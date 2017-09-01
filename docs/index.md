@@ -1,4 +1,4 @@
-# ECE 3400 Group 34
+# ECE 3400 Group 3
 
 [Meet the Team](./meetTeam.md) 
 
