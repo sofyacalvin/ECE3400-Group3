@@ -1,3 +1,2 @@
-Sofya Calvin
-
-Dylan Machado
+PIC | **Sofya Calvin**
+PIC | **Dylan Machado**
