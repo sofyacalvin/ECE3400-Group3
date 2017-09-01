@@ -1,3 +1,3 @@
-# ece3400-group3
+# ece3400-group34
 ## Contents
 [Meet Us](./meetTeam.md)
