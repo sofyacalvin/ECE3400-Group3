@@ -14,18 +14,22 @@ ECE 3400, Fall 2017, Group 3
 * At every meeting, members will report the status of their work including their accomplishments, work in progress, and future goals for the upcoming week.
 
 ## Team Expectations
+
 ### Work Quality
 * Ask for help, preferably early, if you know you will not be able to meet a deadline or generally need help with something.
 * Expectations involve a fully functional robot and any additions, fun or functional, as time allows.
 * Class deadlines should be met, or very nearly met, 24 hours in advance.
 * Team-set deadlines should be met by the agreed-upon time with a less than a day of grace period if previously unknown circumstances arise.
+
 ### Team Participation
 * Show up to meetings.
 * Be honest about your limitations and other commitments.
 * If the workload seems unfairly distributed, it can be brought up in a team meeting or in the Slack group.
+
 ### Personal Accountability
 * Let other members know ahead of time if you will not be able to make a meeting.
 * Respond to communications in a timely manner (within 24 hours).
+
 ### Consequences for Failing to Follow Procedures and Fulfill Expectations
 * If an individual misses more than two consecutive meetings without justification, then the member must bring snacks for the next meeting.
 * If a member fails to meet a class deadline or consistently produces subpar work that must be re-done, the team will decide how to proceed however they reserve the right to notify the Professor/TAs of the skewed distribution of work and given circumstances.
