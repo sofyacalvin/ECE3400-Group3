@@ -44,6 +44,16 @@ void loop() {
 ```
 
 ### Reading the value of a potentiometer via the serial port
+The next step was to test out using analog inputs. We used a potentiometer and a resistor to make a variable voltage input to the analog A0 pin on the board. Here is our setup:
+
+!! add diagram here
+!! add picture here
+
+To see the value of the input in real time we used the serial monitor, which allows us to print a value from the board to the screen. To do this we added this to the code:
+
+!! add code snipet for serial monitor here
+
+When we varied the position of the potentiometer, we were able to vary the output value printed to the serial monitor.
 
 used code from https://www.arduino.cc/en/Tutorial/ReadAnalogVoltage
 ```
@@ -59,7 +69,10 @@ void loop() {
 ```
 
 ### Map the value of the potentiometer to the LED
-
+The Arduino Uno does not have any analog output pins, but the digital output pins that can do pulse width modulation (PWM) are able to approximate the effect of an analog output. This is done using a digital signal with varying duty cycle (the percentage of a cycle for which the output of a signal is high, and if this happens fast enough, it acts as though the voltage is the time average value of the signal. So the high voltage multiplied by the duty cycle is the effective output voltage.
+ 
+We then used this analog output to power an LED so that we could see the effect. Because the analog input values range from 0 to 1023, and the analog output values range from 0 to 255, we multiplied the value read from the input by 255/1023 when feeding that value to the analog output function. Here is our code:
+ 
 ```
 void setup() {
   // initialize serial communication at 9600 bits per second:
