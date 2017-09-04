@@ -6,4 +6,4 @@ Member | Profile
 ![Dylan Machado](/images/IMG_20170901_195507.png) | **Dylan Machado** is a junior in ECE with interests in hardware in software. He enjoys traveling, food, and dogs. 
 *Coming Soon* | **David Kim** is a senior in ECE with interests in software and hardware. He likes to play basketball and also likes to play the drums during his free time. He enjoys listening to music and has some interests in musical instruments and music in general. 
 
-[Return to home](/docs/index.md)
+[Return to home](/index.md)
