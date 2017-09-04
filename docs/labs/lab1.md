@@ -178,4 +178,4 @@ void loop() {
 ```
 
 
-[Return to home](/index)
+[Return to home](https://sofyacalvin.github.io/ece3400-group3/)
