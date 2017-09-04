@@ -53,12 +53,7 @@ void loop() {
 ```
 
 ### Reading the value of a potentiometer via the serial port
-The next step was to test out using analog inputs. We used a potentiometer and a resistor to make a variable voltage input to the analog A0 pin on the board. Here is our setup:
-
-!! add diagram here
-!! add picture here
-
-To see the value of the input in real time we used the serial monitor, which allows us to print a value from the board to the screen. To do this we added this to the code:
+The next step was to test out using analog inputs. We used a potentiometer and a resistor to make a variable voltage input to the analog A0 pin on the board. To see the value of the input in real time we used the serial monitor, which allows us to print a value from the board to the screen. To do this we added this to the code:
 
 ```
 Serial.println(voltage);
