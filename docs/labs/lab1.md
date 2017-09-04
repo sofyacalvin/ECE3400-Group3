@@ -94,7 +94,9 @@ void loop() {
 }
 ```
 
-[![Potentiometer and LED video](https://img.youtube.com/vi/2jGTv0x4b54/0.jpg)](https://www.youtube.com/watch?v=2jGTv0x4b54)
+Using an oscilloscope, we checked the frequency of the signal and how it is affected by the potentiometer. This can be viewed in the following video:
+
+[![Potentiometer and LED video](https://img.youtube.com/vi/wA2syqGHpBw/0.jpg)](https://www.youtube.com/watch?v=wA2syqGHpBw)
 
 ### Map the value of the potentiometer to the servo
 We followed a method similar to mapping the potentiometer to the LED. Building off the code from the setup of the servos, we read the value of A0--our potentiometer value--and converted it to a value on a scale from 0-180, which we knew to be the range of the servos (from full reverse to full forward). We also printed the value to the Serial Monitor, just to ensure we were getting the correct values.
