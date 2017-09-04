@@ -1,5 +1,6 @@
 # Lab 1: Microcontrollers
 Team 1: Amanda Trang, Emmett Milliken
+
 Team 2: David Kim, Dylan Machado, Sofya Calvin
 
 ## Objective 
@@ -177,4 +178,4 @@ void loop() {
 ```
 
 
-[Return to home](/index.md)
+[Return to home](/index)
