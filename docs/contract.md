@@ -60,4 +60,4 @@ Emmett Milliken | 09/01/2017
 Dylan Machado | 09/01/2017
 Sofya Calvin | 09/01/2017
 
-[Return to home](/docs/index.md)
+[Return to home](./index.md)
