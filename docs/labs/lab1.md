@@ -51,12 +51,14 @@ The next step was to test out using analog inputs. We used a potentiometer and a
 
 To see the value of the input in real time we used the serial monitor, which allows us to print a value from the board to the screen. To do this we added this to the code:
 
-!! add code snipet for serial monitor here
+```
+Serial.println(voltage);
+```
 
 When we varied the position of the potentiometer, we were able to vary the output value printed to the serial monitor.
 
-used code from https://www.arduino.cc/en/Tutorial/ReadAnalogVoltage
 ```
+// Base code from https://www.arduino.cc/en/Tutorial/ReadAnalogVoltage
 void setup() {
   // initialize serial communication at 9600 bits per second:
   Serial.begin(9600);
@@ -91,7 +93,10 @@ void loop() {
 }
 ```
 
+[![Potentiometer and LED video](https://img.youtube.com/vi/2jGTv0x4b54/0.jpg)](https://www.youtube.com/watch?v=2jGTv0x4b54)
+
 ### Map the value of the potentiometer to the servo
+We followed a method similar to mapping the potentiometer to the LED. Building off the code from the setup of the servos, we read the value of A0--our potentiometer value--and converted it to a value on a scale from 0-180, which we knew to be the range of the servos (from full reverse to full forward). We also printed the value to the Serial Monitor, just to ensure we were getting the correct values.
 
 ```
 #include <Servo.h>
@@ -107,14 +112,18 @@ void setup() {
 void loop() {
   // read the input on analog pin 0:
   int sensorValue = analogRead(A0);
-  // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V):
  pin.write(sensorValue/5.68);
   // print out the value you read:
   Serial.println(sensorValue*180.0/1023.0);
 }
 ```
 
+This code was a success, allowing us to set the servo's speed and direction based on the potentiometer reading.
+
 ### Assemble your robot
+The assembly portion of the robot was made difficult due to the range of components available. Many screws would not fit through the chassis, or would interfere with the servo due to length. After a series of guessing-and-checking different parts, we mounted two servos, two wheels, a ball caster, and the Arduino onto a chassis. We wired the servos similarly to the previous portion of the lab. 
+
+This was more time-consuming than difficult, especially with a limited amount of Allen wrenches and only a certain amount of tasks that could be done at one time.
 
 ### Driving your robot autonomously
 After assembling our simple robot, we wrote a simple program to attempt to run the robot in a square formation. We had to manually recalibrate the servos, as writing the value 90 to either one did not result in it stopping. We initialized both servos (named servoL and servoR for left and right, respectively):
@@ -133,7 +142,7 @@ void setup() {
 }
 ```
 
-and wrote a forward() function as well as a right() function.
+and wrote a forward() function as well as a right() function. Knowing that 0 would be "full reverse" and 180 was "full forward," we initially set each servo to 180 for forward(). After attempting to run the program, we realized one of the servos was mounted backwards, with respect to the other, and then modified our code to write 0 to servoR.
 
 ```
 void forward(int msec) {
@@ -167,7 +176,5 @@ void loop() {
 }
 ```
 
-
-## Conclusion
 
 [Return to home](/index.md)
