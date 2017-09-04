@@ -170,4 +170,4 @@ void loop() {
 
 ## Conclusion
 
-[Return to home](/docs/index.md)
+[Return to home](/index.md)
