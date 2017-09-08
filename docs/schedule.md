@@ -1,5 +1,3 @@
-Schedule is subject to change.
-
 # September
 
 Sunday | Monday | Tuesday | Wednesday | Thursday | Friday | Saturday |
@@ -9,3 +7,5 @@ Sunday | Monday | Tuesday | Wednesday | Thursday | Friday | Saturday |
 **10** | **11**: Lab (1:25PM, Phillips 427)  | **12**: Open Lab (4PM, Phillips 427) | **13**   | **14**: Team Meeting (4:30 PM, Location TBD) | **15**: Team Meeting (11:15 AM, Thurston)   | **16**  |
 **17** | **18**: Lab (1:25PM, Phillips 427) | **19**: Open Lab (4PM, Phillips 427) | **20** | **21**: Team Meeting (4:30 PM, Location TBD) | **22**: Team Meeting (11:15 AM, Thurston) | **23** |
 **24** | **25**: Lab (1:25PM, Phillips 427) | **26**: Open Lab (4PM, Phillips 427) | **27** | **28**: Team Meeting (4:30 PM, Location TBD) | **29**: Team Meeting (11:15 AM, Thurston) | **30** |
+
+_Schedule is subject to change._
