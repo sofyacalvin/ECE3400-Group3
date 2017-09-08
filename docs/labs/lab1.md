@@ -12,7 +12,7 @@ We used the Arduino IDE to program write and upload our code to the Uno. To inst
 ### Blinking an internal LED
 To make the internal LED on the Arduino blink, we first set up the hardware as is outlined in the schematic below. It is important to have the 300 Ohm resistor in series with the potentiometer this will prevent too much current from being sourced to the pins.
 
-![Blinking and Internal LED Schematic](../images/Lab-1-Module-1.png "Blinking and Internal LED Schematic")
+![Blinking and Internal LED Schematic](./images/Lab-1-Module-1.png "Blinking and Internal LED Schematic")
 
 In order to test whether or not our connection with the board was working, we used the example sketch, Blink (File>Examples>01.Basics>Blink). After uploading the sketch to the board, the on-board LED toggled on and off once per second, verifying that our connection and board were working. 
 
@@ -33,7 +33,7 @@ void loop() {
 ### Blinking an external LED
 To make an external LED blink (as opposed to the one built into the Arduino), we had to modify the schematic to add in the external LED as shown below:
 
-![Blinking an External LED Schematic](../images/Lab-1-Module-2.png "Blinking an External LED Schematic")
+![Blinking an External LED Schematic](./images/Lab-1-Module-2.png "Blinking an External LED Schematic")
 
 We then modified the Blink sketch to blink an external LED through a digital output pin. Since digital output pins on the Uno will stop working if they are used to source too much current, we added a 330 ohm resistor in series with an LED. 
 
