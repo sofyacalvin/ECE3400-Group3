@@ -7,7 +7,7 @@ Team 2: David Kim, Dylan Machado, Sofya Calvin
 The goal of this lab was to introduce the concepts of the Arduino IDE as well as the Arduino Uno microcontroller itself. Additionally, we formed a basic structure for the robot and added a simple autonomous function.
 
 ## Procedure
-We used the Arduino IDE to program write and upload our code to the Uno. To install the Arduino IDE, go to https://www.arduino.cc/en/Main/Software.
+We used the Arduino IDE to program write and upload our code to the Uno. To install the Arduino IDE, go [here.](https://www.arduino.cc/en/Main/Software)
 
 ### Blinking an internal LED
 To make the internal LED on the Arduino blink, we first set up the hardware as is outlined in the schematic below. It is important to have the 300 Ohm resistor in series with the potentiometer this will prevent too much current from being sourced to the pins.
@@ -99,7 +99,7 @@ void loop() {
 
 Using an oscilloscope, we checked the frequency of the signal and how it is affected by the potentiometer. This can be viewed in the following video:
 
-[![Potentiometer and LED video](https://img.youtube.com/vi/wA2syqGHpBw/0.jpg)](https://www.youtube.com/watch?v=wA2syqGHpBw)
+[![Potentiometer and LED video](https://img.youtube.com/vi/Foq4yv9mEkM/0.jpg)](https://youtu.be/Foq4yv9mEkM)
 
 ### Map the value of the potentiometer to the servo
 To setup the servo, we again modified the LED setup, this time removing the LED component all together and replacing it with a servo motor and variable power supply which we held at 5V. The schematic is shown below:
