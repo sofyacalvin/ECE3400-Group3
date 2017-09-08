@@ -99,7 +99,7 @@ void loop() {
 
 Using an oscilloscope, we checked the frequency of the signal and how it is affected by the potentiometer. This can be viewed in the following video:
 
-[![Potentiometer and LED video](https://img.youtube.com/vi/Foq4yv9mEkM/0.jpg)](https://youtu.be/Foq4yv9mEkM)
+[![Potentiometer and LED video](https://img.youtube.com/vi/Foq4yv9mEkM/0.jpg)](https://youtu.be/wA2syqGHpBw?t=17)
 
 ### Map the value of the potentiometer to the servo
 To setup the servo, we again modified the LED setup, this time removing the LED component all together and replacing it with a servo motor and variable power supply which we held at 5V. The schematic is shown below:
