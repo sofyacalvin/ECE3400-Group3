@@ -5,7 +5,7 @@ Schedule is subject to change.
 Sunday | Monday | Tuesday | Wednesday | Thursday | Friday | Saturday |
 ---------|---------|---------|---------|---------|---------|---------|
 27       | 28      | 29      | 30      | 31      | **1**   | **2**   |
-**3** | **4** | **5** | **6** | **7** | **8** | **9**: Open Lab (3 PM) |
-**10** | **11**: Lab (1:25PM)  | **12**: Open Lab (4PM) | **13**   | **14**: Team Meeting (4:30 PM) | **15**   | **16**  |
-**17** | **18**: Lab (1:25PM) | **19**: Open Lab (4PM) | **20** | **21**: Team Meeting (4:30 PM) | **22** | **23** |
-**24** | **25**: Lab (1:25PM) | **26**: Open Lab (4PM) | **27** | **28**: Team Meeting (4:30 PM) | **29** | **30** |
+**3** | **4** | **5** | **6** | **7** | **8** | **9**: Open Lab (3 PM, Phillips 427) |
+**10** | **11**: Lab (1:25PM, Phillips 427)  | **12**: Open Lab (4PM, Phillips 427) | **13**   | **14**: Team Meeting (4:30 PM, Location TBD) | **15**: Team Meeting (11:15 AM, Thurston)   | **16**  |
+**17** | **18**: Lab (1:25PM, Phillips 427) | **19**: Open Lab (4PM, Phillips 427) | **20** | **21**: Team Meeting (4:30 PM, Location TBD) | **22**: Team Meeting (11:15 AM, Thurston) | **23** |
+**24** | **25**: Lab (1:25PM, Phillips 427) | **26**: Open Lab (4PM, Phillips 427) | **27** | **28**: Team Meeting (4:30 PM, Location TBD) | **29**: Team Meeting (11:15 AM, Thurston) | **30** |
