@@ -7,6 +7,8 @@ We are the members of Group 3 for the Fall 2017 semester of ECE 3400. We are ver
 [Team Contract](./contract.md)
 
 [Schedule](./schedule.md)
+
+[Youtube](https://www.youtube.com/channel/UCoPtKPpXSNkzQ-EIfkcnQlg?disable_polymer=true)
  
 ## Labs
 [Lab 1](./labs/lab1.md)
