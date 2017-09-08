@@ -1,10 +1,11 @@
 Schedule is subject to change.
 
-#September#
+# September
 
-27       | 28      | 29      | 30      | 31      | **1**   | **2**   |
+Sunday | Monday | Tuesday | Wednesday | Thursday | Friday | Saturday |
 ---------|---------|---------|---------|---------|---------|---------|
+27       | 28      | 29      | 30      | 31      | **1**   | **2**   |
 **3** | **4** | **5** | **6** | **7** | **8** | **9**: Open Lab (3 PM) |
-**10**) | **11**: Lab (1:25PM  | **12**: Open Lab (4PM) | **13**   | **14**: Team Meeting (4:30 PM) | **15**   | **16**  |
-**17** | **18**: Lab (1:25PM | **19**: Open Lab (4PM) | **20** | **21**: Team Meeting (4:30 PM) | **22** | **23** |
-**24**) | **25**: Lab (1:25PM | **26**: Open Lab (4PM) | **27** | **28**: Team Meeting (4:30 PM) | **29** | **30** |
+**10** | **11**: Lab (1:25PM)  | **12**: Open Lab (4PM) | **13**   | **14**: Team Meeting (4:30 PM) | **15**   | **16**  |
+**17** | **18**: Lab (1:25PM) | **19**: Open Lab (4PM) | **20** | **21**: Team Meeting (4:30 PM) | **22** | **23** |
+**24** | **25**: Lab (1:25PM) | **26**: Open Lab (4PM) | **27** | **28**: Team Meeting (4:30 PM) | **29** | **30** |
