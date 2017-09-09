@@ -34,7 +34,30 @@ void loop() {
  else if (sen2>sen1){
   myservo1.write(110);
  myservo2.write(80);
- }
- 
-  
+ }  
+}
+
+
+void forward(int msec) {
+  myservo1.write();
+  myservo2.write();
+  delay(msec);
+}
+
+void right(int msec) {
+  myservo1.write();
+  myservo2.write();
+  delay(msec);
+}
+
+void left(int msec) {
+  myservo1.write();
+  myservo2.write();
+  delay(msec);
+}
+
+void stop(int msec) {
+  myservo1.write(90);
+  myservo2.write(90);
+  delay(msec);
 }
