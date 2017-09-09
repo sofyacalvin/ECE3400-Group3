@@ -16,8 +16,6 @@ void setup() {
 
 // the loop routine runs over and over again forever:
 void loop() {
-  
- stop(0);
   // read the input on analog pin 0:
   int sen1 = analogRead(A0);
   int sen2 = analogRead(A1);
@@ -25,41 +23,18 @@ void loop() {
  Serial.print(F("  "));
  Serial.println(sen2);
 
- if (abs(sen1-sen2)<75){
+ if (abs(sen1-sen2)<20){
  myservo1.write(100);
  myservo2.write(80);
  }
  else if (sen1>sen2){
  myservo1.write(100);
- myservo2.write(70);
+ myservo2.write(0);
  }
  else if (sen2>sen1){
-  myservo1.write(110);
+  myservo1.write(180);
  myservo2.write(80);
- }  
-}
-
-
-void forward(int msec) {
-  myservo1.write();
-  myservo2.write();
-  delay(msec);
-}
-
-void right(int msec) {
-  myservo1.write();
-  myservo2.write();
-  delay(msec);
-}
-
-void left(int msec) {
-  myservo1.write();
-  myservo2.write();
-  delay(msec);
-}
-
-void stop(int msec) {
-  myservo1.write(90);
-  myservo2.write(90);
-  delay(msec);
+ }
+ 
+  
 }
