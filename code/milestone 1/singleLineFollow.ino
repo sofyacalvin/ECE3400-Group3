@@ -16,6 +16,8 @@ void setup() {
 
 // the loop routine runs over and over again forever:
 void loop() {
+  
+ stop(0);
   // read the input on analog pin 0:
   int sen1 = analogRead(A0);
   int sen2 = analogRead(A1);
