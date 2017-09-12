@@ -1,6 +1,6 @@
 #include <Servo.h>
-int rightTurn = 0;
-int leftTurn = 0;
+int rightTurn;
+int leftTurn;
 
 int inLeft;
 int inRight;
@@ -15,61 +15,88 @@ void setup() {
   Serial.begin(9600);
   leftservo.attach(9);
   rightservo.attach(10);
+
+  rightTurn = 0;
+  leftTurn = 0;
 }
 
 // the loop routine runs over and over again forever:
 void loop() {
-  stop();
+  
   // read the input on analog pin 0:
   
   //light sensors
+  //(>950 : black line ; <900 : white space)
   readSensor();
   
   Serial.print(outLeft); //
   Serial.print(F("  "));
   Serial.println(outRight);
 
+  Serial.print(inLeft); //
+  Serial.print(F("  "));
+  Serial.println(inRight);
 
+ 
   while (outLeft < 900 && outRight < 900){ //while both outer sensors see white
     readSensor();
-    Serial.println("in first while");
-    Serial.print(outLeft); //
-    Serial.print(F("  "));
-    Serial.println(outRight);
-
-    if (abs(inLeft-inRight)<75){ //if inner are similar
+    //Serial.println("in first while");
+    //Serial.print(outLeft); //
+    //Serial.print(F("  "));
+    //Serial.println(outRight);
+    
+    if (abs(inLeft-inRight)<70){ //if inner are similar
       forward();
-     }
-   else if (inLeft>inRight){ //tilted left
-      right();
-     }
-   else if (inRight>inLeft){ //tilted right
-      left();
-     }   
-     readSensor();
+      
+    }
+    else if (inLeft>inRight){ //tilted left
+       leftservo.write(0);
+       rightservo.write(0);
+    }
+    else if (inRight>inLeft){ //tilted right
+      leftservo.write(180);
+       rightservo.write(180);
+    } 
+
+    //readSensor();
   }
+
+  stop();
+ 
   Serial.println("out first while");
   
-  if (rightTurn < 3){ //enters this when both outer sensors see black
-    while(outLeft > 930 || outRight > 930 || inLeft < 870 || inRight < 870) { //while out sees black, in sees white
+  if (rightTurn < 3 && leftTurn == 0){ //enters this when both outer sensors see black
+    //while(outLeft > 950 || outRight > 950 || inLeft < 900 || inRight < 900) { //while out sees black, in sees white
+     // right();
+    //}
+    while(outLeft > 900 || outRight > 900) { //while out sees black, in sees white
+      right();
+    }
+    while(inLeft < 900 && inRight < 900) { //while out sees black, in sees white
       right();
     }
     rightTurn++;
   }
   else if (rightTurn == 3 && leftTurn == 0){ //middle s
-    while(outLeft > 930 && outRight > 930) { //while both out see black
+    while(outLeft > 950 && outRight > 950) { //while both out see black
       forward();
     }
     leftTurn++;
   }
-  else if (leftTurn < 4){
-    while(outLeft > 930 || outRight > 930 || inLeft < 870 || inRight < 870) {
+  else if (rightTurn == 3 && leftTurn < 4){
+    //while(outLeft > 950 || outRight > 950 || inLeft < 900 || inRight < 900) {
+    // left();
+    //}
+    while(outLeft > 900 || outRight > 900) { //while out sees black, in sees white
+      left();
+    }
+    while(inLeft < 900 && inRight < 900) { //while out sees black, in sees white
       left();
     }
     leftTurn++;
   }
-  else if (leftTurn == 4){
-    while(outLeft > 930 && outRight > 930) {
+  else if (rightTurn == 3 && leftTurn == 4){
+    while(outLeft > 900 && outRight > 900) {
       forward();
     }
     rightTurn = 0;
@@ -85,20 +112,20 @@ void readSensor(){
   outRight = analogRead(A3);
 }
 void forward() {
-  leftservo.write(100);
-  rightservo.write(80);
+  leftservo.write(0);
+  rightservo.write(180);
   readSensor();
 }
 
 void right() {
-  leftservo.write(100);
-  rightservo.write(70);
+  leftservo.write(90);
+  rightservo.write(180);
   readSensor();
 }
 
 void left() {
-  leftservo.write(110);
-  rightservo.write(80);
+  leftservo.write(0);
+  rightservo.write(90);
   readSensor();
   
 }
