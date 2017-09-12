@@ -58,7 +58,7 @@ void loop() {
        rightservo.write(180);
     } 
 
-    //readSensor();
+    readSensor();
   }
 
   stop();
@@ -69,6 +69,8 @@ void loop() {
     //while(outLeft > 950 || outRight > 950 || inLeft < 900 || inRight < 900) { //while out sees black, in sees white
      // right();
     //}
+    right();
+    delay(500);
     while(outLeft > 900 || outRight > 900) { //while out sees black, in sees white
       right();
     }
@@ -87,6 +89,8 @@ void loop() {
     //while(outLeft > 950 || outRight > 950 || inLeft < 900 || inRight < 900) {
     // left();
     //}
+    left();
+    delay(500);
     while(outLeft > 900 || outRight > 900) { //while out sees black, in sees white
       left();
     }
@@ -97,6 +101,7 @@ void loop() {
   }
   else if (rightTurn == 3 && leftTurn == 4){
     while(outLeft > 900 && outRight > 900) {
+      delay(500);
       forward();
     }
     rightTurn = 0;
@@ -112,19 +117,19 @@ void readSensor(){
   outRight = analogRead(A3);
 }
 void forward() {
-  leftservo.write(0);
-  rightservo.write(180);
+  leftservo.write(60);
+  rightservo.write(120);
   readSensor();
 }
 
 void right() {
   leftservo.write(90);
-  rightservo.write(180);
+  rightservo.write(120);
   readSensor();
 }
 
 void left() {
-  leftservo.write(0);
+  leftservo.write(60);
   rightservo.write(90);
   readSensor();
   
