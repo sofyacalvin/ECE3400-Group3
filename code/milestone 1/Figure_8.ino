@@ -18,6 +18,8 @@ void setup() {
 
   rightTurn = 0;
   leftTurn = 0;
+  stepCounter = 1;
+  
 }
 
 // the loop routine runs over and over again forever:
@@ -29,31 +31,21 @@ void loop() {
   //(>950 : black line ; <900 : white space)
   readSensor();
   
-  Serial.print(outLeft); //
-  Serial.print(F("  "));
-  Serial.println(outRight);
-
-  Serial.print(inLeft); //
-  Serial.print(F("  "));
-  Serial.println(inRight);
-
- 
-  while (outLeft < 900 && outRight < 900){ //while both outer sensors see white
+  // --------------
+  // LINE FOLLOWING start
+  // --------------
+  while (outLeft < 900 || outRight < 900){ //while both outer sensors see white
     readSensor();
-    //Serial.println("in first while");
-    //Serial.print(outLeft); //
-    //Serial.print(F("  "));
-    //Serial.println(outRight);
     
     if (abs(inLeft-inRight)<70){ //if inner are similar
       forward();
       
     }
-    else if (inLeft>inRight){ //tilted left
+    else if (inLeft>inRight){ //if tilted left, correct
        leftservo.write(0);
        rightservo.write(0);
     }
-    else if (inRight>inLeft){ //tilted right
+    else if (inRight>inLeft){ //if tilted right
       leftservo.write(180);
        rightservo.write(180);
     } 
@@ -62,52 +54,54 @@ void loop() {
   }
 
   stop();
+ //-------------
+ //end line follow section
+ //-------------
+
  
-  Serial.println("out first while");
-  
-  if (rightTurn < 3 && leftTurn == 0){ //enters this when both outer sensors see black
-    //while(outLeft > 950 || outRight > 950 || inLeft < 900 || inRight < 900) { //while out sees black, in sees white
-     // right();
-    //}
-    right();
-    delay(500);
-    while(outLeft > 900 || outRight > 900) { //while out sees black, in sees white
-      right();
-    }
-    while(inLeft < 900 && inRight < 900) { //while out sees black, in sees white
-      right();
-    }
-    rightTurn++;
+//--------------
+//steps when intersection is encountered section, start
+//--------------
+  switch(stepCounter){
+    case 1://for first 3 detected intersections, turn right
+    case 2:
+    case 3:
+        right();
+        delay(500);
+        while(outLeft > 900 || outRight > 900) { //while out sees black, in sees white
+          right();
+        }
+        while(inLeft < 900 && inRight < 900) { //while out sees black, in sees white
+          right();
+        }
+        stepCounter++;
+        break;
+    case 4: //go straight after 3 right turns
+        forward();
+        delay(500);
+        stepCounter++;
+        break;
+    case 5://turn left at next 3 intersections
+    case 6:
+    case 7:
+        left();
+        delay(500);
+        while(outLeft > 900 || outRight > 900) { //while out sees black, in sees white
+          left();
+        }
+        while(inLeft < 900 && inRight < 900) { //while out sees black, in sees white
+          left();
+        }
+        stepCounter++;
+        break;
+     case 8://go straight after 3 left turns
+        forward();
+        delay(500);
+        stepCounter=1;
+        break;
+     default:
+        break;
   }
-  else if (rightTurn == 3 && leftTurn == 0){ //middle s
-    while(outLeft > 950 && outRight > 950) { //while both out see black
-      forward();
-    }
-    leftTurn++;
-  }
-  else if (rightTurn == 3 && leftTurn < 4){
-    //while(outLeft > 950 || outRight > 950 || inLeft < 900 || inRight < 900) {
-    // left();
-    //}
-    left();
-    delay(500);
-    while(outLeft > 900 || outRight > 900) { //while out sees black, in sees white
-      left();
-    }
-    while(inLeft < 900 && inRight < 900) { //while out sees black, in sees white
-      left();
-    }
-    leftTurn++;
-  }
-  else if (rightTurn == 3 && leftTurn == 4){
-    while(outLeft > 900 && outRight > 900) {
-      delay(500);
-      forward();
-    }
-    rightTurn = 0;
-    leftTurn = 0;
-  }
-  
 }
 
 void readSensor(){
