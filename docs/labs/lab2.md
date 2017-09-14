@@ -5,7 +5,7 @@ Optical team: text
 
 
 ## Objective 
-text
+The goal of this lab was to get familiar with the microphone and the IR sensor that we would be adding to our robot. We did this by using the Open Music Labs Arduino FFT library to map the Fourier Transforms of the signals that the sensors were detecting.
 
 ## Procedure
 
