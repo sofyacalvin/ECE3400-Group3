@@ -6,6 +6,7 @@ int inLeft;
 int inRight;
 int outLeft; 
 int outRight;
+int stepCounter;
 
 Servo leftservo;
 Servo rightservo;
@@ -111,20 +112,20 @@ void readSensor(){
   outRight = analogRead(A3);
 }
 void forward() {
-  leftservo.write(60);
-  rightservo.write(120);
+  leftservo.write(180);
+  rightservo.write(0);
   readSensor();
 }
 
 void right() {
-  leftservo.write(90);
-  rightservo.write(120);
+  leftservo.write(180);
+  rightservo.write(95);
   readSensor();
 }
 
 void left() {
-  leftservo.write(60);
-  rightservo.write(90);
+  leftservo.write(85);
+  rightservo.write(0);
   readSensor();
   
 }
