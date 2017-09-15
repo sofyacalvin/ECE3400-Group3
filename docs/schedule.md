@@ -1,4 +1,4 @@
-### [Meeting Minutes](/MeetingMinutes.md)
+### [Meeting Minutes](./MeetingMinutes.md)
 
 # September
 
