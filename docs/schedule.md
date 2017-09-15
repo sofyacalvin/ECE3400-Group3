@@ -1,3 +1,5 @@
+### [Meeting Minutes](/MeetingMinutes.md)
+
 # September
 
 Sunday | Monday | Tuesday | Wednesday | Thursday | Friday | Saturday |
