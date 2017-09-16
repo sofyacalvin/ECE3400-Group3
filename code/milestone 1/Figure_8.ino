@@ -43,12 +43,12 @@ void loop() {
       
     }
     else if (inLeft>inRight){ //if tilted left, correct
-       leftservo.write(0);
+       leftservo.write(90);
        rightservo.write(0);
     }
     else if (inRight>inLeft){ //if tilted right
       leftservo.write(180);
-       rightservo.write(180);
+       rightservo.write(90);
     } 
 
     readSensor();
