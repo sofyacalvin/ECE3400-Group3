@@ -11,9 +11,9 @@ We are the members of Group 3 for the Fall 2017 semester of ECE 3400. We are ver
 [Youtube](https://www.youtube.com/channel/UCoPtKPpXSNkzQ-EIfkcnQlg?disable_polymer=true)
  
 ## Labs
-[Lab 1](./labs/lab1.md)
+[Lab 1: Microcontroller](./labs/lab1.md)
 
-[Lab 2](./labs/lab2.md)
+[Lab 2: Analog Circuitry and FFTs](./labs/lab2.md)
 
 ## Milestones
 [Milestone 1](./milestones/Milestone1.md)
