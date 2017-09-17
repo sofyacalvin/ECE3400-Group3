@@ -13,6 +13,11 @@ We are the members of Group 3 for the Fall 2017 semester of ECE 3400. We are ver
 ## Labs
 [Lab 1](./labs/lab1.md)
 
+[Lab 2](./labs/lab2.md)
+
+## Milestones
+[Milestone 1](./milestones/Milestone1.md)
+
 ## Tutorials
 _Coming Soon_
 
