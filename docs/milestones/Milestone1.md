@@ -20,7 +20,11 @@ With this, if one sensor went off of the line, the robot would turn and correct 
 
 [VIDEO]
 
-The video above shows our robot in action. It correctly follows a line, and corrects itself as it moves. With the first part done, we were ready to move on to the next step.
+The video above shows our robot in action. It correctly follows a line, and corrects itself as it moves. However, we noticed that the robot had issues with remaining in a straight line, and felt that the turns were too jolting and unnecessarily slowed down the robot. It turned out that we initially failed to have a common ground for our servos, which resulted in them moving at different speeds. We also decided to have the robot use only one wheel at a time when adjusting so that the robot was always moving forward on a line, instead of pivoting to adjust. The final iteration can be seen below.
+
+[LINE FINAL]
+
+With the first part done, we were ready to move on to the next step.
 
 ## Figure 8
 
