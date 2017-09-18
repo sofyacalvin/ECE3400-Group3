@@ -1,14 +1,16 @@
 # Milestone 1
 
-For Milestone one, our team was required to create a robot which had the ability to follow a black line using sensors, as well as complete a figure 8 motion when placed on a grid. 
+For Milestone one, our team was required to create a robot which had the ability to follow a black line using sensors, as well as complete a figure 8 motion when placed on a grid. This required an in depth analysis of mechanics, hardware, and software. 
 
 ## Following a Line
 
-For the first part of the milestone, we had to figure out how to make our robot follow a line. We determined that the best way to approach this was to use sensors to read and track the line as the robot follows it. This means we were faced with two challenges: the placement and usage of sensors to detect the line, and the act of remaining on the line and following it as the robot moves.
+For the first part of the milestone, we had to figure out how to make our robot follow a line. We determined that the best way to approach this was to use sensors to read and track the line as the robot followed it. This meant we were faced with two challenges: the placement and usage of sensors to detect the line, and the act of remaining on the line and following it as the robot moves.
 
 ### Hardware
 
 The first challenge in creating the robot from scratch was to make it mobile. We decided that we would start off using the servos as motors and eventually, if we see it to be a problem, will consider swapping these out for more precise and controllable motors. To build the robot was fairly straight forward: we attached the servos to a set of wheels, which were then secured to a plastic base with a third leg for support. On top of the base, we attached an Arduino Uno and circuit board for all of the wiring and programming. Finally, we attached two light sensors on the front of the robot to help with guiding it. 
+
+![Bacardi 1 month](../images/Bacardi1Month.
 
 To make the robot follow a line, we relied on the values reported on the light sensors in (almost) real time. When the value read less than ~900, this indicated the sensor was over white area. When the value read greater than ~950, this indicated the sensor was over black area. At first we left a little space between the two sensors to give the robot a wide range of "vision". However, after running the robot in a trial round, we realized that it was correcting its motion too much and wiggling around the line instead of following it directly. To fix this, we moved the sensors closer together so that once it corrected its motion, it would stay on the line and not continue to wiggle. 
 
