@@ -22,20 +22,11 @@ In order to visualize the data coming out of the arduino, we copied sets of the 
 Our Excel graphs of the frequency content of our signals can be found later on this page.
 
 ### Amplifier/microphone circuit
-When initially setting up the microphone, we were somewhat confiused by the diagram given to us:
-
-![Audio Circuit](../images/lab2/lab2_fig1.png)
-
-We were conflused because the microphone we had was already soldered on a board with other components. 
-
-So we ended up adding the filter in addition to what was already on the board. The good news is that it worked out ok. We were able to measure peak. We doubled the frequency of the tone, and there was a peak about twice as far up the spectrum.
+text
 
 ### 660Hz tone detection
-Once we had succeeded in detecting individual frequencies, we forcused on getting a better idea of the actual range.
+text
 
-The Arduino Uno runs on a 16MHz clock. The ADC uses a prescaling value in order to slow down that clock to 16MHz/(prescaling factor). Changing the prescaling factor therefore lets us change the sampling frequency. Through looking at the documentation for the ATmega chip (http://www.atmel.com/Images/Atmel-42735-8-bit-AVR-Microcontroller-ATmega328-328P_Datasheet.pdf), along with careful reading of the example code and Team Alpha's website, we were able to figure out that we were using a prescaling factor of 32. This meant the clock for the ADC was running at 500kHz. The ATmega documentation says that an average ADC converstion takes 13 clock cycles to complete, so we would be sampling at around 38kHz. The size of each bin would then be around 150Hz. Our estimated bin size scale was about 146.666Hz, so they lined up fairly well.
-
-![Audio Spectrum](../images/lab2/lab2audiofreqspectrum.png)
 ### IR sensor circuit
 The goal of the Optical team was to detect a 7kHz IR beacon through the Arduino and perform a Fourier analysis on the signal. We first created a simple circuit (shown below) to detect the IR-emitting treasure. 
 
@@ -57,9 +48,9 @@ After initial testing, we determined that the signal received from the treasure 
 The actual implementation is as shown, with the treasure transmitting a signal at the top.
 
 ![Phototransistor filtered](../images/lab2/treasure_filtered.jpg "Phototransistor filtered")
-//have a picture
-![Optical Spectrum](../images/lab2/lab2treasurefreqspectrum.png)
+
 ### IR treasure blinking at 7kHz, 12kHz and 17kHz
+#### Before amplifier
 After determining the circuit could detect the IR signal successfully (before the amplifier was implemented), we ran the data through the FFT from the Open Music Labs library. We worked off the example code offered on their site. We modified the ADC clock prescalar %%% by modifying the following line:
 
 // @ David what did we end up using?
@@ -68,11 +59,21 @@ After determining the circuit could detect the IR signal successfully (before th
   ADCSRA = 0xe5; // set the adc to free running mode
 ```
 
-// also @ david, feel free to talk about the calculation of bins or something here
+// also @ david, feel free to talk about the calculation of bins or sampling rate or something here
 
-//i'm gonna add more give me a minute
+We printed the output of the FFT to the Serial monitor and were then able to copy the data into Excel for visualization. In this set of data, we have two sets of data for each frequency the treasure was set to. 
 
-The code in its entirety can be viewed below:
+// someone add info about bins? & distinguishing between the treasures
+
+![IR Data (unfiltered)](../images/lab2/IR_data_1.png "IR Data (unfiltered)")
+
+#### After amplifier
+
+Without modifying the code, we continued to collect data with the amplifier implementation. We can distinctly see the difference between the 
+
+![IR Data (filtered)](../images/lab2/IR_data_2.png "IR Data (filtered)")
+
+The FFT code in its entirety can be viewed below:
 
 ```
 /*
