@@ -11,7 +11,15 @@ The goal of this lab was to get familiar with the microphone and the IR sensor t
 We initially split into two teams: Acoustic and Optical. The Acoustic team (David, Dylan, Emmett) focused on the microphone circuit, while the Optical team (Sofya, Amanda) worked with the IR sensor. Each team was to do the Fourier analysis corresponding to their circuit. As we did not finish during our lab hours, much of the lab was completed with varying members of the team during open lab.
 
 ### FFT analysis
-text
+For both the acoustic and optical parts of this lab, fast fourier transforms (FFT) were used to find the frequency content of the sampled input signal from the sensors. 
+
+The FFT library takes in an analog signal, samples it, and calculates the frequency content. The maximum frequency that the fft can accurately detect is half of the sampling frequency.
+
+The FFT takes in 256 samples taken at equally spaced intervals, and outputs 256 values that represent the frequency content of the input signal. The 256 output values are the calculated frequency content within certain bins, or range of frequencies. The FFT of a real signal is symmetric over zero, only half of the outputs are unique. This is why sets of 128 values are output to serial.
+
+In order to visualize the data coming out of the arduino, we copied sets of the data from the serial window into Excel. We initially spent a fair bit of time trying to get MATLAB to display the frequency content in real time, but ended up not being very successful.
+
+Our Excel graphs of the frequency content of our signals can be found later on this page.
 
 ### Amplifier/microphone circuit
 text
