@@ -1,7 +1,6 @@
 # Lab 2: Analog Circuitry and FFTs
-Acoustic team: text
-
-Optical team: text
+Acoustic team: David Kim, Dylan Machado, Emmett Milliken
+Optical team: Sofya Calvin, Amanda Trang
 
 
 ## Objective 
