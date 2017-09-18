@@ -48,13 +48,13 @@ To modify Brooklynn to move in a figure 8 motion, we decided to add two more sen
 
 ### Software
 
-The first task in coding our figure 8 program was implementing our line following algorithm. After that, we needed to tell the robot when it reached a junction, and what to do. Through the outer sensors, we were able to tell the robot when a "new action" was to be taken. The robot would then follow a loop of commands to determine whether that action was a turn or driving through an intersection.
+The first task in coding our figure 8 program was implementing our line following algorithm. After that, we needed to tell Brooklynn when she reached a junction, and what to do. Through the outer sensors, we were able to tell her when a "new action" was to be taken. She would then follow a loop of commands to determine whether that action was a turn or driving through an intersection.
 
 For our turns, we first tried using an algorithm similar to this:
 
 ![Figure 8 - First Attempt](../images/figure81st.png "Figure 8 - First Attempt")
 
-However, this proved to be unreliable. The robot would often begin turning but not complete the turn, or not turn at all. To fix this issue, we changed our code to implement a delay before the sensors would read new values. As a result, our robot was much more reliable.
+However, this proved to be unreliable. Brooklynn would often begin turning and not complete the turn, or not turn at all. To fix this issue, we changed our code to implement a delay before the sensors would read new values. As a result, Brooklynn was able to respond much more reliably at intersections.
 
 ![Figure 8 - Final](../images/figure8FINAL.png "Figure 8 - Final")
 
@@ -64,7 +64,7 @@ The entire code can be found at the bottom of the page
 
 [![Figure 8 - Before](http://img.youtube.com/vi/FGEi17X3DoE/0.jpg)](http://www.youtube.com/watch?v=FGEi17X3DoE)
 
-The video above shows our working, but unoptimized figure 8 build. We changed our turns to use both wheels (the outer wheel moves faster than the inner wheel to keep the turn sharp but not on a pivot) as well as moving our outer junction-detecting sensors back to compensate for quicker, sharper turns. Below is a video of our final implementation.
+The video above shows our working, but unoptimized figure 8 build. Eventually, we changed our turns to use both wheels (the outer wheel moves faster than the inner wheel to keep the turn sharp but not on a pivot) as well as moving our outer junction-detecting sensors back to compensate for quicker, sharper turns. Below is a video of our final implementation.
 
 [![Figure 8 - After](http://img.youtube.com/vi/lCFXg24FKVM/0.jpg)](http://www.youtube.com/watch?v=lCFXg24FKVM)
 
