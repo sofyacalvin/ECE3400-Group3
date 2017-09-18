@@ -24,6 +24,8 @@ To make our robot follow a line, we coded a way for the robot to utilize the two
 
 With this, if one sensor went off of the line, the robot would turn and correct itself to have both sensors over it again.
 
+The full code can be found at the bottom of this page.
+
 ### Results
 
 [![Line Following - Before](http://img.youtube.com/vi/RP49caLh4oo/0.jpg)](http://www.youtube.com/watch?v=RP49caLh4oo)
@@ -53,6 +55,8 @@ For our turns, we first tried using an algorithm similar to this:
 However, this proved to be unreliable. The robot would often begin turning but not complete the turn, or not turn at all. To fix this issue, we changed our code to implement a delay before the sensors would read new values. As a result, our robot was much more reliable.
 
 ![Figure 8 - Final](../images/figure8FINAL.png "Figure 8 - Final")
+
+The entire code can be found at the bottom of the page
 
 ### Results
 
