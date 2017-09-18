@@ -35,10 +35,11 @@ For reference, here is a selection of a few graphs of our attempts at running th
 ![Failed filters](../images/lab2/failed_attempts.png)
 
 The following circuits are the filters we designed based on the gain, passbands, and stopbands we wanted. Using [Filter Wizard](http://www.analog.com/designtools/en/filterwizard/), we found the values for the components we would need.
-Low-pass:
+
+Low-pass: 
 ![Lowpass filter](../images/lab2/lowpass.png)
 
-High-pass
+High-pass: 
 ![Highpass filter](../images/lab2/highpass.png)
 
 As the LM358 is a dual op-amp, we were able to include both circuits using the same board. The implementation was as follows:
