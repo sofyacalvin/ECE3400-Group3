@@ -26,7 +26,7 @@ text
 
 ### 660Hz tone detection
 text
-
+![Audio Spectrum](../images/lab2/lab2audiospectrum.png)
 ### IR sensor circuit
 The goal of the Optical team was to detect a 7kHz IR beacon through the Arduino and perform a Fourier analysis on the signal. We first created a simple circuit (shown below) to detect the IR-emitting treasure. 
 
@@ -48,9 +48,9 @@ After initial testing, we determined that the signal received from the treasure 
 The actual implementation is as shown, with the treasure transmitting a signal at the top.
 
 ![Phototransistor filtered](../images/lab2/treasure_filtered.jpg "Phototransistor filtered")
-
+//have a picture
+![Optical Spectrum](../images/lab2/lab2treasurefreqspectrum.png)
 ### IR treasure blinking at 7kHz, 12kHz and 17kHz
-#### Before amplifier
 After determining the circuit could detect the IR signal successfully (before the amplifier was implemented), we ran the data through the FFT from the Open Music Labs library. We worked off the example code offered on their site. We modified the ADC clock prescalar %%% by modifying the following line:
 
 // @ David what did we end up using?
@@ -59,19 +59,11 @@ After determining the circuit could detect the IR signal successfully (before th
   ADCSRA = 0xe5; // set the adc to free running mode
 ```
 
-// also @ david, feel free to talk about the calculation of bins or sampling rate or something here
+// also @ david, feel free to talk about the calculation of bins or something here
 
-We printed the output of the FFT to the Serial monitor and were then able to copy the data into Excel for visualization. In this set of data, we have two sets of data for each frequency the treasure was set to. 
+//i'm gonna add more give me a minute
 
-// someone add info about bins? & distinguishing between the treasures
-
-![IR Data (unfiltered)](../images/lab2/IR_data_1.png "IR Data (unfiltered)")
-
-#### After amplifier
-
-Without modifying the code, we continued to collect data with the amplifier implementation. 
-
-The FFT code in its entirety can be viewed below:
+The code in its entirety can be viewed below:
 
 ```
 /*
