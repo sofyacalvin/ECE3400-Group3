@@ -46,6 +46,10 @@ To modify Brooklynn to move in a figure 8 motion, we decided to add two more sen
 
 ![Bacardi 2 Months](../images/Bacardi2Months.png "Sensor Setup")
 
+The final hardware wiring for Milestone 1 is depicted by the following schematic:
+
+![Schematic](../images/schematic1.png "Milestone 1 Schematic")
+
 ### Software
 
 The first task in coding our figure 8 program was implementing our line following algorithm. After that, we needed to tell Brooklynn when she reached a junction, and what to do. Through the outer sensors, we were able to tell her when a "new action" was to be taken. She would then follow a loop of commands to determine whether that action was a turn or driving through an intersection.
