@@ -50,6 +50,7 @@ The actual implementation is as shown, with the treasure transmitting a signal a
 ![Phototransistor filtered](../images/lab2/treasure_filtered.jpg "Phototransistor filtered")
 
 ### IR treasure blinking at 7kHz, 12kHz and 17kHz
+#### Before amplifier
 After determining the circuit could detect the IR signal successfully (before the amplifier was implemented), we ran the data through the FFT from the Open Music Labs library. We worked off the example code offered on their site. We modified the ADC clock prescalar %%% by modifying the following line:
 
 // @ David what did we end up using?
@@ -58,11 +59,19 @@ After determining the circuit could detect the IR signal successfully (before th
   ADCSRA = 0xe5; // set the adc to free running mode
 ```
 
-// also @ david, feel free to talk about the calculation of bins or something here
+// also @ david, feel free to talk about the calculation of bins or sampling rate or something here
 
-//i'm gonna add more give me a minute
+We printed the output of the FFT to the Serial monitor and were then able to copy the data into Excel for visualization. In this set of data, we have two sets of data for each frequency the treasure was set to. 
 
-The code in its entirety can be viewed below:
+// someone add info about bins? & distinguishing between the treasures
+
+![IR Data (unfiltered)](../images/lab2/IR_data_1.png "IR Data (unfiltered)")
+
+#### After amplifier
+
+Without modifying the code, we continued to collect data with the amplifier implementation. 
+
+The FFT code in its entirety can be viewed below:
 
 ```
 /*
