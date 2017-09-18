@@ -28,7 +28,19 @@ When initially setting up the microphone, we were somewhat confiused by the diag
 
 We were confused because the microphone we had was already soldered on a board with other components.
 
-So we ended up adding the filter in addition to what was already on the board. The good news is that it worked out ok. We were able to measure peak. We doubled the frequency of the tone, and there was a peak about twice as far up the spectrum.
+After revieweing the FFT results, we determined a bandpass filter would be ideal to distinguish the 660Hz tone from environmental noise. After a series of failed trials and many exasperating hours later (e.g. a incorrectly wired bandpass filter, two or three correctly wired filters with excessive gains, a broken microphone, a faulty Arduino pin, etc.), we ultimately settled for a low-pass filter and high-pass filter back-to-back.
+
+Low-pass:
+![Lowpass filter](../images/lab2/lowpass.png)
+
+High-pass
+![Highpass filter](../images/lab2/highpass.png)
+
+As the LM358 is a dual op-amp, we were able to include both circuits using the same board. The implementation was as follows:
+
+![Acoustic final](../images/lab2/mic_filtered.jpg)
+
+We were able to measure peak. We doubled the frequency of the tone, and there was a peak about twice as far up the spectrum.
 
 ### 660Hz tone detection
 Once we had succeeded in detecting individual frequencies, we forcused on getting a better idea of the actual range.
@@ -79,7 +91,7 @@ We printed the output of the FFT to the Serial monitor and were then able to cop
 
 #### After amplifier
 
-Without modifying the code, we continued to collect data with the amplifier implementation. We can distinctly see the difference between the normal and the amplified signals, as there is a significantly higher amount of frequencies within the desired bins. 
+Without modifying the code, we continued to collect data with the amplifier implementation. We can distinctly see the difference between the normal and the amplified signals, as there is a significantly higher amount of frequencies within the desired bins. We will likely use a similar implementation on the robot in the future.
 
 ![IR Data (amplified)](../images/lab2/IR_data_2.png "IR Data (amplified)")
 
