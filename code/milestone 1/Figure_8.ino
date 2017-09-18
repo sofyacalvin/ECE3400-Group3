@@ -111,6 +111,7 @@ void readSensor(){
   outLeft = analogRead(A2);
   outRight = analogRead(A3);
 }
+//turning functions
 void forward() {
   leftservo.write(180);
   rightservo.write(0);
@@ -128,9 +129,4 @@ void left() {
   rightservo.write(0);
   readSensor();
   
-}
-
-void stop() {
-  leftservo.write(90);
-  rightservo.write(90);
 }
