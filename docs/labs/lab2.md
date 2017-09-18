@@ -22,7 +22,12 @@ In order to visualize the data coming out of the arduino, we copied sets of the 
 Our Excel graphs of the frequency content of our signals can be found later on this page.
 
 ### Amplifier/microphone circuit
-text
+When initially setting up the microphone, we were somewhat confiused by the diagram given to us:
+//insert pic here
+We were conflused because the microphone we had was already soldered on a board with other components. 
+
+So we ended up adding the filter in addition to what was already on the board. The good news is that it worked out ok. We were able to measure peak. We doubled the frequency of the tone, and there was a peak about twice as far up the spectrum.
+
 
 ### 660Hz tone detection
 text
