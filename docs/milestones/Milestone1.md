@@ -68,7 +68,7 @@ The video above shows our working, but unoptimized figure 8 build. We changed ou
 
 ### Line Following Code
 
-```
+```c
 #include <Servo.h>
 
 
@@ -114,7 +114,7 @@ void loop() {
 ```
 ### Figure 8 Code
 
-```
+```c
 #include <Servo.h>
 int rightTurn;
 int leftTurn;
