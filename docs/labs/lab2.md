@@ -40,14 +40,17 @@ As the LM358 is a dual op-amp, we were able to include both circuits using the s
 
 ![Acoustic final](../images/lab2/mic_filtered.jpg)
 
-We were able to measure peak. We doubled the frequency of the tone, and there was a peak about twice as far up the spectrum.
 
 ### 660Hz tone detection
+#### Before filter
 Once we had succeeded in detecting individual frequencies, we forcused on getting a better idea of the actual range.
 
 The Arduino Uno runs on a 16MHz clock. The ADC uses a prescaling value in order to slow down that clock to 16MHz/(prescaling factor). Changing the prescaling factor therefore lets us change the sampling frequency. Through looking at the documentation for the ATmega chip (http://www.atmel.com/Images/Atmel-42735-8-bit-AVR-Microcontroller-ATmega328-328P_Datasheet.pdf), along with careful reading of the example code and Team Alpha's website, we were able to figure out that we were using a prescaling factor of 32. This meant the clock for the ADC was running at 500kHz. The ATmega documentation says that an average ADC converstion takes 13 clock cycles to complete, so we would be sampling at around 38kHz. The size of each bin would then be around 150Hz. Our estimated bin size scale was about 146.666Hz, so they lined up fairly well.
 
  ![Audio Spectrum](../images/lab2/lab2audiofreqspectrum.png)
+ 
+#### After Filter
+
 
 ### IR sensor circuit
 The goal of the Optical team was to detect a 7kHz IR beacon through the Arduino and perform a Fourier analysis on the signal. We first created a simple circuit (shown below) to detect the IR-emitting treasure. 
