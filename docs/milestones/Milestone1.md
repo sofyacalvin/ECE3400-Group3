@@ -18,11 +18,11 @@ With this, if one sensor went off of the line, the robot would turn and correct 
 
 ### Results
 
-[VIDEO]
+[![Line Following - Before](http://img.youtube.com/vi/RP49caLh4oo/0.jpg)](http://www.youtube.com/watch?v=RP49caLh4oo)
 
 The video above shows our robot in action. It correctly follows a line, and corrects itself as it moves. However, we noticed that the robot had issues with remaining in a straight line, and felt that the turns were too jolting and unnecessarily slowed down the robot. It turned out that we initially failed to have a common ground for our servos, which resulted in them moving at different speeds. We also decided to have the robot use only one wheel at a time when adjusting so that the robot was always moving forward on a line, instead of pivoting to adjust. The final iteration can be seen below.
 
-[LINE FINAL]
+[![Line Following - After](http://img.youtube.com/vi/3n7LCLbF0UE/0.jpg)](http://www.youtube.com/watch?v=3n7LCLbF0UE)
 
 With the first part done, we were ready to move on to the next step.
 
@@ -47,9 +47,9 @@ However, this proved to be unreliable. The robot would often begin turning but n
 
 ### Results
 
-[FIRST RESULT]
+[![Figure 8 - Before](http://img.youtube.com/vi/FGEi17X3DoE/0.jpg)](http://www.youtube.com/watch?v=FGEi17X3DoE)
 
 The video above shows our working, but unoptimized figure 8 build. We changed our turns to use both wheels (the outer wheel moves faster than the inner wheel to keep the turn sharp but not on a pivot) as well as moving our outer junction-detecting sensors back to compensate for quicker, sharper turns. Below is a video of our final implementation.
 
-[FINAL RESULT]
+[![Figure 8 - After](http://img.youtube.com/vi/lCFXg24FKVM/0.jpg)](http://www.youtube.com/watch?v=lCFXg24FKVM)
 
