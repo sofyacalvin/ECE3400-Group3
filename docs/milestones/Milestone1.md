@@ -12,7 +12,7 @@ For the first part of the milestone, we had to figure out how to make our robot 
 
 To make our robot follow a line, we coded a way for the robot to utilize the two center sensors in front. First, we obtained data from the sensors to determine the values of white and black. From there, we created an algorithm represented by this pseudocode:
 
-[PIC]
+![Line Following Code](../images/linefollow.png "Line Following Code")
 
 With this, if one sensor went off of the line, the robot would turn and correct itself to have both sensors over it again.
 
@@ -36,14 +36,13 @@ For the figure 8, we faced several more challenges. The robot needed to follow a
 
 The first task in coding our figure 8 program was implementing our line following algorithm. After that, we needed to tell the robot when it reached a junction, and what to do. Through the outer sensors, we were able to tell the robot when a "new action" was to be taken. The robot would then follow a loop of commands to determine whether that action was a turn or driving through an intersection.
 
-[PIC]
-
 For our turns, we first tried using an algorithm similar to this:
 
-[PIC]
+![Figure 8 - First Attempt](../images/figure81st.png "Figure 8 - First Attempt")
 
 However, this proved to be unreliable. The robot would often begin turning but not complete the turn, or not turn at all. To fix this issue, we changed our code to implement a delay before the sensors would read new values. As a result, our robot was much more reliable.
 
+![Figure 8 - Final](../images/figure8FINAL.png "Figure 8 - Final")
 
 ### Results
 
