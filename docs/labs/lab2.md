@@ -28,8 +28,13 @@ When initially setting up the microphone, we were somewhat confiused by the diag
 
 We were confused because the microphone we had was already soldered on a board with other components.
 
-After revieweing the FFT results, we determined a bandpass filter would be ideal to distinguish the 660Hz tone from environmental noise. After a series of failed trials and many exasperating hours later (e.g. a incorrectly wired bandpass filter, two or three correctly wired filters with excessive gains, a broken microphone, a faulty Arduino pin, etc.), we ultimately settled for a low-pass filter and high-pass filter back-to-back.
+After reviewing the FFT results, we determined a bandpass filter would be ideal to distinguish the 660Hz tone from environmental noise. After a series of failed trials and many exasperating hours later (e.g. a incorrectly wired bandpass filter, two or three correctly wired filters with excessive gains, a broken microphone, a faulty Arduino pin, etc.), we ultimately settled for a low-pass filter and high-pass filter back-to-back.
 
+For reference, here is a selection of a few graphs of our attempts at running the FFT through the failed bandpass filters.
+
+![Failed filters](../images/lab2/failed_attempts.png)
+
+The following circuits are the filters we designed based on the gain, passbands, and stopbands we wanted. Using [Filter Wizard](http://www.analog.com/designtools/en/filterwizard/), we found the values for the components we would need.
 Low-pass:
 ![Lowpass filter](../images/lab2/lowpass.png)
 
