@@ -20,7 +20,7 @@ text
 text
 
 ### IR sensor circuit
-The goal of the Optical team was to detect a 7kHz IR beacon through the Arduino. We first created a simple circuit (shown below) to detect the IR-emitting treasure. 
+The goal of the Optical team was to detect a 7kHz IR beacon through the Arduino and perform a Fourier analysis on the signal. We first created a simple circuit (shown below) to detect the IR-emitting treasure. 
 
 ![Phototransistor Circuit](../images/lab2/Lab2_Phototransistor.jpg "Phototransistor Circuit")
 
@@ -28,13 +28,19 @@ The goal of the Optical team was to detect a 7kHz IR beacon through the Arduino.
 
 //how to change size??
 
-The operating principle of the phototransistor is that it allows more current to pass with the more light it receives; and, similarly, less current to pass with less light. We were able to test the functionality of this simple circuit by using the oscilloscope. The output voltage would lower when the phototransistor was covered (i.e. exposed to no light). 
+The operating principle of the phototransistor is that it allows more current to pass with the more light it receives; and, similarly, less current to pass with less light. We were able to test the functionality of this simple circuit by using the oscilloscope. The output voltage would correctly lower when the phototransistor was covered (i.e. exposed to no light). 
 
-We set the treasures by attaching the output to the oscilloscope and adjusting the amplitude and frequency. 
+We set the treasures by attaching the output to the oscilloscope and adjusting the amplitude and frequency. This is indicated by channel 2 in blue in the image below. By holding the treasure against the phototransistor, we could see the effect in the output on the oscilloscope, as seen on channel 1 in yellow. The Fourier analysis will be discussed in the following section.
+
+![Treasure on Oscilloscope](../images/lab2/treasure_osc.jpg "Treasure on Oscilloscope")
+
+After initial testing, we determined that the signal received from the treasure was too weak at a realistic distance, and decided to implement an amplifier circuit. Using the LM358 op-amp and 1kΩ and 100Ω resistors, we created a simple non-inverting amplifier with a gain of approximately 10.
+
+![Non-inverting Amplifier](../images/lab2/noninvrt.gif "Non-inverting Amplifier")
 
 //not done yet i'm just saving it lol
 
-### IR treasure blinking at 300 and 400 Hz
+### IR treasure blinking at 7kHz, 12kHz and 17kHz
 text
 
 [Return to home](https://sofyacalvin.github.io/ece3400-group3/)
