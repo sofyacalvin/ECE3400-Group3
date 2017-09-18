@@ -42,7 +42,7 @@ Low-pass:
 High-pass: 
 ![Highpass filter](../images/lab2/highpass.png)
 
-As the LM358 is a dual op-amp, we were able to include both circuits using the same board. The implementation was as follows:
+As the LM358 is a dual op-amp, we were able to include both circuits using the same board. The final circuit that we ended up using for the audio prortion of this lab is shown in the image below where the output of the microphone was put into the input of the low pass filter and the output of the low pass filter was then put into the high pass filter and finally the output of the high pass filter was connected to a capacitor and then the analog port of the arduino. The implementation was as follows:
 
 ![Acoustic final](../images/lab2/mic_filtered.jpg)
 
@@ -57,6 +57,47 @@ The Arduino Uno runs on a 16MHz clock. The ADC uses a prescaling value in order 
  
 #### After Filter
 
+##### Capacitor VS No Capacitor:
+ ![660Hz(128)v1](../images/lab2/660Hz(128)v1.jpg)
+ ![660Hz(128)v2](../images/lab2/660Hz(128)v2.jpg)
+
+The Capacitor was added right before the output signal was sent into the Arduino in order to cut the DC offset. As seen in the graphs above the one on the left was the circuit with the capacitor and the graph on the right was the circuit without a capacitor.
+ 
+
+##### Different Prescalers:
+ ![660Hz(32)](../images/lab2/660Hz(32).jpg)
+ ![660Hz(64)](../images/lab2/660Hz(64).jpg)
+ ![660Hz(128)v2](../images/lab2/660Hz(128)v2.jpg)
+ 
+After building and connecting the filters to our circuit we were able to discover how to use the prescalers properly. The prescalers were preset to 32 from this line of code in the setup portion
+ ```c
+  ADCSRA = 0xe5; // set the adc to free running mode
+```
+and this line of code from the loop portion
+```c
+ ADCSRA = 0xf5; // restart adc
+```
+We were able to figure out that inorder to change the prescalers both the values needed to be changed and we changed the prescaler value to 128 by setting the ADCSRA like this:
+ ```c
+  ADCSRA = 0xe7; // set the adc to free running mode
+ 
+  ADCSRA = 0xf7; // restart adc
+ ```
+We also figured out that as the prescaler value increases, the resolution increases, but the total range of measurable frequencies decreases. Therefore the graph would look like it is shifting to the right as shown in the graphs above.
+ 
+##### Different Frequencies: 
+ ![590Hz(128)](../images/lab2/590Hz(128).jpg)
+ ![730Hz(128)](../images/lab2/730Hz(128).jpg)
+ ![660Hz(128)v1](../images/lab2/660Hz(128)v1.jpg)
+ 
+The capacitor in our circuit cuts the DC offset and prevents the signal from going down below 0V so the negative signals would be read as almost square waves and this causes the multiple peaks after the initial peak in the graphs above. 
+
+##### Distinguish 660Hz from 590Hz and 730Hz
+ ![Combine_Audio(128)](../images/lab2/Combine_Audio(128).jpg)
+ 
+ *Note: Actual bin numbers are the ones shown in the graph - 1, because we forgot to take into account that while graphing on excel the data started indexing at 2. So (660Hz: Bin 18; 590Hz: Bin 16; 730Hz: Bin 19)*
+ 
+Once again we calculated the our actual sampling rate as we did before and found that we would be sampling at around 9.4kHz when we had our prescaler at 128. Therefore the size of each bin would then be around 36.87Hz. This calculation fits the bin numbers that the three different signals in the graph above fell into. Also the graph shows that we were able to distinguish the three signals apart from each other.
 
 ### IR sensor circuit
 The goal of the Optical team was to detect a 7kHz IR beacon through the Arduino and perform a Fourier analysis on the signal. We first created a simple circuit (shown below) to detect the IR-emitting treasure. 
@@ -82,19 +123,16 @@ The actual implementation is as shown, with the treasure transmitting a signal a
 
 ### IR treasure blinking at 7kHz, 12kHz and 17kHz
 #### Before amplifier
-After determining the circuit could detect the IR signal successfully (before the amplifier was implemented), we ran the data through the FFT from the Open Music Labs library. We worked off the example code offered on their site. We modified the ADC clock prescalar %%% by modifying the following line:
+After determining the circuit could detect the IR signal successfully (before the amplifier was implemented), we ran the data through the FFT from the Open Music Labs library. We worked off the example code offered on their site. We used the preset ADC clock prescalar 32 which is shown in the following line:
 
-// @ David what did we end up using?
-
-```
+```c
   ADCSRA = 0xe5; // set the adc to free running mode
 ```
 
-// also @ david, feel free to talk about the calculation of bins or sampling rate or something here
+For this part of the lab we used the prescaler value of 32 because we were able to determine that if we used the value of 128 the signal at 17kHz would most likely be cutoff. 
 
 We printed the output of the FFT to the Serial monitor and were then able to copy the data into Excel for visualization. In this set of data, we have two sets of data for each frequency the treasure was set to. 
 
-// someone add info about bins? & distinguishing between the treasures
 
 ![IR Data (unfiltered)](../images/lab2/IR_data_1.png "IR Data (unfiltered)")
 
@@ -102,11 +140,14 @@ We printed the output of the FFT to the Serial monitor and were then able to cop
 
 Without modifying the code, we continued to collect data with the amplifier implementation. We can distinctly see the difference between the normal and the amplified signals, as there is a significantly higher amount of frequencies within the desired bins. We will likely use a similar implementation on the robot in the future.
 
-![IR Data (amplified)](../images/lab2/IR_data_2.png "IR Data (amplified)")
+Our measurements showed us that the 7kHz signal was in bin 48, the 12 kHz signal was in bin 81 and the 17kHz signal was in bin 114. Our bin size was calculated to be about 150 Hz(*[(16 MHz / 32 prescalar) / 13 clock cylces] / 256 bins.*). According to the calculated bin size and the bins that the signals seem to be placed in, in the graph shown below, the graph seems to be accurately detecting the treasures at each different signals.
+
+![IR Data (amplified)](../images/lab2/Treasure(7kHz,12kHz,17kHz).jpg)
 
 The FFT code in its entirety can be viewed below:
+(We used the example code that was provided to us to do this lab. The only part of the code that we modified was setting the prescaler values as mentioned in the seperate parts of the audio and optical parts).
 
-```
+```c
 /*
 fft_adc_serial.pde
 guest openmusiclabs.com 7.7.14
