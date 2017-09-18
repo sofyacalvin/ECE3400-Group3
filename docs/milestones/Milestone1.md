@@ -10,7 +10,7 @@ For the first part of the milestone, we had to figure out how to make our robot 
 
 The first challenge in creating the robot from scratch was to make it mobile. We decided that we would start off using the servos as motors and eventually, if we see it to be a problem, will consider swapping these out for more precise and controllable motors. To build the robot was fairly straight forward: we attached the servos to a set of wheels, which were then secured to a plastic base with a third leg for support. On top of the base, we attached an Arduino Uno and circuit board for all of the wiring and programming. Finally, we attached two light sensors on the front of the robot to help with guiding it. 
 
-![Bacardi 1 month](../images/Bacardi 1 Month.png "Initial setup")
+![Bacardi 1 month](../images/Bacardi1Month.png "Initial setup")
 
 To make the robot follow a line, we relied on the values reported on the light sensors in (almost) real time. When the value read less than ~900, this indicated the sensor was over white area. When the value read greater than ~950, this indicated the sensor was over black area. At first we left a little space between the two sensors to give the robot a wide range of "vision". However, after running the robot in a trial round, we realized that it was correcting its motion too much and wiggling around the line instead of following it directly. To fix this, we moved the sensors closer together so that once it corrected its motion, it would stay on the line and not continue to wiggle. 
 
