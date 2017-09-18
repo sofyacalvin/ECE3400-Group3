@@ -79,9 +79,9 @@ We printed the output of the FFT to the Serial monitor and were then able to cop
 
 #### After amplifier
 
-Without modifying the code, we continued to collect data with the amplifier implementation. We can distinctly see the difference between the 
+Without modifying the code, we continued to collect data with the amplifier implementation. We can distinctly see the difference between the normal and the amplified signals, as there is a significantly higher amount of frequencies within the desired bins. 
 
-![IR Data (filtered)](../images/lab2/IR_data_2.png "IR Data (filtered)")
+![IR Data (amplified)](../images/lab2/IR_data_2.png "IR Data (amplified)")
 
 The FFT code in its entirety can be viewed below:
 
