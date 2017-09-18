@@ -26,7 +26,7 @@ text
 
 ### 660Hz tone detection
 text
-![Audio Spectrum](../images/lab2/lab2audiospectrum.png)
+![Audio Spectrum](../images/lab2/lab2audiofreqspectrum.png)
 ### IR sensor circuit
 The goal of the Optical team was to detect a 7kHz IR beacon through the Arduino and perform a Fourier analysis on the signal. We first created a simple circuit (shown below) to detect the IR-emitting treasure. 
 
