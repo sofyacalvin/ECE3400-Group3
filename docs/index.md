@@ -1,7 +1,4 @@
----
-layout: index
-title: Home
----
+
 
 # ECE 3400 Group 3
 
