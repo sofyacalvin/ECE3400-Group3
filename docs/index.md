@@ -1,5 +1,3 @@
-
-
 # ECE 3400 Group 3
 
 ![Team Pic](./images/TeamPic.png)
