@@ -45,3 +45,23 @@
   * Sofya: hardware, schematics
   * Dylan: software (milestone)
   * David: wiring, testing, debugging, improvements
+  
+## September 21
+* Milestone 2
+* Analog: 4 line sensors, 3 wall sensors, 2 IR,  (+1 microphone in future)
+  * Schmitt Trigger
+    * What can be digital
+    * 6 analog pins: 2 line, 2 IR,  1 wall (front facing)
+* Digital: 2 line (outer), 2 wall (sides)
+* Change line sensors?
+  * 5: like in lecture, one in center--potential for feedback control (PID)? 
+    * Slightly more precise, more memory vs current implementation?
+  * Implement PID with our current 4 line sensors?
+    * To worry about in the future
+* For now:
+  * Use 3 short sensors
+  * Add 2 side wall sensors to be digital 
+  * Front wall sensor to be analog
+  * Switch 2 outside line to digital
+  * Add 2 IR sensors: both analog
+    * Add code to “signal”
