@@ -23,18 +23,6 @@ void setup() {
 void loop() {
   // read the input on analog pin 0:
   readSensor();
- /*Serial.print(sen1); //
- Serial.print(F("  "));
- Serial.println(sen2);*/
-
- //if (digitalRead(3) = 1) {
-  //Serial.println(analogRead(A5));
-  //delay(500);
-  Serial.print("line OR value ");
-  Serial.print(inLeft);
-  Serial.print("          ");
-  Serial.print("line OL value ");
-  Serial.println(inRight);
 
   while (outLeft < 900 || outRight < 900){ //while both outer sensors see white
     if (abs(inLeft-inRight)<70){ //if inner are similar
@@ -56,9 +44,7 @@ void loop() {
   readSensor();
   }
 
-  if (analogRead(A5) > 200) {
-//  leftservo.write(90);
-//  rightservo.write(90);
+  if (analogRead(A5) > 200) { //If at an intersection and a wall is detected in front
     left();
     delay(500);
     while(outLeft > 900 || outRight > 900) { //while out sees black, in sees white
@@ -68,7 +54,7 @@ void loop() {
       left();
     }
   }
-  else{
+  else{ // if there is no wall in front at the intersection, drive across
     forward();
     delay(500);
   }
