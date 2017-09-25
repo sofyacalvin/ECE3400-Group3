@@ -36,6 +36,8 @@ We set up digital pin 9 to be a white LED, 10 to green, and 11 to red. These cor
 
 For additional testing, we set the treasure to 8kHz, 13khz, and 18kHZ to ensure our bins were small enough to not detect extraneous frequencies. This was also successful--the LEDs did not light up. 
 
+In the future, we will have two IR detectors (one on each side) and mount them on Brooklynn. We will likely maintain the simple LED setup to flag when a treasure is detected.
+
 ### Autonomous Wall Detection
 
 
