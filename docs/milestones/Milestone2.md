@@ -126,7 +126,8 @@ The full code can be found at the bottom of this page.
 ```
 In addition, a video of Brooklynn autonomously detecting walls and turning is below:
 
-[![Wall Detection - Left Turn](http://img.youtube.com/vi/U8qxujkT1dE/0.jpg)]https://www.youtube.com/watch?v=U8qxujkT1dE)
+[![Wall Detection - Left Turn](http://img.youtube.com/vi/U8qxujkT1dE/0.jpg)](https://www.youtube.com/watch?v=U8qxujkT1dE)
+
 In the future, we will use two more short range IR sensors, one on each side of Brooklynn, to detect walls on her respective sides. This will help in mapping out the maze, as well as allow Brooklynn to determine which direction she needs to turn when at an intersection. These sensors have been mounted and correctly detect walls like the front sensor, but are not in use at the moment.
 
 
