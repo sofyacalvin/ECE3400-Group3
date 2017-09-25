@@ -47,20 +47,19 @@ void loop() {
     for (byte i = 0 ; i < FFT_N/2 ; i++) { 
       Serial.println(fft_log_out[i]); // send out the data
     }
-    if (fft_log_out[48] > 100){
-      digitalWrite(9, HIGH);   // turn the LED on (HIGH is the voltage level)
-      digitalWrite(10, LOW);   // turn the LED on (HIGH is the voltage level)
-      digitalWrite(11, LOW);
+    if (fft_log_out[48] > 130){         //7kHz, white
+      digitalWrite(9, HIGH);  
     }
-    else if (fft_log_out[81] > 100){
-      digitalWrite(9, LOW);   // turn the LED on (HIGH is the voltage level)
-      digitalWrite(10, HIGH);   // turn the LED on (HIGH is the voltage level)
-      digitalWrite(11, LOW);
+    else if (fft_log_out[81] > 130){    //12kHz, green
+      digitalWrite(10, HIGH); 
     }
-    else if (fft_log_out[114] > 100) {
-      digitalWrite(9, LOW);   // turn the LED on (HIGH is the voltage level)
-      digitalWrite(10, LOW);   // turn the LED on (HIGH is the voltage level)
+    else if (fft_log_out[114] > 130) {  //17kHz, red
       digitalWrite(11, HIGH);
     }
+   else {                               //turn all off
+      digitalWrite(9, LOW);   
+      digitalWrite(10, LOW);  
+      digitalWrite(11, LOW);
+   }
   }
 }
