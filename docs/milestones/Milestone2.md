@@ -135,7 +135,7 @@ In the future, we will use two more short range IR sensors, one on each side of 
 
 At the point of this report, Brooklynn is being dismantled in order to have the wiring reorganized and more accessible for future use. Here is the current status:
 
-//add photo
+![Before](../images/milestone2/brooklynn_before.jpg)
 
 ### Schmitt Triggers
 
