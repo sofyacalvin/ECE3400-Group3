@@ -133,9 +133,13 @@ In the future, we will use two more short range IR sensors, one on each side of 
 
 ## Build Changes
 
+At the point of this report, Brooklynn is being dismantled in order to have the wiring reorganized and more accessible for future use. Here is the current status:
+
+//add photo
+
 ### Schmitt Triggers
 
-We realized that we will soon have too many analog sensors for the 6 pins on the Arduino Uno. To remedy this, we have begun the implementation of Schmitt triggers. Conceptually, these are comparator circuits that actively convert analog input into digital output. Essentially, we choose threshold voltages to turn "on" and "off" att, and calculate corresponding resistor values from there. We used an [Inverting Schmitt Trigger Calculator](https://www.random-science-tools.com/electronics/inverting-schmitt-trigger-calculator.htm) and used the following base circuit:
+We realized that we will soon have too many analog sensors for the 6 pins on the Arduino Uno. To remedy this, we have begun the implementation of Schmitt triggers. Conceptually, these are comparator circuits that actively convert analog input into digital output. Essentially, we choose threshold voltages to turn "on" and "off" at, and calculate corresponding resistor values from there. We used an [Inverting Schmitt Trigger Calculator](https://www.random-science-tools.com/electronics/inverting-schmitt-trigger-calculator.htm) and used the following base circuit:
 
 ![Inverting Schmitt Trigger](../images/milestone2/inverting-schmitt.png)
 
@@ -146,7 +150,5 @@ Our first attempt was to use a non-inverting Schmitt Trigger for all four signal
 ![Non-inverting Schmitt Trigger](../images/milestone2/noninverting_schmitt.jpg)
 
 This did not work. On the oscilloscope and the serial monitor, we could tell the signal started low and would switch to high when desired, but would never come back down. After discussing with a TA, we realized the feedback loop was somehow interfering with the output signal. We then chose to switch to an inverting Schmitt Trigger at this point.
-
-//add more info
 
 [Return to home](https://sofyacalvin.github.io/ece3400-group3/)
