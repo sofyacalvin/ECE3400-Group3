@@ -19,6 +19,7 @@ We are the members of Group 3 for the Fall 2017 semester of ECE 3400 and this is
 
 ## Milestones
 [Milestone 1](./milestones/Milestone1.md)
+
 [Milestone 2](./milestones/Milestone2.md)
 
 ## Tutorials
