@@ -14,4 +14,9 @@ This data shows that bins 48, 81, and 114 correspond to the 7kHz, 12kHz, and 17k
 
 ### Autonomous Wall Detection
 
+
+## Build Changes
+
+### Schmitt Triggers
+
 [Return to home](https://sofyacalvin.github.io/ece3400-group3/)
