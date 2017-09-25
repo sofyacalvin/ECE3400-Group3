@@ -135,7 +135,7 @@ In the future, we will use two more short range IR sensors, one on each side of 
 
 At the point of this report, Brooklynn is being dismantled in order to have the wiring reorganized and more accessible for future use. Here is the current status:
 
-![Before](../images/milestone2/brooklynn_before.jpg)
+![Before](../images/milestone2/brooklynn_before.png)
 
 The idea is to restructure her (for now) so that the arduino sits on the lower base plate while the entire upper base plate is used as an extended circuit board. We decided to switch the locations of the breadboard and arduino because we realized that between adding the new hardware components, and creating new Schmitt Triggers, we would need much more ease of access to large parts of the breadboard than we had in the previous setup. 
 
