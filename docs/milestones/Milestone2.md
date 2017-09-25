@@ -10,7 +10,7 @@ Most of the work for this lab had been completed in [Lab 2](../labs/lab2.md), in
 
 The circuit with the LEDs can be viewed below:
 
-![IR and LED circuit](../images/milestone2/IR_distinguish.jpg)
+![IR and LED circuit](../images/milestone2/IR_distinguish.png)
 
 We referenced our amplified treasure detection data from the previous lab:
 
