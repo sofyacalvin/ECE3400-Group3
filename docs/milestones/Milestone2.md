@@ -6,7 +6,13 @@ The primary goal of Milestone 2 is to be able to distinguish between three treas
 ## Procedure
 
 ### Treasure Detection
-Most of the work for this lab had been completed in [Lab 2](../labs/lab2.md), in which we mapped the Fourier transforms of the IR signal detected. To complete this milestone, we added LEDs to our preexisting IR detection circuit (with amplification) to individually light up upon the correct signal of a treasure. We referenced our amplified treasure detection data from the previous lab:
+Most of the work for this lab had been completed in [Lab 2](../labs/lab2.md), in which we mapped the Fourier transforms of the IR signal detected. To complete this milestone, we added LEDs to our preexisting IR detection circuit (with amplification) to individually light up upon the correct signal of a treasure.
+
+The circuit with the LEDs can be viewed below:
+
+![IR and LED circuit](../images/milestone2/IR_distinguish.jpg)
+
+We referenced our amplified treasure detection data from the previous lab:
 
 ![IR Data (amplified)](../images/lab2/Treasure(7kHz,12kHz,17kHz).jpg)
 
