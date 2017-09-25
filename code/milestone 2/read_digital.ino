@@ -18,17 +18,17 @@ void loop() {
   int front = analogRead(A5);
 
 
-//  Serial.print("line OR value ");
-//  Serial.print(lineOR);
-//  Serial.print("          ");
-//  Serial.print("line OL value ");
-//  Serial.print(lineOL);
-//  Serial.print("          ");
-//  Serial.print("wall L value ");
-//  Serial.print(wallL);
-//  Serial.print("          ");
-//  Serial.print("wall R value ");
-//  Serial.println(wallR);
-Serial.print("wall R value ");
-  Serial.println(front);
+  Serial.print("line OR value ");
+  Serial.print(lineOR);
+  Serial.print("          ");
+  Serial.print("line OL value ");
+  Serial.print(lineOL);
+  Serial.print("          ");
+  Serial.print("wall L value ");
+  Serial.print(wallL);
+  Serial.print("          ");
+  Serial.print("wall R value ");
+  Serial.println(wallR);
+  //Serial.print("wall R value ");
+  //Serial.println(front);
 }
