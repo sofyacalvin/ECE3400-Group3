@@ -110,6 +110,17 @@ void loop() {
 In the future, we will have two IR detectors (one on each side) and mount them on Brooklynn. We will likely maintain the simple LED setup to flag when a treasure is detected.
 
 ### Autonomous Wall Detection
+The other goal of this milestone was to get Brooklynn to detect a wall autonomously. To do this, we attached a short range IR sensor to the front of Brooklynn. The sensor was then attached to our Arduino via an analog pin for us to calibrate its sensor values. From there, we used snippets of our previous line detection and figure 8 code from Milestone 1 in addition to new wall direction code to make the robot turn left when a wall was detected in front of the robot at the intersection, since walls in front of Brooklynn will only occur at intersections. Our resulting code looked like the pseudocode below:
+
+```
+**line following code**
+if (at an intersection and a wall is detected in front)
+	turn left
+The full code can be found at the bottom of this page.
+In addition, a video of Brooklynn autonomously detecting walls and turning is below:
+```
+
+In the future, we will use two more short range IR sensors, one on each side of Brooklynn, to detect walls on her respective sides. This will help in mapping out the maze, as well as allow Brooklynn to determine which direction she needs to turn when at an intersection. These sensors have been mounted and correctly detect walls like the front sensor, but are not in use at the moment.
 
 
 ## Build Changes
