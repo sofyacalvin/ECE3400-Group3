@@ -47,6 +47,7 @@
   * David: wiring, testing, debugging, improvements
   
 ## September 21
+* Attendance: everyone is here
 * Milestone 2
 * Analog: 4 line sensors, 3 wall sensors, 2 IR,  (+1 microphone in future)
   * Schmitt Trigger
@@ -65,3 +66,18 @@
   * Switch 2 outside line to digital
   * Add 2 IR sensors: both analog
     * Add code to “signal”
+    
+## September 28
+Attendance: everyone is here
+* Monday status:
+  * No line sensor Schmitt triggers yet
+  * Inputs/outputs for Arduino are all unplugged but power and ground currently ready
+  * Extended Arduino pins for easier access
+* Lab 3: lab due date?
+  * Fall break??
+  * Prelims :(
+  * Thursday meeting next week 
+    * Meet on Friday instead
+  * Make sure Quartus works
+  * Prelab!
+* Team assessment—due Saturday
