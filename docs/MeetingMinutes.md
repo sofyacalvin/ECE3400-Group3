@@ -81,3 +81,18 @@ Attendance: everyone is here
   * Make sure Quartus works
   * Prelab!
 * Team assessment—due Saturday
+
+## September 29
+* Attendance: Amanda, Emmett, Dylan, Sofya
+* Lab 3 
+  * Voted on Piazza poll
+  * Audio team: David, Emmett
+  * Graphics team: Amanda, Dylan, Sofya
+* Reminder to fill out Team Assessment by tomorrow!
+* Schmitt triggers for line sensors?
+  * Narrower threshold; just need to go to open lab sometime
+* Team names?
+  * New York themed??
+  * Memes
+* Modifying website structure
+  * Adding sidebar
