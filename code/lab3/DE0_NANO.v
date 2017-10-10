@@ -129,73 +129,7 @@ module DE0_NANO(
 			endcase
 	 end
 	 
-//	 always @ (*) begin
-//
-//		if (PIXEL_COORD_X < 20 || PIXEL_COORD_X > 620) begin				// empty space on sides black
-//			PIXEL_COLOR = 8'b000_000_00;
-//		end
-//		
-//		else if (PIXEL_COORD_X > 20 && PIXEL_COORD_X < 30) begin
-//					PIXEL_COLOR = 8'b111_111_11;											// white outer walls (left+right)
-//		end
-//		else if (PIXEL_COORD_X > 610 && PIXEL_COORD_X < 620)  begin
-//			PIXEL_COLOR = 8'b111_111_11;											// white outer walls (left+right)
-//		end
-//		else if ( PIXEL_COORD_Y < 10) begin
-//			PIXEL_COLOR = 8'b111_111_11;
-//		end
-//		else if (PIXEL_COORD_Y > 470 ) begin
-//			PIXEL_COLOR = 8'b111_111_11;											// white outer walls (top+bottom)
-//		end
-//		
-//		
-////		if (PIXEL_COORD_Y > 10 && PIXEL_COORD_Y < 110 ) begin				// ----1st row----
-////			if (PIXEL_COORD_X >= 30 && PIXEL_COORD_X <= 130) begin			// 1st col (A1)
-////				PIXEL_COLOR = 8'b111_000_00; 												// red
-////			end
-////				else if (PIXEL_COORD_X > 130 && PIXEL_COORD_X < 150) begin		// -wall- (A1/A2)
-////					PIXEL_COLOR = 8'b000_111_00; 												//gray
-////				end
-////			else if (PIXEL_COORD_X >= 150 && PIXEL_COORD_X <= 250) begin		// 2nd col (A2)
-////				PIXEL_COLOR = 8'b000_111_00; 												// green
-////			end
-////				else if (PIXEL_COORD_X > 250 && PIXEL_COORD_X < 270) begin		// -wall- (A2/A3)
-////					PIXEL_COLOR = 8'b000_111_00; 												//gray
-////				end
-////			else if (PIXEL_COORD_X >= 270 && PIXEL_COORD_X <= 370) begin		// 3rd col (A3)
-////				PIXEL_COLOR = 8'b000_111_00; 												// green
-////			end
-////				else if (PIXEL_COORD_X > 370 && PIXEL_COORD_X < 390) begin		// -wall- (A3/A4)
-////					PIXEL_COLOR = 8'b000_111_00; 												//gray
-////				end
-////			else if (PIXEL_COORD_X >= 390 && PIXEL_COORD_X <= 490) begin		// 4th col (A4)
-////				PIXEL_COLOR = 8'b000_111_00; 												// green
-////			end
-////				else if (PIXEL_COORD_X > 490 && PIXEL_COORD_X < 510) begin		// -wall- (A4/A5)
-////					PIXEL_COLOR = 8'b000_111_00; 												//gray
-////				end
-////			else if (PIXEL_COORD_X >= 510 && PIXEL_COORD_X <= 610) begin		// 5th col (A5)
-////				PIXEL_COLOR = 8'b000_111_00; 												// green
-////			end
-////			else begin																		// else
-////				PIXEL_COLOR = 8'b111_111_00; 												// yellow
-////			end
-////		end
-////		else if (PIXEL_COORD_X >= 240 && PIXEL_COORD_X < 480)	begin		// ---2nd row---
-////			if (PIXEL_COORD_Y < 240) begin											// 1st col
-////				PIXEL_COLOR = 8'b111_000_11; 												// blue
-////			end
-////			else if (PIXEL_COORD_Y >= 240 && PIXEL_COORD_Y < 480) begin		// 2nd col
-////				PIXEL_COLOR = 8'b111_111_11; 												// white
-////			end
-////			else begin																		// else
-////				PIXEL_COLOR = 8'b000_111_11; 												// purple
-////			end
-////		end
-//		else begin																		// ---else---
-//				PIXEL_COLOR = 8'b000_000_00;											// black
-//		end
-//	 end
+
 	 
     // Module outputs coordinates of next pixel to be written onto screen
     VGA_DRIVER driver(
