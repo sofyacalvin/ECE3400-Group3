@@ -66,15 +66,136 @@ module DE0_NANO(
     //=======================================================
     reg         CLOCK_25;
     wire        reset; // active high reset signal 
-	 
-	 reg[7:0]    address;
 
     wire [9:0]  PIXEL_COORD_X; // current x-coord from VGA driver
     wire [9:0]  PIXEL_COORD_Y; // current y-coord from VGA driver
-    wire [7:0]  PIXEL_COLOR;   // input 8-bit pixel color for current coords
+    reg [7:0]  PIXEL_COLOR;   // input 8-bit pixel color for current coords
 	 
 	 reg [24:0] led_counter; // timer to keep track of when to toggle LED
 	 reg 			led_state;   // 1 is on, 0 is off
+	 
+
+	 // current highlighted square
+	 wire highlighted_x;
+	 wire highlighted_y;	 
+	 //Switch input through GPIO pins
+	 assign highlighted_x = GPIO_0_D[33];
+	 assign highlighted_y = GPIO_0_D[31];
+	 
+	 always @ (*) begin
+	 
+		case(PIXEL_COORD_Y / 120)
+			4'd0 : 												// row A
+				case(PIXEL_COORD_X / 120)
+					4'd0 : PIXEL_COLOR = 8'b111_000_00;
+					4'd1 : PIXEL_COLOR = 8'b111_001_00;
+					4'd2 : PIXEL_COLOR = 8'b111_010_00;
+					4'd3 : PIXEL_COLOR = 8'b111_100_00;
+					4'd4 : PIXEL_COLOR = 8'b111_110_00;
+					4'd5 : PIXEL_COLOR = 8'b111_111_10;
+					default: PIXEL_COLOR = 8'b111_111_11;
+					endcase
+			4'd1 : 												// row B
+				case(PIXEL_COORD_X / 120)
+					4'd0 : PIXEL_COLOR = 8'b000_000_00;
+					4'd1 : PIXEL_COLOR = 8'b000_001_00;
+					4'd2 : PIXEL_COLOR = 8'b000_010_00;
+					4'd3 : PIXEL_COLOR = 8'b000_100_00;
+					4'd4 : PIXEL_COLOR = 8'b000_110_00;
+					4'd5 : PIXEL_COLOR = 8'b000_111_10;
+					default: PIXEL_COLOR = 8'b0;
+					endcase
+			4'd2 : 												// row C
+				case(PIXEL_COORD_X / 120)
+					4'd0 : PIXEL_COLOR = 8'b111_111_00;
+					4'd1 : PIXEL_COLOR = 8'b110_111_00;
+					4'd2 : PIXEL_COLOR = 8'b101_111_00;
+					4'd3 : PIXEL_COLOR = 8'b100_111_00;
+					4'd4 : PIXEL_COLOR = 8'b011_111_00;
+					4'd5 : PIXEL_COLOR = 8'b001_111_10;
+					default: PIXEL_COLOR = 8'b0;
+					endcase
+			4'd3 : 												// row D
+				case(PIXEL_COORD_X / 120)
+					4'd0 : PIXEL_COLOR = 8'b111_000_11;
+					4'd1 : PIXEL_COLOR = 8'b111_001_11;
+					4'd2 : PIXEL_COLOR = 8'b111_010_11;
+					4'd3 : PIXEL_COLOR = 8'b111_100_11;
+					4'd4 : PIXEL_COLOR = 8'b111_110_11;
+					4'd5 : PIXEL_COLOR = 8'b111_111_01;
+					default: PIXEL_COLOR = 8'b0;
+					endcase
+			default: PIXEL_COLOR = 8'b000_111_00;
+			endcase
+	 end
+	 
+//	 always @ (*) begin
+//
+//		if (PIXEL_COORD_X < 20 || PIXEL_COORD_X > 620) begin				// empty space on sides black
+//			PIXEL_COLOR = 8'b000_000_00;
+//		end
+//		
+//		else if (PIXEL_COORD_X > 20 && PIXEL_COORD_X < 30) begin
+//					PIXEL_COLOR = 8'b111_111_11;											// white outer walls (left+right)
+//		end
+//		else if (PIXEL_COORD_X > 610 && PIXEL_COORD_X < 620)  begin
+//			PIXEL_COLOR = 8'b111_111_11;											// white outer walls (left+right)
+//		end
+//		else if ( PIXEL_COORD_Y < 10) begin
+//			PIXEL_COLOR = 8'b111_111_11;
+//		end
+//		else if (PIXEL_COORD_Y > 470 ) begin
+//			PIXEL_COLOR = 8'b111_111_11;											// white outer walls (top+bottom)
+//		end
+//		
+//		
+////		if (PIXEL_COORD_Y > 10 && PIXEL_COORD_Y < 110 ) begin				// ----1st row----
+////			if (PIXEL_COORD_X >= 30 && PIXEL_COORD_X <= 130) begin			// 1st col (A1)
+////				PIXEL_COLOR = 8'b111_000_00; 												// red
+////			end
+////				else if (PIXEL_COORD_X > 130 && PIXEL_COORD_X < 150) begin		// -wall- (A1/A2)
+////					PIXEL_COLOR = 8'b000_111_00; 												//gray
+////				end
+////			else if (PIXEL_COORD_X >= 150 && PIXEL_COORD_X <= 250) begin		// 2nd col (A2)
+////				PIXEL_COLOR = 8'b000_111_00; 												// green
+////			end
+////				else if (PIXEL_COORD_X > 250 && PIXEL_COORD_X < 270) begin		// -wall- (A2/A3)
+////					PIXEL_COLOR = 8'b000_111_00; 												//gray
+////				end
+////			else if (PIXEL_COORD_X >= 270 && PIXEL_COORD_X <= 370) begin		// 3rd col (A3)
+////				PIXEL_COLOR = 8'b000_111_00; 												// green
+////			end
+////				else if (PIXEL_COORD_X > 370 && PIXEL_COORD_X < 390) begin		// -wall- (A3/A4)
+////					PIXEL_COLOR = 8'b000_111_00; 												//gray
+////				end
+////			else if (PIXEL_COORD_X >= 390 && PIXEL_COORD_X <= 490) begin		// 4th col (A4)
+////				PIXEL_COLOR = 8'b000_111_00; 												// green
+////			end
+////				else if (PIXEL_COORD_X > 490 && PIXEL_COORD_X < 510) begin		// -wall- (A4/A5)
+////					PIXEL_COLOR = 8'b000_111_00; 												//gray
+////				end
+////			else if (PIXEL_COORD_X >= 510 && PIXEL_COORD_X <= 610) begin		// 5th col (A5)
+////				PIXEL_COLOR = 8'b000_111_00; 												// green
+////			end
+////			else begin																		// else
+////				PIXEL_COLOR = 8'b111_111_00; 												// yellow
+////			end
+////		end
+////		else if (PIXEL_COORD_X >= 240 && PIXEL_COORD_X < 480)	begin		// ---2nd row---
+////			if (PIXEL_COORD_Y < 240) begin											// 1st col
+////				PIXEL_COLOR = 8'b111_000_11; 												// blue
+////			end
+////			else if (PIXEL_COORD_Y >= 240 && PIXEL_COORD_Y < 480) begin		// 2nd col
+////				PIXEL_COLOR = 8'b111_111_11; 												// white
+////			end
+////			else begin																		// else
+////				PIXEL_COLOR = 8'b000_111_11; 												// purple
+////			end
+////		end
+//		else begin																		// ---else---
+//				PIXEL_COLOR = 8'b000_000_00;											// black
+//		end
+//	 end
 	 
     // Module outputs coordinates of next pixel to be written onto screen
     VGA_DRIVER driver(
@@ -88,26 +209,11 @@ module DE0_NANO(
         .V_SYNC_NEG(GPIO_0_D[5])
     );
 	 
-	 SINE_ROM sine (
-			.addr(address),
-			.clk(CLOCK_25),
-			.q({GPIO_1_D[22],GPIO_1_D[20],GPIO_1_D[18],GPIO_1_D[16],GPIO_1_D[14],GPIO_1_D[12],GPIO_1_D[10],GPIO_1_D[8]})
-	 
-	 );
-	 
 	 assign reset = ~KEY[0]; // reset when KEY0 is pressed
 	 
-	 assign PIXEL_COLOR = 8'b000_111_00; // Green
+	 //assign PIXEL_COLOR = (PIXEL_COORD_X > 50 && PIXEL_COORD_X < 150 && PIXEL_COORD_Y > 50 && PIXEL_COORD_Y < 150) ? 8'b000_111_000 : 8'b000_000_000;
+ 	 //assign PIXEL_COLOR = 8'b111_000_00; // Red
 	 assign LED[0] = led_state;
-	 
-	 	 // Local parameter
-	localparam CLKDIVIDER_440 = 25000000/660/256;
-
-	// Sound variables
-	reg square_440;                       // 440 Hz square wave
-	assign GPIO_0_D[4] = square_440;
-	reg [15:0] counter;
-
 	 
     //=======================================================
     //  Structural coding
@@ -116,8 +222,8 @@ module DE0_NANO(
 	 // Generate 25MHz clock for VGA, FPGA has 50 MHz clock
     always @ (posedge CLOCK_50) begin
         CLOCK_25 <= ~CLOCK_25; 
-		  
     end // always @ (posedge CLOCK_50)
+
 	
 	 // Simple state machine to toggle LED0 every one second
 	 always @ (posedge CLOCK_25) begin
@@ -135,39 +241,6 @@ module DE0_NANO(
 				led_counter <= led_counter + 25'b1;
 		  end // always @ (posedge CLOCK_25)
 	 end
-
-
-	 always @ (posedge CLOCK_25) begin
-		if (counter == 0) begin
-			counter <= CLKDIVIDER_440 - 1;
-			
-			if (address == 255) begin
-			address <= 0;
-			
-			end
-			else begin
-				address <= address + 1;
-			end
-		end
-		else begin
-			counter <= counter - 1;
-		end
-		
-		
-	end
-		
 	 
-	 
-// Sound state machine
-//always @ (posedge CLOCK_25) begin
-//  if (counter == 0) begin
-//    counter    <= CLKDIVIDER_440 - 1; // reset clock
-//    square_440 <= ~square_440;        // toggle the square pulse
-//  end
-//  else begin
-//    counter    <= counter - 1;
-//    square_440 <= square_440;
-//  end
-//end	
 
 endmodule
