@@ -73,7 +73,6 @@ module DE0_NANO(
 	 
 	 reg [24:0] led_counter; // timer to keep track of when to toggle LED
 	 reg 			led_state;   // 1 is on, 0 is off
-	 
 
 	 // current highlighted square
 	 wire highlighted_x;
@@ -82,17 +81,81 @@ module DE0_NANO(
 	 assign highlighted_x = GPIO_0_D[33];
 	 assign highlighted_y = GPIO_0_D[31];
 	 
-	 always @ (*) begin
-	 
+   // array to store state of maze blocks
+   //   (2 bit entries, 3 bit row numbers, 4 bit col numbers)
+   reg [1:0] maze_state [2:0][3:0];
+	
+	parameter bricky = 13'd14400;
+	reg [7:0] COLOR_DATA [0:bricky-1];
+   
+   
+   
+   
+   
+   
+   
+    //=======================================================
+    //  ALWAYS block for PIXEL_COLOR
+    //=======================================================
+   //always @ (*) begin
+		//case(PIXEL_COORD_Y / 120)
+			//4'd0 : 												// row A
+				//case(PIXEL_COORD_X / 120)
+					//4'd0 : PIXEL_COLOR = 8'b111_000_00;
+					//4'd1 : PIXEL_COLOR = 8'b111_001_00;
+					//4'd2 : PIXEL_COLOR = 8'b111_010_00;
+					//4'd3 : PIXEL_COLOR = 8'b111_100_00;
+					//4'd4 : PIXEL_COLOR = 8'b111_110_00;
+					//4'd5 : PIXEL_COLOR = 8'b111_111_10;
+					//default: PIXEL_COLOR = 8'b111_111_11;
+					//endcase
+			//4'd1 : 												// row B
+				//case(PIXEL_COORD_X / 120)
+					//4'd0 : PIXEL_COLOR = 8'b000_000_00;
+					//4'd1 : PIXEL_COLOR = 8'b000_001_00;
+					//4'd2 : PIXEL_COLOR = 8'b000_010_00;
+					//4'd3 : PIXEL_COLOR = 8'b000_100_00;
+					//4'd4 : PIXEL_COLOR = 8'b000_110_00;
+					//4'd5 : PIXEL_COLOR = 8'b000_111_10;
+					//default: PIXEL_COLOR = 8'b0;
+					//endcase
+			//4'd2 : 												// row C
+				//case(PIXEL_COORD_X / 120)
+					//4'd0 : PIXEL_COLOR = 8'b111_111_00;
+					//4'd1 : PIXEL_COLOR = 8'b110_111_00;
+					//4'd2 : PIXEL_COLOR = 8'b101_111_00;
+					//4'd3 : PIXEL_COLOR = 8'b100_111_00;
+					//4'd4 : PIXEL_COLOR = 8'b011_111_00;
+					//4'd5 : PIXEL_COLOR = 8'b001_111_10;
+					//default: PIXEL_COLOR = 8'b0;
+					//endcase
+			//4'd3 : 												// row D
+				//case(PIXEL_COORD_X / 120)
+					//4'd0 : PIXEL_COLOR = 8'b111_000_11;
+					//4'd1 : PIXEL_COLOR = 8'b111_001_11;
+					//4'd2 : PIXEL_COLOR = 8'b111_010_11;
+					//4'd3 : PIXEL_COLOR = 8'b111_100_11;
+					//4'd4 : PIXEL_COLOR = 8'b111_110_11;
+					//4'd5 : PIXEL_COLOR = 8'b111_111_01;
+					//default: PIXEL_COLOR = 8'b0;
+					//endcase
+			//default: PIXEL_COLOR = 8'b000_111_00;
+			//endcase
+	 //end
+	initial
+	$readmemh ("brick.list", COLOR_DATA);
+ 
+      always @ (*) begin
 		case(PIXEL_COORD_Y / 120)
 			4'd0 : 												// row A
 				case(PIXEL_COORD_X / 120)
-					4'd0 : PIXEL_COLOR = 8'b111_000_00;
+					4'd0 : PIXEL_COLOR = COLOR_DATA[{PIXEL_COORD_Y*(PIXEL_COORD_X-1)+PIXEL_COORD_X}];
+					//4'd0 : PIXEL_COLOR = COLOR_DATA[{PIXEL_COORD_X}];
 					4'd1 : PIXEL_COLOR = 8'b111_001_00;
 					4'd2 : PIXEL_COLOR = 8'b111_010_00;
 					4'd3 : PIXEL_COLOR = 8'b111_100_00;
-					4'd4 : PIXEL_COLOR = 8'b111_110_00;
-					4'd5 : PIXEL_COLOR = 8'b111_111_10;
+					//4'd4 : PIXEL_COLOR = 8'b111_110_00;
+					//4'd5 : PIXEL_COLOR = 8'b111_111_10;
 					default: PIXEL_COLOR = 8'b111_111_11;
 					endcase
 			4'd1 : 												// row B
@@ -101,8 +164,8 @@ module DE0_NANO(
 					4'd1 : PIXEL_COLOR = 8'b000_001_00;
 					4'd2 : PIXEL_COLOR = 8'b000_010_00;
 					4'd3 : PIXEL_COLOR = 8'b000_100_00;
-					4'd4 : PIXEL_COLOR = 8'b000_110_00;
-					4'd5 : PIXEL_COLOR = 8'b000_111_10;
+					//4'd4 : PIXEL_COLOR = 8'b000_110_00;
+					//4'd5 : PIXEL_COLOR = 8'b000_111_10;
 					default: PIXEL_COLOR = 8'b0;
 					endcase
 			4'd2 : 												// row C
@@ -111,8 +174,8 @@ module DE0_NANO(
 					4'd1 : PIXEL_COLOR = 8'b110_111_00;
 					4'd2 : PIXEL_COLOR = 8'b101_111_00;
 					4'd3 : PIXEL_COLOR = 8'b100_111_00;
-					4'd4 : PIXEL_COLOR = 8'b011_111_00;
-					4'd5 : PIXEL_COLOR = 8'b001_111_10;
+					//4'd4 : PIXEL_COLOR = 8'b011_111_00;
+					//4'd5 : PIXEL_COLOR = 8'b001_111_10;
 					default: PIXEL_COLOR = 8'b0;
 					endcase
 			4'd3 : 												// row D
@@ -121,14 +184,13 @@ module DE0_NANO(
 					4'd1 : PIXEL_COLOR = 8'b111_001_11;
 					4'd2 : PIXEL_COLOR = 8'b111_010_11;
 					4'd3 : PIXEL_COLOR = 8'b111_100_11;
-					4'd4 : PIXEL_COLOR = 8'b111_110_11;
-					4'd5 : PIXEL_COLOR = 8'b111_111_01;
+					//4'd4 : PIXEL_COLOR = 8'b111_110_11;
+					//4'd5 : PIXEL_COLOR = 8'b111_111_01;
 					default: PIXEL_COLOR = 8'b0;
 					endcase
 			default: PIXEL_COLOR = 8'b000_111_00;
 			endcase
 	 end
-	 
 
 	 
     // Module outputs coordinates of next pixel to be written onto screen
@@ -178,3 +240,4 @@ module DE0_NANO(
 	 
 
 endmodule
+
