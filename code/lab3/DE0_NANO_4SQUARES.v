@@ -91,18 +91,12 @@ module DE0_NANO(
 	 //Switch input through GPIO pins
 	 assign highlighted_x = GPIO_0_D[33];
 	 assign highlighted_y = GPIO_0_D[31];
-	 //assign switch_1 = switch_1_in;
 	 
 	 always @ (posedge CLOCK_50) begin
-	 
-		case(PIXEL_COORD_Y / 120)
+	 		case(PIXEL_COORD_Y / 120)
 			4'd0 : 												// row A
 				case(PIXEL_COORD_X / 120)
-					4'd0 : //begin 
-//								if(switch_1 == 1'b1) PIXEL_COLOR = 8'b0;
-//								else PIXEL_COLOR = 8'b111_000_00;
-//							 end
-							 PIXEL_COLOR = (~switch_1 && ~switch_2) ? 8'b111_111_11: 8'b111_000_00;
+					4'd0 : PIXEL_COLOR = (~switch_1 && ~switch_2) ? 8'b111_111_11: 8'b111_000_00;
 					4'd1 : PIXEL_COLOR = 8'b111_001_00;
 					4'd2 : PIXEL_COLOR = 8'b111_010_00;
 					4'd3 : PIXEL_COLOR = 8'b111_100_00;
@@ -112,13 +106,7 @@ module DE0_NANO(
 					endcase
 			4'd1 : 												// row B
 				case(PIXEL_COORD_X / 120)
-					4'd0 : //begin
-//								if(switch_2 == 1'b1) PIXEL_COLOR = 8'b0;
-//								else PIXEL_COLOR = 8'b111_111_00;
-//							 end
-							 PIXEL_COLOR = (~switch_1 && switch_2) ? 8'b111_111_11: 8'b111_111_00;
-							 //PIXEL_COLOR = (switch_2) ? 8'b111_111_11: 8'b111_111_00;
-					//4'd0 : PIXEL_COLOR = 8'b000_000_00;
+					4'd0 : PIXEL_COLOR = (~switch_1 && switch_2) ? 8'b111_111_11: 8'b111_111_00;
 					4'd1 : PIXEL_COLOR = 8'b000_001_00;
 					4'd2 : PIXEL_COLOR = 8'b000_010_00;
 					4'd3 : PIXEL_COLOR = 8'b000_100_00;
@@ -128,7 +116,6 @@ module DE0_NANO(
 					endcase
 			4'd2 : 												// row C
 				case(PIXEL_COORD_X / 120)
-					//4'd0 : PIXEL_COLOR = 8'b111_111_00;
 					4'd0 : PIXEL_COLOR = (switch_1 && ~switch_2) ? 8'b111_111_11: 8'b111_111_00;
 					4'd1 : PIXEL_COLOR = 8'b110_111_00;
 					4'd2 : PIXEL_COLOR = 8'b101_111_00;
@@ -139,7 +126,6 @@ module DE0_NANO(
 					endcase
 			4'd3 : 												// row D
 				case(PIXEL_COORD_X / 120)
-					//4'd0 : PIXEL_COLOR = 8'b111_000_11;
 					4'd0 : PIXEL_COLOR = (switch_1 && switch_2) ? 8'b111_111_11: 8'b111_000_11;
 					4'd1 : PIXEL_COLOR = 8'b111_001_11;
 					4'd2 : PIXEL_COLOR = 8'b111_010_11;
@@ -167,9 +153,7 @@ module DE0_NANO(
     );
 	 
 	 assign reset = ~KEY[0]; // reset when KEY0 is pressed
-	 
-	 //assign PIXEL_COLOR = (PIXEL_COORD_X > 50 && PIXEL_COORD_X < 150 && PIXEL_COORD_Y > 50 && PIXEL_COORD_Y < 150) ? 8'b000_111_000 : 8'b000_000_000;
- 	 //assign PIXEL_COLOR = 8'b111_000_00; // Red
+	
 	 assign LED[0] = led_state;
 	 assign LED[1] = switch_1;
 	 assign LED[2] = switch_2;
