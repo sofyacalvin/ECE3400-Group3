@@ -60,6 +60,8 @@ module DE0_NANO(
 	 //////////// GPIO_0, GPIO_1 connect to GPIO Default //////////
 	 inout 		    [33:0]		GPIO_1_D;
 	 input 		     [1:0]		GPIO_1_IN;
+	 
+	 input	switch_1_in; 
 
     //=======================================================
     //  REG/WIRE declarations
@@ -75,35 +77,53 @@ module DE0_NANO(
 	 reg 			led_state;   // 1 is on, 0 is off
 	 
 
+	 // switch setup
+	 wire switch_1;
+	 wire switch_2;
+	 
+	 assign switch_1 = GPIO_1_D[10]; //arduino 12
+	 assign switch_2 = GPIO_1_D[11]; //arduino 13
+	 
 	 // current highlighted square
 	 wire highlighted_x;
 	 wire highlighted_y;	 
+	 
 	 //Switch input through GPIO pins
 	 assign highlighted_x = GPIO_0_D[33];
 	 assign highlighted_y = GPIO_0_D[31];
+	 assign switch_1 = switch_1_in;
 	 
 	 always @ (*) begin
 	 
 		case(PIXEL_COORD_Y / 120)
 			4'd0 : 												// row A
 				case(PIXEL_COORD_X / 120)
-					4'd0 : PIXEL_COLOR = 8'b111_000_00;
+					4'd0 : //begin 
+//								if(switch_1 == 1'b1) PIXEL_COLOR = 8'b0;
+//								else PIXEL_COLOR = 8'b111_000_00;
+//							 end
+							 PIXEL_COLOR = (switch_1) ? 8'b0: 8'b111_000_00;
 					4'd1 : PIXEL_COLOR = 8'b111_001_00;
 					4'd2 : PIXEL_COLOR = 8'b111_010_00;
 					4'd3 : PIXEL_COLOR = 8'b111_100_00;
 					4'd4 : PIXEL_COLOR = 8'b111_110_00;
-					4'd5 : PIXEL_COLOR = 8'b111_111_10;
+					4'd5 : PIXEL_COLOR = 8'b111_111_01;
 					default: PIXEL_COLOR = 8'b111_111_11;
 					endcase
 			4'd1 : 												// row B
 				case(PIXEL_COORD_X / 120)
-					4'd0 : PIXEL_COLOR = 8'b000_000_00;
+					4'd0 : //begin
+//								if(switch_2 == 1'b1) PIXEL_COLOR = 8'b0;
+//								else PIXEL_COLOR = 8'b111_111_00;
+//							 end
+							 PIXEL_COLOR = (switch_2) ? 8'b0: 8'b111_111_00;
+					//4'd0 : PIXEL_COLOR = 8'b000_000_00;
 					4'd1 : PIXEL_COLOR = 8'b000_001_00;
 					4'd2 : PIXEL_COLOR = 8'b000_010_00;
 					4'd3 : PIXEL_COLOR = 8'b000_100_00;
 					4'd4 : PIXEL_COLOR = 8'b000_110_00;
 					4'd5 : PIXEL_COLOR = 8'b000_111_10;
-					default: PIXEL_COLOR = 8'b0;
+					default: PIXEL_COLOR = 8'b111_111_11;
 					endcase
 			4'd2 : 												// row C
 				case(PIXEL_COORD_X / 120)
@@ -122,7 +142,7 @@ module DE0_NANO(
 					4'd2 : PIXEL_COLOR = 8'b111_010_11;
 					4'd3 : PIXEL_COLOR = 8'b111_100_11;
 					4'd4 : PIXEL_COLOR = 8'b111_110_11;
-					4'd5 : PIXEL_COLOR = 8'b111_111_01;
+					4'd5 : PIXEL_COLOR = 8'b111_111_10;
 					default: PIXEL_COLOR = 8'b0;
 					endcase
 			default: PIXEL_COLOR = 8'b000_111_00;
