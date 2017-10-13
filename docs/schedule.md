@@ -11,6 +11,7 @@ Sunday | Monday | Tuesday | Wednesday | Thursday | Friday | Saturday |
 **24** | **25**: Lab (1:25PM, Phillips 427) | **26**:  | **27** | **28**: Team Meeting (4:30 PM, Olin Library 302) | **29**: Team Meeting (11:15 AM, Thurston) | **30** |
 
 # October
+
 Sunday | Monday | Tuesday | Wednesday | Thursday | Friday | Saturday |
 ---------|---------|---------|---------|---------|---------|---------|
 **1**    | **2**  | **3** | **4** | **5** | **6**   | **7**: Team Meeting (11:15 AM, Thurston)   |
@@ -18,6 +19,7 @@ Sunday | Monday | Tuesday | Wednesday | Thursday | Friday | Saturday |
 **15** | **16**: Lab (1:25PM, Phillips 427)  | **17**: Open Lab (4PM, Phillips 427) | **18**   | **19**: Team Meeting (4:30 PM, Olin Library 302) | **20**: Team Meeting (11:15 AM, Thurston) Lab (2:15PM, Phillips 427)| **21** Open Lab (2PM, Phillips 427) |
 **22** | **23**: Lab (1:25PM, Phillips 427) | **24** | **25** | **26**: Team Meeting (4:30 PM, Olin Library 404) | **27**: Team Meeting (11:15 AM, Thurston) | **28** |
 **29** | **30**: Lab (1:25PM, Phillips 427) | **31**  | 1 | 2 | 3 | 4 |
+
 _Schedule is subject to change._
 
 [Return to home](https://sofyacalvin.github.io/ece3400-group3/)
