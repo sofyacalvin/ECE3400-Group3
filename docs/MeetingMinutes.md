@@ -96,3 +96,15 @@ Attendance: everyone is here
   * Memes
 * Modifying website structure
   * Adding sidebar
+
+## October 12
+* Lab 3
+  * Graphics
+    * Pixel grouping explanation
+      * By row/column
+    * Need to implement Arduino communication
+    * Go in 7:30 lab today
+  * Audio
+    * Will go in Friday
+  * Nicely merged code?
+  
