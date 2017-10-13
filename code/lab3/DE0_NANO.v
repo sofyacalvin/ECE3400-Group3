@@ -61,7 +61,7 @@ module DE0_NANO(
 	 inout 		    [33:0]		GPIO_1_D;
 	 input 		     [1:0]		GPIO_1_IN;
 	 
-	 input	switch_1_in; 
+	 //input	switch_1_in; 
 
     //=======================================================
     //  REG/WIRE declarations
@@ -81,8 +81,8 @@ module DE0_NANO(
 	 wire switch_1;
 	 wire switch_2;
 	 
-	 assign switch_1 = GPIO_1_D[10]; //arduino 12
-	 assign switch_2 = GPIO_1_D[11]; //arduino 13
+	 assign switch_1 = GPIO_1_D[5]; //arduino 12
+	 assign switch_2 = GPIO_1_D[7]; //arduino 13
 	 
 	 // current highlighted square
 	 wire highlighted_x;
@@ -91,9 +91,9 @@ module DE0_NANO(
 	 //Switch input through GPIO pins
 	 assign highlighted_x = GPIO_0_D[33];
 	 assign highlighted_y = GPIO_0_D[31];
-	 assign switch_1 = switch_1_in;
+	 //assign switch_1 = switch_1_in;
 	 
-	 always @ (*) begin
+	 always @ (posedge CLOCK_50) begin
 	 
 		case(PIXEL_COORD_Y / 120)
 			4'd0 : 												// row A
@@ -102,7 +102,7 @@ module DE0_NANO(
 //								if(switch_1 == 1'b1) PIXEL_COLOR = 8'b0;
 //								else PIXEL_COLOR = 8'b111_000_00;
 //							 end
-							 PIXEL_COLOR = (switch_1) ? 8'b0: 8'b111_000_00;
+							 PIXEL_COLOR = (switch_1) ? 8'b111_111_11: 8'b111_000_00;
 					4'd1 : PIXEL_COLOR = 8'b111_001_00;
 					4'd2 : PIXEL_COLOR = 8'b111_010_00;
 					4'd3 : PIXEL_COLOR = 8'b111_100_00;
@@ -116,7 +116,7 @@ module DE0_NANO(
 //								if(switch_2 == 1'b1) PIXEL_COLOR = 8'b0;
 //								else PIXEL_COLOR = 8'b111_111_00;
 //							 end
-							 PIXEL_COLOR = (switch_2) ? 8'b0: 8'b111_111_00;
+							 PIXEL_COLOR = (switch_2) ? 8'b111_111_11: 8'b111_111_00;
 					//4'd0 : PIXEL_COLOR = 8'b000_000_00;
 					4'd1 : PIXEL_COLOR = 8'b000_001_00;
 					4'd2 : PIXEL_COLOR = 8'b000_010_00;
@@ -168,6 +168,8 @@ module DE0_NANO(
 	 //assign PIXEL_COLOR = (PIXEL_COORD_X > 50 && PIXEL_COORD_X < 150 && PIXEL_COORD_Y > 50 && PIXEL_COORD_Y < 150) ? 8'b000_111_000 : 8'b000_000_000;
  	 //assign PIXEL_COLOR = 8'b111_000_00; // Red
 	 assign LED[0] = led_state;
+	 assign LED[1] = switch_1;
+	 assign LED[2] = switch_2;
 	 
     //=======================================================
     //  Structural coding
