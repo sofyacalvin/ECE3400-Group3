@@ -10,14 +10,27 @@ This lab has two main goals: one, to take external inputs from the Arduino to th
 
 ### Graphics
 #### DAC on VGA connectors
-resistor values
+
++ calculating resistor values
+
 #### Drawing one box
+
+
+
 #### Updating array dependent on inputs
-#### Communication between Arduino and FPGA
 
-Reading external inputs to FPGA
++ drawing the whole colorful grid
 
-Mapping external inputs on screen
++ mention of voltage divider calculation
+
+#### Reading external inputs to FPGA
+
++ arduino code
+
++ disaster of writing to pins
+
+#### Mapping external inputs on screen
+
 
 ### Audio
 #### Connecting the FPGA output to the the speaker
