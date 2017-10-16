@@ -14,12 +14,35 @@ This lab has two main goals: one, to take external inputs from the Arduino to th
 + calculating resistor values
 
 #### Drawing one box
+To draw one box, we first designated in our code the pixel color we wanted.
 
+``` assign PIXEL_COLOR = 8'b000_111_00; // Green```
+The program then looped through each pixel and changed all them to that one designated color. Since they were all one color, there was no need to create an array to keep track of each pixel. They were all the same. 
 
 
 #### Updating array dependent on inputs
+The next goal was to split the pixels up to display multiple colors on the screen. To do this, we split up our box into groups via a series of case statements.
 
-+ drawing the whole colorful grid
+```
+ always @ (posedge CLOCK_50) begin
+	 		case(PIXEL_COORD_Y / 120)
+			4'd0 : 												// row A
+				case(PIXEL_COORD_X / 120)
+					4'd0 : PIXEL_COLOR = 
+					8'b111_000_00;
+					4'd1 : PIXEL_COLOR = 8'b111_001_00;
+					4'd2 : PIXEL_COLOR = 8'b111_010_00;
+					4'd3 : PIXEL_COLOR = 8'b111_100_00;
+					4'd4 : PIXEL_COLOR = 8'b111_110_00;
+					4'd5 : PIXEL_COLOR = 8'b111_111_01;
+					default: PIXEL_COLOR = 8'b111_111_11;
+					endcase
+...
+ end```
+
+With the case statements, we first divided our set of pixels into rows, from row A to row D. From there, we looked at the the remaining X coordinate values of the pixels and divided them into further columns. This gave us boxes that could each contain a unique color that we designated. The result was a colorful grid on our screen, seen below.
+
+![Color Grid](../images/lab3/colored_screen.png)
 
 #### Reading external inputs to FPGA
 
