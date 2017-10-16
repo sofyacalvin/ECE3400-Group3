@@ -55,7 +55,7 @@ We wanted to ensure our signal was toggling as desired, so we hooked it up to th
 
 In order to check if our signals were being read correctly, we wrote the LEDs on the FPGA to toggle in accordance with the two signals (i.e. LED1 turned on when switch_1 (from the Arduino) went high, and the same thing for LED2 and switch_2). The debugging process of this is described later in this report. The following is a quick clip of what the LEDs looked like with the toggling signal:
 
-![FPGA LEDs reading signals][http://img.youtube.com/vi/l2PiRnfkoK0/0.jpg)](https://www.youtube.com/watch?v=l2PiRnfkoK0)
+![FPGA LEDs reading signals][http://img.youtube.com/vi/l2PiRnfkoK0/0.jpg](https://www.youtube.com/watch?v=l2PiRnfkoK0)
 
 The left two blinking LEDs correspond to the changing signals, while the rightmost LED blinking was from the Lab 3 template code, in order to show it was running.
 
@@ -79,7 +79,7 @@ always @ (posedge CLOCK_50) begin
 
 This gave us four different states: neither square being white (0,0), one white with one colored (0,1) or (1,0), and both white (1,1). Here is a video of the toggling squares:
 
-![Two toggling squares][http://img.youtube.com/vi/GtVpXq7ru7g/0.jpg)](https://www.youtube.com/watch?v=GtVpXq7ru7g)
+![Two toggling squares][http://img.youtube.com/vi/GtVpXq7ru7g/0.jpg](https://www.youtube.com/watch?v=GtVpXq7ru7g)
 
 We additionally wanted to have four different squares change colors, for the clear distinction of the four different states. We changed the square A1 (top left) to turn white on (0,0), B1 white on (0,1), C1 white on (1,0), and D1 (bottom left) on (1,1). 
 
