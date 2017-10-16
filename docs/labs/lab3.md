@@ -45,9 +45,11 @@ void loop() {
 
 We also knew the Arduino runs on a 5V scale, whereas the FPGA uses 3.3V. We designed a simple voltage divider to pull down the voltage as follows:
 
-schematic!
+![Voltage divider](../images/lab3/divider.png)
 
-These values were calculated using [Ohms Law Calculator](http://www.ohmslawcalculator.com/voltage-divider-calculator). We connected the pins from the Arduino to this circuit, and the output of the voltage divider to the FPGA.
+Where Z1 (R1) was 240Ω, ad Z2 (R2) was 470Ω. These values were calculated using [Ohms Law Calculator](http://www.ohmslawcalculator.com/voltage-divider-calculator). We connected the pins from the Arduino to this circuit, and the output of the voltage divider to the FPGA. The system looked as follows:
+
+![Circuit](../images/lab3/circuit.jpg)
 
 We wanted to ensure our signal was toggling as desired, so we hooked it up to the oscilloscope to view the signals from each pin. The oscilloscope showed us that it was toggling as desired:
 
