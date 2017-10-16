@@ -17,6 +17,8 @@ We are the members of ¯\\\_(ツ)_/¯ for the Fall 2017 semester of ECE 3400 and
 
 [Lab 2: Analog Circuitry and FFTs](./labs/lab2.md)
 
+[Lab 3: FPGA Video Controller and Sound Generation](./labs/lab3.md)
+
 ## Milestones
 [Milestone 1](./milestones/Milestone1.md)
 
