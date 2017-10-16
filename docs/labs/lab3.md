@@ -11,7 +11,6 @@ This lab has two main goals: one, to take external inputs from the Arduino to th
 ### Graphics
 #### DAC on VGA connectors
 
-+ calculating resistor values
 Before beginning our lab, we had to prepare our VGA connector with the proper resistors to display on our screen. The connector contains 8 inputs: 3 corresponding to red, 3 to green, and 2 to blue. The VGA would determine how much of each color is being displayed based on the voltages of the corresponding bits, up to 1 volt. For example, if the display were to show all red, then the 3 bits corresponding to red would add up to 1 volt. Furthermore, we made our voltage values for each bit to be half of the next bit's. This meant that, in red for example, the smallest bit was valued at 0.143 volts, the next bit was valued at 0.286 volts, and the largest bit was 0.571 volts. These added together would add up to 1 volt, and allowed for varying amounts of color in between. 
 
 To achieve this on our VGA, we used a voltage divider. Below is an example of the voltage divider used for the bits corresponding to red. Bits 7, 6, and 5 all modify red on the VGA connector.
