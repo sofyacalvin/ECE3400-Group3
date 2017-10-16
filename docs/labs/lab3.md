@@ -67,16 +67,16 @@ Wanting to use these signals to change the colors on-screen, we returned to Quar
 
 ```
 always @ (posedge CLOCK_50) begin
-	 		case(PIXEL_COORD_Y / 120)
-			4'd0 : 												// row A
-				case(PIXEL_COORD_X / 120)
-					4'd0 : PIXEL_COLOR = (switch_1) ? 8'b111_111_11: 8'b111_000_00;
+	case(PIXEL_COORD_Y / 120)
+		4'd0 : 									// row A
+			case(PIXEL_COORD_X / 120)
+				4'd0 : PIXEL_COLOR = (switch_1) ? 8'b111_111_11: 8'b111_000_00;
 
 ...
 
-			4'd1 : 												// row B
-							case(PIXEL_COORD_X / 120)
-								4'd0 : PIXEL_COLOR = (switch_2) ? 8'b111_111_11: 8'b111_111_00;					
+		4'd1 : 									// row B
+			case(PIXEL_COORD_X / 120)
+				4'd0 : PIXEL_COLOR = (switch_2) ? 8'b111_111_11: 8'b111_111_00;			
 ```
 
 This gave us four different states: neither square being white (0,0), one white with one colored (0,1) or (1,0), and both white (1,1). Here is a video of the toggling squares:
@@ -86,27 +86,27 @@ This gave us four different states: neither square being white (0,0), one white 
 We additionally wanted to have four different squares change colors, for the clear distinction of the four different states. We changed the square A1 (top left) to turn white on (0,0), B1 white on (0,1), C1 white on (1,0), and D1 (bottom left) on (1,1). 
 
 ```
-4'd0 : 												// row A
-				case(PIXEL_COORD_X / 120)
-					4'd0 : PIXEL_COLOR = (~switch_1 && ~switch_2) ? 8'b111_111_11: 8'b111_000_00;
+4'd0 : 											// row A
+	case(PIXEL_COORD_X / 120)
+		4'd0 : PIXEL_COLOR = (~switch_1 && ~switch_2) ? 8'b111_111_11: 8'b111_000_00;
 
 ...
 
-4'd1 : 												// row B
-				case(PIXEL_COORD_X / 120)
-					4'd0 : PIXEL_COLOR = (~switch_1 && switch_2) ? 8'b111_111_11: 8'b111_111_00;					
+4'd1 : 											// row B
+	case(PIXEL_COORD_X / 120)
+		4'd0 : PIXEL_COLOR = (~switch_1 && switch_2) ? 8'b111_111_11: 8'b111_111_00;					
 
 ...
 
-4'd2 : 												// row C
-				case(PIXEL_COORD_X / 120)
-					4'd0 : PIXEL_COLOR = (switch_1 && ~switch_2) ? 8'b111_111_11: 8'b111_111_00;
+4'd2 : 											// row C
+	case(PIXEL_COORD_X / 120)
+		4'd0 : PIXEL_COLOR = (switch_1 && ~switch_2) ? 8'b111_111_11: 8'b111_111_00;
 
 ...
 
-4'd3 : 												// row D
-				case(PIXEL_COORD_X / 120)
-					4'd0 : PIXEL_COLOR = (switch_1 && switch_2) ? 8'b111_111_11: 8'b111_000_11;
+4'd3 : 											// row D
+	case(PIXEL_COORD_X / 120)
+		4'd0 : PIXEL_COLOR = (switch_1 && switch_2) ? 8'b111_111_11: 8'b111_000_11;
 ```					
 
 ![Four toggling squares](http://img.youtube.com/vi/NvecpIrvSZ8/0.jpg)](https://www.youtube.com/watch?v=NvecpIrvSZ8)
