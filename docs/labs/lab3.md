@@ -51,7 +51,7 @@ These values were calculated using [Ohms Law Calculator](http://www.ohmslawcalcu
 
 We wanted to ensure our signal was toggling as desired, so we hooked it up to the oscilloscope to view the signals from each pin. The oscilloscope showed us that it was toggling as desired:
 
-![Toggling signal](../images/lab3/toggle.png)
+![Toggling signal](../images/lab3/toggle.png =300x)
 
 In order to check if our signals were being read correctly, we wrote the LEDs on the FPGA to toggle in accordance with the two signals (i.e. LED1 turned on when switch_1 (from the Arduino) went high, and the same thing for LED2 and switch_2). The debugging process of this is described later in this report. The following is a quick clip of what the LEDs looked like with the toggling signal:
 
