@@ -15,6 +15,9 @@ Before beginning our lab, we had to prepare our VGA connector with the proper re
 
 To achieve this on our VGA, we used a voltage divider. Below is an example of the voltage divider used for the bits corresponding to red. Bits 7, 6, and 5 all modify red on the VGA connector.
 
+![VGA Voltage Divider](../images/lab3/VGA-voltage-divider.png)
+
+There is also an internal resistor of 50 ohms built into ground that we had to account for. It is pictured in the schematic above. From this, we then calculated the resistor values needed to build this setup on our VGA connector and then soldered the appropriate resistors onto the connector. We were then ready to display images on our screen!
 
 #### Drawing one box
 To draw one box, we first designated in our code the pixel color we wanted.
@@ -22,10 +25,6 @@ To draw one box, we first designated in our code the pixel color we wanted.
 ``` assign PIXEL_COLOR = 8'b000_111_00; // Green```
 
 The program then looped through each pixel and changed all them to that one designated color. Since they were all one color, there was no need to create an array to keep track of each pixel. They were all the same. 
-
-![VGA Voltage Divider](../images/lab3/VGA-voltage-divider.png)
-
-There is also an internal resistor of 50 ohms built into ground that we had to account for. It is pictured in the schematic above. From this, we then calculated the resistor values needed to build this setup on our VGA connector and then soldered the appropriate resistors onto the connector. We were then ready to display images on our screen!
 
 #### Updating array dependent on inputs
 The next goal was to split the pixels up to display multiple colors on the screen. To do this, we split up our box into groups via a series of case statements.
