@@ -12,6 +12,10 @@ This lab has two main goals: one, to take external inputs from the Arduino to th
 #### DAC on VGA connectors
 
 + calculating resistor values
+Before beginning our lab, we had to prepare our VGA connector with the proper resistors to display on our screen. The connector contains 8 inputs: 3 corresponding to red, 3 to green, and 2 to blue. The VGA would determine how much of each color is being displayed based on the voltages of the corresponding bits, up to 1 volt. For example, if the display were to show all red, then the 3 bits corresponding to red would add up to 1 volt. Furthermore, we made our voltage values for each bit to be half of the next bit's. This meant that, in red for example, the smallest bit was valued at 0.143 volts, the next bit was valued at 0.286 volts, and the largest bit was 0.571 volts. These added together would add up to 1 volt, and allowed for varying amounts of color in between. 
+
+To achieve this on our VGA, we used a voltage divider. Below is an example of the voltage divider used for the bits corresponding to red. Bits 7, 6, and 5 all modify red on the VGA connector.
+
 
 #### Drawing one box
 To draw one box, we first designated in our code the pixel color we wanted.
@@ -20,6 +24,9 @@ To draw one box, we first designated in our code the pixel color we wanted.
 
 The program then looped through each pixel and changed all them to that one designated color. Since they were all one color, there was no need to create an array to keep track of each pixel. They were all the same. 
 
+![VGA Voltage Divider](../images/lab3/VGA-voltage-divider.png)
+
+There is also an internal resistor of 50 ohms built into ground that we had to account for. It is pictured in the schematic above. From this, we then calculated the resistor values needed to build this setup on our VGA connector and then soldered the appropriate resistors onto the connector. We were then ready to display images on our screen!
 
 #### Updating array dependent on inputs
 The next goal was to split the pixels up to display multiple colors on the screen. To do this, we split up our box into groups via a series of case statements.
