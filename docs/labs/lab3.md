@@ -123,6 +123,48 @@ After this, we switched to outputting on the screen. Our logic had been correct 
 
 ### Audio
 #### Connecting the FPGA output to the the speaker
+The DAC was connected to the FPGA GPIO 1 pins for this part of the lab. We had the output from the sine wave output from the even numbered pins of GPIO_1 pins 8 through 22. Then the output of the DAC was connected to the speakers as shown in the pictures below.
+
+![FPGA](../images/lab3/DE0_NANO.JPG)
+
+![DAC](../images/lab3/DAC_connection.jpg)
+
+To make sure that our connection was working properly we first wrote out the code that outputed a 660hz sine wave. The code that was used was similiar to the 440hz square wave code. However we created a new module in the project in verilog called SINE_ROM that would read in the sine values from a text file that we generated and store the values as a ROM. Then we created an instance of the module in the main file and connected the inputs and outputs the way we wanted it to be. 
+
+```verilog
+SINE_ROM sine  (
+		.addr(address),
+		.clk(CLOCK_25),
+		.q({GPIO_1_D[8],GPIO_1_D[10],GPIO_1_D[12],GPIO_1_D[14],GPIO_1_D[16],GPIO_1_D[18],GPIO_1_D[20],GPIO_1_D[22]})
+	       );
+```
+Then we had a varable that represented the time, in clock cycles, it would wait before the next address access in the sine table.
+
+```verilog
+//660hz sine wave
+localparam CLKDIVIDER_660 = 25000000/660/256;
+```
+The algorithm that we used was having a counter decrementing to 0, and when the time reached 0 the program would read the next value in the sine table. And the counter would be reset to the value in the local variable CLKDIVIDER_660. We had the counter decrementing every posedge of the CLK. 
+
+```verilog
+/* 660 hz sine wave */	 
+always @ (posedge CLOCK_25) begin
+ if (counter == 0) begin
+   counter <= CLKDIVIDER_660 - 1;
+   if (address == 255) begin
+     address <= 0;
+   end
+   else begin
+   address <= address + 1;
+   end
+ end
+ else begin
+   counter <= counter - 1;
+ end
+end
+```
+
+[![660hz sine wave](http://img.youtube.com/vi/ROW6aC9uuBA/0.jpg)](https://www.youtube.com/watch?v=ROW6aC9uuBA)
 
 #### Outputting a square wave to the speaker
 We first used the template code that was provided to us and followed the example that team alpha had on their website.
@@ -151,9 +193,131 @@ always @ (posedge CLOCK_25) begin
   end
 end	
 ```
+after we ran the code on the DE0-NANO we connected the output to the oscilloscope and got the output that we were expecting.
+
+![Square Wave](../images/lab3/square_wave.jpg)
+
 
 #### Outputting three tones via DAC
+For outputting three distinct tones, we took 2 different approaches. At first we thought that we were supposed to output 3 seperate frequencies at the same time. So we started working on that approach. However, it proved difficult because there was a problem with assigning the outputs of 3 different modules to the same pins that we used for the output that was set up (GPIO1 even pins 8 - 22). 
+Then we were told that the task was to output 3 different frequencies, one at a time. So we fixed up our code to do this, with came out to be a lot simpler. 
 
+First we found some different frequencies that we wanted to output. 
+```verilog
+//notes in Dm11 chord
+localparam CLKDIVIDER_D = 25000000/294/256;
+localparam CLKDIVIDER_F = 25000000/349/256;
+localparam CLKDIVIDER_A = 25000000/440/256;
+localparam CLKDIVIDER_C = 25000000/523/256;
+localparam CLKDIVIDER_E = 25000000/660/256;
+localparam CLKDIVIDER_G = 25000000/784/256;
+```
+Next we added 2 more variables one called duration to make sure that each frequency plays for one sec at a time and the other one called note to keep track of which of the three tones were currently playing. 
+
+Then we coded the whole program similiarly to the 660 hz sine output. However we had more conditions that were checking this time. One additional condition checked that the if the duration decremented down to 0 it would reset it to the value that is ONE_SEC and also it would change the tone that was currently playing. The second additional condition that we added was to check which note was currently playing and which note to change to.
+
+```verilog
+/* 3 distinct tones played for 1 sec at a time*/ 
+always @ (posedge CLOCK_25) begin
+  if (duration == 0) begin
+    duration <= ONE_SEC;
+    if (note == 0) begin
+      count <= CLKDIVIDER_C - 16'b1;
+      note <= 2;
+    end
+    else if (note == 1) begin
+      count <= CLKDIVIDER_G - 16'b1;
+      note <= note - 2'b1;
+    end
+    else if (note == 2) begin
+      count <= CLKDIVIDER_E - 16'b1;
+      note <= note - 2'b1;
+    end
+  end
+  else begin
+    if (counter == 0) begin
+      counter <= count - 16'b1;
+      if (address == 255) begin
+        address <= 8'b0;
+      end
+      else begin
+        address <= address + 8'b1;
+      end
+    end
+    else begin
+      counter <= counter - 16'b1;
+    end
+    duration <= duration - 25'b1;
+  end
+end
+```
+
+[![3 distinct tones](http://img.youtube.com/vi/UuwHNSVr4Zk/0.jpg)](https://www.youtube.com/watch?v=UuwHNSVr4Zk)
+
+After we finished this part of the lab we went back to our first approach where we would output 3 tones at the same time because it seemed interesting. 
+With the help of the TA we figured out that we needed three seperate modules (one for each frequency) and we would have to have 3 temporary output reg for the 3 modules. 
+```verilog
+//multifrequency output
+SINE_ROM sine1 (
+		.addr(address1),
+		.clk(CLOCK_25),
+		.q(out1)
+	       );
+	 
+SINE_ROM sine2 (
+		.addr(address2),
+		.clk(CLOCK_25),
+		.q(out2)
+	       );
+
+SINE_ROM sine3 (
+		.addr(address3),
+		.clk(CLOCK_25),
+		.q(out3)
+	       );
+```
+
+Then we would add up the 3 outputs of the seperate modules and divide it by 3 to take care of possible very high amplitude from the sum of the three outputs and then output it to the FPGA board. 
+
+The setup of the output was a little tricky at first but we figured out that we needed to assign the desired output pins:
+```verilog
+//for multifrequency output
+reg[7:0]   final;
+
+assign {GPIO_1_D[8],GPIO_1_D[10],GPIO_1_D[12],GPIO_1_D[14],GPIO_1_D[16],GPIO_1_D[18],GPIO_1_D[20],GPIO_1_D[22]} = final;
+```
+Then we had 3 seperate always blocks that were for each of the 3 tones we wanted. In these always blocks we had the code for going through the sine table. The only thing that would be different would be the desired tone variable. 
+```verilog 
+always @ (posedge CLOCK_25) begin
+  if (counter1 == 0) begin
+    counter1 <= CLKDIVIDER_E - 1;
+    if (address1 == 255) begin
+      address1 <= 0;
+    end
+    else begin
+      address1 <= address1 + 1;
+    end
+  end
+  else begin
+    counter1 <= counter1 - 1;
+  end
+end
+```
+Then this last always block would combine the outputs of the three seperate tones
+```verilog
+always @ (posedge CLOCK_25) begin
+  if (counter == 0) begin
+    counter <= CLKDIVIDER_G - 16'b1;
+    final <= ((out1 + out2 + out3 )/3);
+  end
+  else begin
+    counter <= counter - 16'b1;
+  end
+end
+```
+Although, the outputting sound was not very clean this seemed to work to a certain extent. If we have more time we will try to output a more pleasent and cleaner sounding chord.
+
+[![Multifreq output](http://img.youtube.com/vi/U1iU36uOmO8/0.jpg)](https://www.youtube.com/watch?v=U1iU36uOmO8)
 
 
 [Return to home](https://sofyacalvin.github.io/ece3400-group3/)
