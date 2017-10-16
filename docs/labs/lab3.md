@@ -17,7 +17,7 @@ To achieve this on our VGA, we used a voltage divider. Below is an example of th
 
 ![VGA Voltage Divider](../images/lab3/VGA-voltage-divider.png)
 
-There is also an internal resistor of 50 ohms built into ground that we had to account for. It is pictured in the schematic above. From this, we then calculated the resistor values needed to build this setup on our VGA connector and then soldered the appropriate resistors onto the connector. We were then ready to display images on our screen!
+Bit 7 represents where our largest voltage can come from. Bit 6 can then send half the voltage of bit 7 when activated, and bit 5 therefore sends the lowest voltage value when sending a signal. There is also an internal resistor of 50 ohms built into ground that we had to account for. It is pictured in the schematic above. From this, we then calculated the resistor values needed to build this setup on our VGA connector and then soldered the appropriate resistors onto the connector. We were then ready to display images on our screen!
 
 #### Drawing one box
 To draw one box, we first designated in our code the pixel color we wanted.
