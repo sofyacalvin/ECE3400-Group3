@@ -25,7 +25,7 @@ This lab has two main goals: one, to take external inputs from the Arduino to th
 
 With an objective of taking in at least two inputs from the Arduino, we took a simple route of outputting toggling digital signals from the Arduino on loop. Outputting to digital pins 12 and 13, we alternated between sending (0,0), (0,1), (1,0), and (1,1) with 1.5 second intervals. This would create the desired four states.
 
-```
+```c
 void loop() {
   // put your main code here, to run repeatedly:
   digitalWrite(pin1, LOW);
@@ -65,7 +65,7 @@ The left two blinking LEDs correspond to the changing signals, while the rightmo
 
 Wanting to use these signals to change the colors on-screen, we returned to Quartus to modify the existing colored grid code. Out of simplicity, we modified the first square on the first two rows--turning them white when its respective signal went high.
 
-```
+```c
 always @ (posedge CLOCK_50) begin
 	case(PIXEL_COORD_Y / 120)
 		4'd0 : 									// row A
@@ -85,7 +85,7 @@ This gave us four different states: neither square being white (0,0), one white 
 
 We additionally wanted to have four different squares change colors, for the clear distinction of the four different states. We changed the square A1 (top left) to turn white on (0,0), B1 white on (0,1), C1 white on (1,0), and D1 (bottom left) on (1,1). 
 
-```
+```c
 4'd0 : 											// row A
 	case(PIXEL_COORD_X / 120)
 		4'd0 : PIXEL_COLOR = (~switch_1 && ~switch_2) ? 8'b111_111_11: 8'b111_000_00;
@@ -107,7 +107,7 @@ We additionally wanted to have four different squares change colors, for the cle
 4'd3 : 											// row D
 	case(PIXEL_COORD_X / 120)
 		4'd0 : PIXEL_COLOR = (switch_1 && switch_2) ? 8'b111_111_11: 8'b111_000_11;
-```					
+```
 
 [![Four toggling squares](http://img.youtube.com/vi/NvecpIrvSZ8/0.jpg)](https://www.youtube.com/watch?v=NvecpIrvSZ8)
 
@@ -123,7 +123,35 @@ After this, we switched to outputting on the screen. Our logic had been correct 
 
 ### Audio
 #### Connecting the FPGA output to the the speaker
+
 #### Outputting a square wave to the speaker
+We first used the template code that was provided to us and followed the example that team alpha had on their website.
+The following is the code that we added to the DE0_NANO template.
+```c
+//time for 440hz square wave
+localparam CLKDIVIDER_440 = 25000000/440/2;
+
+...
+	
+// Sound variables
+reg square_440;                       // 440 Hz square wave
+assign GPIO_0_D[2] = square_440;
+
+...
+   
+//Sound state machine (440hz square wave)
+always @ (posedge CLOCK_25) begin
+  if (counter == 0) begin
+    counter    <= CLKDIVIDER_440 - 1; // reset clock
+    square_440 <= ~square_440;        // toggle the square pulse
+  end
+  else begin
+    counter    <= counter - 1;
+    square_440 <= square_440;
+  end
+end	
+```
+
 #### Outputting three tones via DAC
 
 
