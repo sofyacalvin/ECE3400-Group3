@@ -20,14 +20,22 @@ To achieve this on our VGA, we used a voltage divider. Below is an example of th
 Bit 7 represents where our largest voltage can come from. Bit 6 can then send half the voltage of bit 7 when activated, and bit 5 therefore sends the lowest voltage value when sending a signal. There is also an internal resistor of 50 ohms built into ground that we had to account for. It is pictured in the schematic above. From this, we then calculated the resistor values needed to build this setup on our VGA connector and then soldered the appropriate resistors onto the connector. We were then ready to display images on our screen!
 
 #### Drawing one box
-To draw one box, we first designated in our code the pixel color we wanted.
+To change the color of the screen, we first designated in our code the pixel color we wanted.
 
 ``` assign PIXEL_COLOR = 8'b000_111_00; // Green```
 
 The program then looped through each pixel and changed all them to that one designated color. Since they were all one color, there was no need to create an array to keep track of each pixel. They were all the same. 
 
+To follow this up, we drew a single box, defined through ternary operators with the pixel value as the condition. In words, the follow code tells the pixels between 50-150 in the X and Y coordinates to be white; otherwise (i.e. the rest of the screen) should be red.
+
+```
+assign PIXEL_COLOR = (PIXEL_COORD_X > 50 && PIXEL_COORD_X < 150 && PIXEL_COORD_Y > 50 && PIXEL_COORD_Y < 150) ? 8'b111_111_11 : 8'b111_000_00;
+```
+
+![Square](../images/lab3/square.jpg)
+
 #### Updating array dependent on inputs
-The next goal was to split the pixels up to display multiple colors on the screen. To do this, we split up our box into groups via a series of case statements.
+The next goal was to split the pixels up to display multiple colors on the screen. We knew defining each pixel would be inefficient and wasteful, and instead wanted to break the screen into specifically defined squares. To do this, we split up our box into groups via a series of case statements.
 
 ```
  always @ (posedge CLOCK_50) begin
@@ -53,10 +61,10 @@ With the case statements, we first divided our set of pixels into rows, from row
 
 #### Reading external inputs to FPGA
 
-With an objective of taking in at least two inputs from the Arduino, we took a simple route of outputting toggling digital signals from the Arduino on loop. Outputting to digital pins 12 and 13, we alternated between sending (0,0), (0,1), (1,0), and (1,1) with 1.5 second intervals. This would create the desired four states.
+With an objective of taking in at least two inputs from the Arduino, we took a simple route of outputting toggling digital signals from the Arduino on loop. Outputting to digital pins 12 and 13, we alternated between sending signals (0,0), (0,1), (1,0), and (1,1) with 1.5 second intervals. This would create the desired four states.
 
 ```arduino
-void loop() {
+void loop() { 
   // put your main code here, to run repeatedly:
   digitalWrite(pin1, LOW);
   digitalWrite(pin2, LOW);
@@ -77,11 +85,11 @@ We also knew the Arduino runs on a 5V scale, whereas the FPGA uses 3.3V. We desi
 
 ![Voltage divider](../images/lab3/divider.png)
 
-Where Z1 (R1) was 240Ω, ad Z2 (R2) was 470Ω. These values were calculated using [Ohms Law Calculator](http://www.ohmslawcalculator.com/voltage-divider-calculator). We connected the pins from the Arduino to this circuit, and the output of the voltage divider to the FPGA. The system looked as follows:
+Where Z1 (R1) was 240Ω, ad Z2 (R2) was 470Ω. These values were calculated using [Ohms Law Calculator](http://www.ohmslawcalculator.com/voltage-divider-calculator). We were not aware the Arduino had a built-in 3.3V pin, because the text had rubbed off. We connected the pins from the Arduino to this circuit, and the output of the voltage divider to the FPGA. The system looked as follows:
 
 ![Circuit](../images/lab3/circuit.jpg)
 
-We wanted to ensure our signal was toggling as desired, so we hooked it up to the oscilloscope to view the signals from each pin. The oscilloscope showed us that it was toggling as desired:
+We wanted to ensure our signal was toggling as desired, so we hooked it up to the oscilloscope to view the signals from each pin. The oscilloscope showed us that it was toggling between 0 and 3.3V as expected:
 
 ![Toggling signal](../images/lab3/toggle.png)
 
@@ -145,11 +153,9 @@ Debugging:
 
 We had a few issues with using the correct pins on the FPGA. We first didn't distinguish between GPIO_0 and GPIO_1, and then did not know the correct orientation of the pinout (i.e. where pin 1 was), then could not interface with the pin itself. 
 
-
-From the oscilloscope check, we were confident the signal was toggling as desired at 3.3V. Then, we tried debugging using the LEDs on the FPGA. After a series of seeing the LEDs constantly high for some arbitrary reason, we realized we were not, in fact, reading from GPIO_1 pins 15 and 17, but rather 5 and 7--the declaration of the "_1" in "GPIO_15" was confusing.
+From the oscilloscope check, we were confident the signal was toggling as expected. Then, we tried debugging using the LEDs on the FPGA. After a series of seeing the LEDs constantly high for some arbitrary reason, we realized we were not, in fact, reading from GPIO_1 pins 15 and 17, but rather 5 and 7--the declaration of the "_1" in "GPIO_15" was confusing.
 
 After this, we switched to outputting on the screen. Our logic had been correct to change boxes on-screen.
-
 
 ### Audio
 #### Connecting the FPGA output to the the speaker
