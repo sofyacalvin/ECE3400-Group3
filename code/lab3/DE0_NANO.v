@@ -71,6 +71,7 @@ module DE0_NANO(
     wire [9:0]  PIXEL_COORD_Y; // current y-coord from VGA driver
     reg [7:0]  PIXEL_COLOR;   // input 8-bit pixel color for current coords
 	 
+	 
 	 reg [24:0] led_counter; // timer to keep track of when to toggle LED
 	 reg 			led_state;   // 1 is on, 0 is off
 
@@ -85,75 +86,53 @@ module DE0_NANO(
    //   (2 bit entries, 3 bit row numbers, 4 bit col numbers)
    reg [1:0] maze_state [2:0][3:0];
 	
-	parameter bricky = 13'd14400;
+	parameter bricky = 14'd14400;
 	reg [7:0] COLOR_DATA [0:bricky-1];
-   
-   
-   
-   
-   
-   
-   
-    //=======================================================
+   reg [7:0] COLOR_DATA2 [0:bricky-1];
+   wire [13:0] pix_num;
+
+	 
+    // Module outputs coordinates of next pixel to be written onto screen
+    VGA_DRIVER driver(
+		  .RESET(reset),
+        .CLOCK(CLOCK_25),
+        .PIXEL_COLOR_IN(PIXEL_COLOR),
+        .PIXEL_X(PIXEL_COORD_X),
+        .PIXEL_Y(PIXEL_COORD_Y),
+        .PIXEL_COLOR_OUT({GPIO_0_D[9],GPIO_0_D[11],GPIO_0_D[13],GPIO_0_D[15],GPIO_0_D[17],GPIO_0_D[19],GPIO_0_D[21],GPIO_0_D[23]}),
+        .H_SYNC_NEG(GPIO_0_D[7]),
+        .V_SYNC_NEG(GPIO_0_D[5])
+    );
+	 
+	PIX_COUNT counter1(
+			.X(PIXEL_COORD_X),
+			.Y(PIXEL_COORD_Y),
+			.PIX_NUM(pix_num)
+	);
+
+	 
+	 assign reset = ~KEY[0]; // reset when KEY0 is pressed
+	 
+	 //=======================================================
     //  ALWAYS block for PIXEL_COLOR
     //=======================================================
-   //always @ (*) begin
-		//case(PIXEL_COORD_Y / 120)
-			//4'd0 : 												// row A
-				//case(PIXEL_COORD_X / 120)
-					//4'd0 : PIXEL_COLOR = 8'b111_000_00;
-					//4'd1 : PIXEL_COLOR = 8'b111_001_00;
-					//4'd2 : PIXEL_COLOR = 8'b111_010_00;
-					//4'd3 : PIXEL_COLOR = 8'b111_100_00;
-					//4'd4 : PIXEL_COLOR = 8'b111_110_00;
-					//4'd5 : PIXEL_COLOR = 8'b111_111_10;
-					//default: PIXEL_COLOR = 8'b111_111_11;
-					//endcase
-			//4'd1 : 												// row B
-				//case(PIXEL_COORD_X / 120)
-					//4'd0 : PIXEL_COLOR = 8'b000_000_00;
-					//4'd1 : PIXEL_COLOR = 8'b000_001_00;
-					//4'd2 : PIXEL_COLOR = 8'b000_010_00;
-					//4'd3 : PIXEL_COLOR = 8'b000_100_00;
-					//4'd4 : PIXEL_COLOR = 8'b000_110_00;
-					//4'd5 : PIXEL_COLOR = 8'b000_111_10;
-					//default: PIXEL_COLOR = 8'b0;
-					//endcase
-			//4'd2 : 												// row C
-				//case(PIXEL_COORD_X / 120)
-					//4'd0 : PIXEL_COLOR = 8'b111_111_00;
-					//4'd1 : PIXEL_COLOR = 8'b110_111_00;
-					//4'd2 : PIXEL_COLOR = 8'b101_111_00;
-					//4'd3 : PIXEL_COLOR = 8'b100_111_00;
-					//4'd4 : PIXEL_COLOR = 8'b011_111_00;
-					//4'd5 : PIXEL_COLOR = 8'b001_111_10;
-					//default: PIXEL_COLOR = 8'b0;
-					//endcase
-			//4'd3 : 												// row D
-				//case(PIXEL_COORD_X / 120)
-					//4'd0 : PIXEL_COLOR = 8'b111_000_11;
-					//4'd1 : PIXEL_COLOR = 8'b111_001_11;
-					//4'd2 : PIXEL_COLOR = 8'b111_010_11;
-					//4'd3 : PIXEL_COLOR = 8'b111_100_11;
-					//4'd4 : PIXEL_COLOR = 8'b111_110_11;
-					//4'd5 : PIXEL_COLOR = 8'b111_111_01;
-					//default: PIXEL_COLOR = 8'b0;
-					//endcase
-			//default: PIXEL_COLOR = 8'b000_111_00;
-			//endcase
-	 //end
-	initial
-	$readmemh ("brick.list", COLOR_DATA);
- 
-      always @ (*) begin
+
+	initial begin
+	$readmemh ("burst.list", COLOR_DATA);
+	$readmemh ("ball.list", COLOR_DATA2);
+	end
+	
+      always @ (CLOCK_25) begin
+		
 		case(PIXEL_COORD_Y / 120)
 			4'd0 : 												// row A
 				case(PIXEL_COORD_X / 120)
-					4'd0 : PIXEL_COLOR = COLOR_DATA[{PIXEL_COORD_Y*(PIXEL_COORD_X-1)+PIXEL_COORD_X}];
-					//4'd0 : PIXEL_COLOR = COLOR_DATA[{PIXEL_COORD_X}];
+					//4'd0 : PIXEL_COLOR = COLOR_DATA[{120*(PIXEL_COORD_Y-1)+PIXEL_COORD_X}];
+					4'd0 : PIXEL_COLOR = COLOR_DATA[{120*(PIXEL_COORD_Y%120) + PIXEL_COORD_X%120}];
 					4'd1 : PIXEL_COLOR = 8'b111_001_00;
 					4'd2 : PIXEL_COLOR = 8'b111_010_00;
-					4'd3 : PIXEL_COLOR = 8'b111_100_00;
+					//4'd3 : PIXEL_COLOR = 8'b111_100_00;
+					4'd3 : PIXEL_COLOR = COLOR_DATA[{120*(PIXEL_COORD_Y%120)+PIXEL_COORD_X%120}];
 					//4'd4 : PIXEL_COLOR = 8'b111_110_00;
 					//4'd5 : PIXEL_COLOR = 8'b111_111_10;
 					default: PIXEL_COLOR = 8'b111_111_11;
@@ -172,7 +151,7 @@ module DE0_NANO(
 				case(PIXEL_COORD_X / 120)
 					4'd0 : PIXEL_COLOR = 8'b111_111_00;
 					4'd1 : PIXEL_COLOR = 8'b110_111_00;
-					4'd2 : PIXEL_COLOR = 8'b101_111_00;
+					4'd2 : PIXEL_COLOR = COLOR_DATA[{120*(PIXEL_COORD_Y%120)+PIXEL_COORD_X%120}];
 					4'd3 : PIXEL_COLOR = 8'b100_111_00;
 					//4'd4 : PIXEL_COLOR = 8'b011_111_00;
 					//4'd5 : PIXEL_COLOR = 8'b001_111_10;
@@ -181,7 +160,7 @@ module DE0_NANO(
 			4'd3 : 												// row D
 				case(PIXEL_COORD_X / 120)
 					4'd0 : PIXEL_COLOR = 8'b111_000_11;
-					4'd1 : PIXEL_COLOR = 8'b111_001_11;
+					4'd1 : PIXEL_COLOR = COLOR_DATA2[{120*(PIXEL_COORD_Y%120)+PIXEL_COORD_X%120}];
 					4'd2 : PIXEL_COLOR = 8'b111_010_11;
 					4'd3 : PIXEL_COLOR = 8'b111_100_11;
 					//4'd4 : PIXEL_COLOR = 8'b111_110_11;
@@ -191,24 +170,8 @@ module DE0_NANO(
 			default: PIXEL_COLOR = 8'b000_111_00;
 			endcase
 	 end
-
 	 
-    // Module outputs coordinates of next pixel to be written onto screen
-    VGA_DRIVER driver(
-		  .RESET(reset),
-        .CLOCK(CLOCK_25),
-        .PIXEL_COLOR_IN(PIXEL_COLOR),
-        .PIXEL_X(PIXEL_COORD_X),
-        .PIXEL_Y(PIXEL_COORD_Y),
-        .PIXEL_COLOR_OUT({GPIO_0_D[9],GPIO_0_D[11],GPIO_0_D[13],GPIO_0_D[15],GPIO_0_D[17],GPIO_0_D[19],GPIO_0_D[21],GPIO_0_D[23]}),
-        .H_SYNC_NEG(GPIO_0_D[7]),
-        .V_SYNC_NEG(GPIO_0_D[5])
-    );
 	 
-	 assign reset = ~KEY[0]; // reset when KEY0 is pressed
-	 
-	 //assign PIXEL_COLOR = (PIXEL_COORD_X > 50 && PIXEL_COORD_X < 150 && PIXEL_COORD_Y > 50 && PIXEL_COORD_Y < 150) ? 8'b000_111_000 : 8'b000_000_000;
- 	 //assign PIXEL_COLOR = 8'b111_000_00; // Red
 	 assign LED[0] = led_state;
 	 
     //=======================================================
@@ -240,4 +203,3 @@ module DE0_NANO(
 	 
 
 endmodule
-
