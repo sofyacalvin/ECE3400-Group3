@@ -20,6 +20,11 @@ The objective of this lab
 
 #### Displaying full 4x5 grid
 
+Binary values: 
+
+row | col | data
+xxx | xxx | xx
+
 |   | 1          | 2          | 3          | 4          | 5          |
 |---|------------|------------|------------|------------|------------|
 | A | 001 001 xx | 010 001 xx | 011 001 xx | 100 001 xx | 101 001 xx |
