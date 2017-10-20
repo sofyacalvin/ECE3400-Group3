@@ -87,7 +87,7 @@ void setup(void)
 
   // optionally, reduce the payload size.  seems to
   // improve reliability
-  radio.setPayloadSize(8);
+  radio.setPayloadSize(7);
 
   //
   // Open pipes to other nodes for communication
@@ -121,14 +121,15 @@ void setup(void)
 
   radio.printDetails();
 
-  pinMode(8, OUTPUT);
-  pinMode(1, OUTPUT);
+  
+  //pinMode(1, OUTPUT);
   pinMode(2, OUTPUT);
   pinMode(3, OUTPUT);
   pinMode(4, OUTPUT);
   pinMode(5, OUTPUT);
   pinMode(6, OUTPUT);
   pinMode(7, OUTPUT);
+  pinMode(8, OUTPUT);
 }
 
 void loop(void)
@@ -146,7 +147,7 @@ void loop(void)
     unsigned long time = millis();
 
     unsigned char new_data;
-
+    /*
     if (x_coord == 4) {
       if (y_coord < 3) {
         x_coord = 0;
@@ -160,15 +161,39 @@ void loop(void)
     else {
       x_coord++;
     }
-    if (pos_data == 1) {
-      pos_data = 2;
-    }
+    */
+    
+    if (x_coord < 4) {
+        x_coord++;
+      }
     else {
-      pos_data = 1;
+      x_coord = 0;
     }
     
-    new_data = x_coord << 5 | y_coord << 3 | pos_data;
-    // x x x | y y | p p p
+    /*
+    if (pos_data == 3) {
+      pos_data = 0;
+    }
+    else {
+      pos_data++;
+    }
+    */
+    
+    if (x_coord == 0) {
+      if (pos_data == 3) {
+        pos_data = 0;
+      }
+      else {
+        pos_data++;
+      }
+    }
+
+    //pos_data = 3;
+
+  
+    
+    new_data = x_coord << 4 | y_coord << 2 | pos_data;
+    // x x x | y y | p p 
     // will appear as decimal value
     
     printf("Now sending new map data\n");
@@ -199,14 +224,14 @@ void loop(void)
 
     unsigned long got_data_t;
       radio.read( &got_data_t, sizeof(unsigned long) );
-      String got_string = String(bitRead(got_data_t, 7)) + String(bitRead(got_data_t, 6)) + String(bitRead(got_data_t, 5)) + String(bitRead(got_data_t, 4)) + String(bitRead(got_data_t, 3)) + String(bitRead(got_data_t, 2)) + String(bitRead(got_data_t, 1)) + String(bitRead(got_data_t, 0));
-
+      //String got_string = String(bitRead(got_data_t, 7)) + String(bitRead(got_data_t, 6)) + String(bitRead(got_data_t, 5)) + String(bitRead(got_data_t, 4)) + String(bitRead(got_data_t, 3)) + String(bitRead(got_data_t, 2)) + String(bitRead(got_data_t, 1)) + String(bitRead(got_data_t, 0));
+      String got_string = String(bitRead(got_data_t, 6)) + String(bitRead(got_data_t, 5)) + String(bitRead(got_data_t, 4)) + String(bitRead(got_data_t, 3)) + String(bitRead(got_data_t, 2)) + String(bitRead(got_data_t, 1)) + String(bitRead(got_data_t, 0));
       // Spew it
       Serial.println("Got response " + got_string);
       }
 
     // Try again 1s later
-    delay(1000);
+    delay(2000);
   }
 
   //
@@ -229,20 +254,32 @@ void loop(void)
         // Spew it
         // Print the received data as a decimal
 
+        /*
         digitalWrite(8, LOW);
         delay(1000);
         digitalWrite(8, HIGH);
         delay(1000);
-        //digitalWrite(0, bitRead(got_data, 0) ? HIGH : LOW);
-        digitalWrite(1, bitRead(got_data, 1) ? HIGH : LOW);
-        digitalWrite(2, bitRead(got_data, 2) ? HIGH : LOW);
+        */
+        /*
+        digitalWrite(8, bitRead(got_data, 0) ? HIGH : LOW);
+        digitalWrite(1, bitRead(got_data, 2) ? HIGH : LOW);
+        digitalWrite(2, bitRead(got_data, 1) ? HIGH : LOW);
         digitalWrite(3, bitRead(got_data, 3) ? HIGH : LOW);
         digitalWrite(4, bitRead(got_data, 4) ? HIGH : LOW);
         digitalWrite(5, bitRead(got_data, 5) ? HIGH : LOW);
         digitalWrite(6, bitRead(got_data, 6) ? HIGH : LOW);
         digitalWrite(7, bitRead(got_data, 7) ? HIGH : LOW);
+        */
 
-        String bin_string = String(bitRead(got_data, 7)) + String(bitRead(got_data, 6)) + String(bitRead(got_data, 5)) + String(bitRead(got_data, 4)) + String(bitRead(got_data, 3)) + String(bitRead(got_data, 2)) + String(bitRead(got_data, 1)) + String(bitRead(got_data, 0));
+        digitalWrite(2, bitRead(got_data, 0) ? HIGH : LOW);
+        digitalWrite(3, bitRead(got_data, 1) ? HIGH : LOW);
+        digitalWrite(4, bitRead(got_data, 2) ? HIGH : LOW);
+        digitalWrite(5, bitRead(got_data, 3) ? HIGH : LOW);
+        digitalWrite(6, bitRead(got_data, 4) ? HIGH : LOW);
+        digitalWrite(7, bitRead(got_data, 5) ? HIGH : LOW);
+        digitalWrite(8, bitRead(got_data, 6) ? HIGH : LOW);
+        //String bin_string = String(bitRead(got_data, 7)) + String(bitRead(got_data, 6)) + String(bitRead(got_data, 5)) + String(bitRead(got_data, 4)) + String(bitRead(got_data, 3)) + String(bitRead(got_data, 2)) + String(bitRead(got_data, 1)) + String(bitRead(got_data, 0));
+        String bin_string = String(bitRead(got_data, 6)) + String(bitRead(got_data, 5)) + String(bitRead(got_data, 4)) + String(bitRead(got_data, 3)) + String(bitRead(got_data, 2)) + String(bitRead(got_data, 1)) + String(bitRead(got_data, 0));
         
         printf("Got payload... ");
         Serial.println(bin_string);
