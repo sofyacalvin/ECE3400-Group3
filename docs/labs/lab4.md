@@ -23,14 +23,14 @@ The objective of this lab
 Binary values: 
 
 row | col | data
-xxx | xxx | xx
+xxx | xx | xxx
 
 |   | 1          | 2          | 3          | 4          | 5          |
 |---|------------|------------|------------|------------|------------|
-| A | 001 001 xx | 010 001 xx | 011 001 xx | 100 001 xx | 101 001 xx |
-| B | 001 010 xx | 010 010 xx | 011 010 xx | 100 010 xx | 101 010 xx |
-| C | 001 011 xx | 010 011 xx | 011 011 xx | 100 011 xx | 101 011 xx |
-| D | 001 100 xx | 010 100 xx | 011 100 xx | 100 100 xx | 101 100 xx |
+| A | 000 00 xx | 001 00 xx | 010 00 xx | 100 001 xx | 101 001 xx |
+| B | 000 01 xx | 001 01 xx | 010 01 xx | 100 010 xx | 101 010 xx |
+| C | 000 10 xx | 001 10 xx | 010 10 xx | 100 011 xx | 101 011 xx |
+| D | 000 11 xx | 001 11 xx | 010 11 xx | 100 100 xx | 101 100 xx |
 
 #### Arduino and FPGA maze communication
 
