@@ -47,9 +47,11 @@ module DE0_NANO(
 	parameter green = 8'b000_111_00;
 	parameter blue = 8'b000_000_11;
 	parameter purple = 8'b011_000_11;
-	parameter wall = 8'b010_011_11;
+	parameter wall = 8'b111_100_10;
 	
-   
+   parameter weird_purple = 8'b010_000_01;
+	parameter dark_lavender = 8'b010_010_10;
+	parameter maroon = 8'b011_001_00;
 	 //=======================================================
 	 //  PORT declarations
 	 //=======================================================
@@ -89,14 +91,14 @@ module DE0_NANO(
 	 reg [24:0] led_counter; // timer to keep track of when to toggle LED
 	 reg 			led_state;   // 1 is on, 0 is off
 	 
-    reg [2:0] maze_state[0:4][0:3];
+    reg [1:0] maze_state[0:4][0:3];
 	
 	 //reg [1:0] current_row;
 	 //reg [2:0] current_col;
 	 
 	 wire [2:0] radio_x;
 	 wire [1:0] radio_y;
-	 wire [2:0] radio_value;
+	 wire [1:0] radio_value;
 	 
 	 // switch setup
 	 //wire switch_1;
@@ -137,7 +139,7 @@ module DE0_NANO(
 	 RADIO_READ driver2(
 			.RESET(reset),
 			.CLOCK(CLOCK_25),
-			.DATA_IN({GPIO_1_D[9],GPIO_1_D[11],GPIO_1_D[13],GPIO_1_D[15],GPIO_1_D[17],GPIO_1_D[19],GPIO_1_D[21],GPIO_1_D[23]}),
+			.DATA_IN({GPIO_1_D[9],GPIO_1_D[11],GPIO_1_D[13],GPIO_1_D[15],GPIO_1_D[17],GPIO_1_D[19],GPIO_1_D[21]}),
 			.RADIO_X(radio_x),
 			.RADIO_Y(radio_y),
 			.VALUE(radio_value)
@@ -145,16 +147,19 @@ module DE0_NANO(
 	 
 	 assign reset = ~KEY[0]; // reset when KEY0 is pressed
 	
-	 assign LED[0] = led_state;
-	 assign LED[1] = switch_1;
-	 assign LED[2] = switch_2;
-	 
+	 assign LED[0] = radio_value[0];
+	 assign LED[1] = radio_value[1];
+	 assign LED[2] = radio_y[0];
+	 assign LED[3] = radio_y[1];
+	 assign LED[4] = radio_x[0];
+	 assign LED[5] = radio_x[1];
+	 assign LED[6] = radio_x[2];
 	 
 	 
 	 initial begin
 		for(i = 0; i < 5; i = i+1) begin
 			for (j = 0; j < 4; j = j+1) begin
-				maze_state[i][j] = 3'd0;
+				maze_state[i][j] = 2'd0;
 			end
 		end
 	 end
@@ -183,65 +188,98 @@ module DE0_NANO(
 				case(PIX_X / 120)
 					4'd0 : begin
                 case(maze_state[PIX_X/120][PIX_Y/120])
-                  3'd0: PIXEL_COLOR <= red;
-                  3'd1: PIXEL_COLOR <=  orange;
-                  3'd2: PIXEL_COLOR <=  yellow;
-                  3'd3: PIXEL_COLOR <=  green;
-                  3'd4: PIXEL_COLOR <=  blue;
-                  3'd5: PIXEL_COLOR <=  purple;
-                  3'd6: PIXEL_COLOR <=  white;
-                  3'd7: PIXEL_COLOR <=  wall;
+                  2'd0: PIXEL_COLOR <= red;
+                  2'd1: PIXEL_COLOR <=  green;
+                  2'd2: PIXEL_COLOR <=  blue;
+                  2'd3: PIXEL_COLOR <=  white;
+                  2'd4: PIXEL_COLOR <=  blue;
+                  2'd5: PIXEL_COLOR <=  purple;
+                  2'd6: PIXEL_COLOR <=  white;
+                  2'd7: PIXEL_COLOR <=  wall;
                 endcase
 							 end
 					4'd1 : begin
                 case(maze_state[PIX_X/120][PIX_Y/120])
-                  3'd0: PIXEL_COLOR <= red;
-                  3'd1: PIXEL_COLOR <=  orange;
-                  3'd2: PIXEL_COLOR <=  yellow;
-                  3'd3: PIXEL_COLOR <=  green;
-                  3'd4: PIXEL_COLOR <=  blue;
-                  3'd5: PIXEL_COLOR <=  purple;
-                  3'd6: PIXEL_COLOR <=  white;
-                  3'd7: PIXEL_COLOR <=  wall;
+                  2'd0: PIXEL_COLOR <= red;
+                  2'd1: PIXEL_COLOR <=  green;
+                  2'd2: PIXEL_COLOR <=  blue;
+                  2'd3: PIXEL_COLOR <=  white;
+                  2'd4: PIXEL_COLOR <=  blue;
+                  2'd5: PIXEL_COLOR <=  purple;
+                  2'd6: PIXEL_COLOR <=  white;
+                  2'd7: PIXEL_COLOR <=  wall;
                 endcase
 							 end
-					4'd2 : PIXEL_COLOR <= black;
-					4'd3 : PIXEL_COLOR <= black;
-					4'd4 : PIXEL_COLOR <= black;
+					4'd2 : begin
+                case(maze_state[PIX_X/120][PIX_Y/120])
+                  2'd0: PIXEL_COLOR <= red;
+                  2'd1: PIXEL_COLOR <=  green;
+                  2'd2: PIXEL_COLOR <=  blue;
+                  2'd3: PIXEL_COLOR <=  white;
+                  2'd4: PIXEL_COLOR <=  blue;
+                  2'd5: PIXEL_COLOR <=  purple;
+                  2'd6: PIXEL_COLOR <=  white;
+                  2'd7: PIXEL_COLOR <=  wall;
+                endcase
+							 end
+					4'd3 :  begin
+                case(maze_state[PIX_X/120][PIX_Y/120])
+                  2'd0: PIXEL_COLOR <= red;
+                  2'd1: PIXEL_COLOR <=  green;
+                  2'd2: PIXEL_COLOR <=  blue;
+                  2'd3: PIXEL_COLOR <=  white;
+                  2'd4: PIXEL_COLOR <=  blue;
+                  2'd5: PIXEL_COLOR <=  purple;
+                  2'd6: PIXEL_COLOR <=  white;
+                  2'd7: PIXEL_COLOR <=  wall;
+                endcase
+							 end
+					4'd4 :  begin
+					 case(maze_state[PIX_X/120][PIX_Y/120])
+                  2'd0: PIXEL_COLOR <= red;
+                  2'd1: PIXEL_COLOR <=  green;
+                  2'd2: PIXEL_COLOR <=  blue;
+                  2'd3: PIXEL_COLOR <=  white;
+                  2'd4: PIXEL_COLOR <=  blue;
+                  2'd5: PIXEL_COLOR <=  purple;
+                  2'd6: PIXEL_COLOR <=  white;
+                  2'd7: PIXEL_COLOR <=  wall;
+                endcase
+							 end
 					4'd5 : PIXEL_COLOR <= black;
-					default: PIXEL_COLOR <= red;
+					default: PIXEL_COLOR <= gray;
 					endcase
 			4'd1 : 												// row B
 				case(PIX_X / 120)
 					4'd0 : begin
                 case(maze_state[PIX_X/120][PIX_Y/120])
-                  3'd0: PIXEL_COLOR <= red;
-                  3'd1: PIXEL_COLOR <=  orange;
-                  3'd2: PIXEL_COLOR <=  yellow;
-                  3'd3: PIXEL_COLOR <=  green;
-                  3'd4: PIXEL_COLOR <=  blue;
-                  3'd5: PIXEL_COLOR <=  purple;
-                  3'd6: PIXEL_COLOR <=  white;
-                  3'd7: PIXEL_COLOR <=  wall;
+                  2'd0: PIXEL_COLOR <= red;
+                  2'd1: PIXEL_COLOR <=  orange;
+                  2'd2: PIXEL_COLOR <=  yellow;
+                  2'd3: PIXEL_COLOR <=  green;
+                  2'd4: PIXEL_COLOR <=  blue;
+                  2'd5: PIXEL_COLOR <=  purple;
+                  2'd6: PIXEL_COLOR <=  white;
+                  2'd7: PIXEL_COLOR <=  wall;
                 endcase
 							 end
 					4'd1 : begin
                 case(maze_state[PIX_X/120][PIX_Y/120])
-                  3'd0: PIXEL_COLOR <= red;
-                  3'd1: PIXEL_COLOR <=  orange;
-                  3'd2: PIXEL_COLOR <=  yellow;
-                  3'd3: PIXEL_COLOR <=  green;
-                  3'd4: PIXEL_COLOR <=  blue;
-                  3'd5: PIXEL_COLOR <=  purple;
-                  3'd6: PIXEL_COLOR <=  white;
-                  3'd7: PIXEL_COLOR <=  wall;
+                  2'd0: PIXEL_COLOR <= red;
+                  2'd1: PIXEL_COLOR <=  orange;
+                  2'd2: PIXEL_COLOR <=  yellow;
+                  2'd3: PIXEL_COLOR <=  green;
+                  2'd4: PIXEL_COLOR <=  blue;
+                  2'd5: PIXEL_COLOR <=  purple;
+                  2'd6: PIXEL_COLOR <=  white;
+                  2'd7: PIXEL_COLOR <=  wall;
                 endcase
 							 end
 					4'd2 : PIXEL_COLOR <= black;
 					4'd3 : PIXEL_COLOR <= black;
 					4'd4 : PIXEL_COLOR <= black;
 					4'd5 : PIXEL_COLOR <= black;
-					default: PIXEL_COLOR <= red;
+					default: PIXEL_COLOR <= gray;
 					endcase
 			4'd2 : 												// row C
 				case(PIX_X / 120)
@@ -251,7 +289,7 @@ module DE0_NANO(
 					4'd3 : PIXEL_COLOR <= black;
 					4'd4 : PIXEL_COLOR <= black;
 					4'd5 : PIXEL_COLOR <= black;
-					default: PIXEL_COLOR <= red;
+					default: PIXEL_COLOR <= gray;
 					endcase
 			4'd3 : 												// row D
 				case(PIX_X / 120)
@@ -261,9 +299,9 @@ module DE0_NANO(
 					4'd3 : PIXEL_COLOR <= black;
 					4'd4 : PIXEL_COLOR <= black;
 					4'd5 : PIXEL_COLOR <= black;
-					default: PIXEL_COLOR <= red;
+					default: PIXEL_COLOR <= gray;
 					endcase
-			default: PIXEL_COLOR <= green;
+			default: PIXEL_COLOR <= orange;
 			endcase
 	 end
 	 
