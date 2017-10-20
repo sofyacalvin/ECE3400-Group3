@@ -52,6 +52,10 @@ const char* role_friendly_name[] = { "invalid", "Ping out", "Pong back"};
 // The role of the current running sketch
 role_e role = role_pong_back;
 
+unsigned char y_coord = 0;
+unsigned char x_coord = 0;
+unsigned char pos_data = 0;
+
 void setup(void)
 {
   //
@@ -116,6 +120,15 @@ void setup(void)
   //
 
   radio.printDetails();
+
+  pinMode(8, OUTPUT);
+  pinMode(1, OUTPUT);
+  pinMode(2, OUTPUT);
+  pinMode(3, OUTPUT);
+  pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
+  pinMode(6, OUTPUT);
+  pinMode(7, OUTPUT);
 }
 
 void loop(void)
@@ -134,13 +147,30 @@ void loop(void)
 
     unsigned char new_data;
 
-    unsigned char x_coord = 2;
-    unsigned char y_coord = 4;
-    unsigned char pos_data = 3;
-    // 2 | 4 | 3 = 010_100_11
-    // decimal 83
-    new_data = x_coord << 5 | y_coord << 2 | pos_data;
-
+    if (x_coord == 4) {
+      if (y_coord < 3) {
+        x_coord = 0;
+        y_coord++;
+      }
+      else { //last
+        x_coord = 0;
+        y_coord = 0;
+      }
+    }
+    else {
+      x_coord++;
+    }
+    if (pos_data == 1) {
+      pos_data = 2;
+    }
+    else {
+      pos_data = 1;
+    }
+    
+    new_data = x_coord << 5 | y_coord << 3 | pos_data;
+    // x x x | y y | p p p
+    // will appear as decimal value
+    
     printf("Now sending new map data\n");
     bool ok = radio.write( &new_data, sizeof(unsigned char) );
     
@@ -167,11 +197,12 @@ void loop(void)
     else
     {
 
-    unsigned long got_time;
-      radio.read( &got_time, sizeof(unsigned long) );
+    unsigned long got_data_t;
+      radio.read( &got_data_t, sizeof(unsigned long) );
+      String got_string = String(bitRead(got_data_t, 7)) + String(bitRead(got_data_t, 6)) + String(bitRead(got_data_t, 5)) + String(bitRead(got_data_t, 4)) + String(bitRead(got_data_t, 3)) + String(bitRead(got_data_t, 2)) + String(bitRead(got_data_t, 1)) + String(bitRead(got_data_t, 0));
 
       // Spew it
-      printf("Got response %lu, round-trip delay: %lu\n\r",got_time,millis()-got_time);
+      Serial.println("Got response " + got_string);
       }
 
     // Try again 1s later
@@ -190,18 +221,35 @@ void loop(void)
       // Dump the payloads until we've gotten everything
       
       unsigned char got_data;
+      
       bool done = false;
       while (!done) {
         // Fetch the payload, and see if this was the last one.
         done = radio.read( &got_data, sizeof(unsigned char) );
-      
         // Spew it
         // Print the received data as a decimal
-        printf("Got payload %d...",got_data);
 
-      // Delay just a little bit to let the other unit
-      // make the transition to receiver
-      delay(20);
+        digitalWrite(8, LOW);
+        delay(1000);
+        digitalWrite(8, HIGH);
+        delay(1000);
+        //digitalWrite(0, bitRead(got_data, 0) ? HIGH : LOW);
+        digitalWrite(1, bitRead(got_data, 1) ? HIGH : LOW);
+        digitalWrite(2, bitRead(got_data, 2) ? HIGH : LOW);
+        digitalWrite(3, bitRead(got_data, 3) ? HIGH : LOW);
+        digitalWrite(4, bitRead(got_data, 4) ? HIGH : LOW);
+        digitalWrite(5, bitRead(got_data, 5) ? HIGH : LOW);
+        digitalWrite(6, bitRead(got_data, 6) ? HIGH : LOW);
+        digitalWrite(7, bitRead(got_data, 7) ? HIGH : LOW);
+
+        String bin_string = String(bitRead(got_data, 7)) + String(bitRead(got_data, 6)) + String(bitRead(got_data, 5)) + String(bitRead(got_data, 4)) + String(bitRead(got_data, 3)) + String(bitRead(got_data, 2)) + String(bitRead(got_data, 1)) + String(bitRead(got_data, 0));
+        
+        printf("Got payload... ");
+        Serial.println(bin_string);
+
+        // Delay just a little bit to let the other unit
+        // make the transition to receiver
+        delay(20);
 
       }
 
