@@ -76,11 +76,14 @@ module DE0_NANO(
 	 reg [24:0] led_counter; // timer to keep track of when to toggle LED
 	 reg 			led_state;   // 1 is on, 0 is off
 	 
-    reg [1:0] maze_state[0:3][0:4];
+    reg [2:0] maze_state[0:4][0:3];
 	
 	 reg [1:0] current_row;
 	 reg [2:0] current_col;
 	 
+	 wire [2:0] radio_x;
+	 wire [1:0] radio_y;
+	 wire [2:0] value;
 	 
 	 // switch setup
 	 wire switch_1;
@@ -100,70 +103,8 @@ module DE0_NANO(
 	reg [2:0]i;
 	reg [2:0]j;
 	
-	 initial begin
-		for(i = 0; i < 4; i = i+1) begin
-			for (j = 0; j < 5; j = j+1) begin
-				maze_state[i][j] = 2'd0;
-			end
-		end
-	 end
-	 
-	 always @ (posedge CLOCK_50) begin
 
-			
-			current_row = 2'd3;
-			current_col = 3'd2;
-			if (switch_1) maze_state[current_row][current_col] = 2'd2;
-			//else maze_state[current_row][current_col] = 2'd0;
-			
-			
-	 		case(PIXEL_COORD_Y / 120)
-			4'd0 : 												// row A
-				case(PIXEL_COORD_X / 120)
-					4'd0 : PIXEL_COLOR = (~switch_1 && ~switch_2) ? 8'b111_111_11: 8'b111_000_00;
-					4'd1 : PIXEL_COLOR = 8'b111_001_00;
-					4'd2 : PIXEL_COLOR = 8'b111_010_00;
-					4'd3 : PIXEL_COLOR = 8'b111_100_00;
-					4'd4 : PIXEL_COLOR = 8'b111_110_00;
-					4'd5 : PIXEL_COLOR = 8'b111_111_01;
-					default: PIXEL_COLOR = 8'b111_111_11;
-					endcase
-			4'd1 : 												// row B
-				case(PIXEL_COORD_X / 120)
-					4'd0 : PIXEL_COLOR = (~switch_1 && switch_2) ? 8'b111_111_11: 8'b111_111_00;
-					4'd1 : PIXEL_COLOR = 8'b000_001_00;
-					4'd2 : PIXEL_COLOR = 8'b000_010_00;
-					4'd3 : PIXEL_COLOR = 8'b000_100_00;
-					4'd4 : PIXEL_COLOR = 8'b000_110_00;
-					4'd5 : PIXEL_COLOR = 8'b000_111_10;
-					default: PIXEL_COLOR = 8'b111_111_11;
-					endcase
-			4'd2 : 												// row C
-				case(PIXEL_COORD_X / 120)
-					4'd0 : PIXEL_COLOR = (switch_1 && ~switch_2) ? 8'b111_111_11: 8'b111_111_00;
-					4'd1 : PIXEL_COLOR = 8'b110_111_00;
-					4'd2 : PIXEL_COLOR = 8'b101_111_00;
-					4'd3 : PIXEL_COLOR = 8'b100_111_00;
-					4'd4 : PIXEL_COLOR = 8'b011_111_00;
-					4'd5 : PIXEL_COLOR = 8'b001_111_10;
-					default: PIXEL_COLOR = 8'b0;
-					endcase
-			4'd3 : 												// row D
-				case(PIXEL_COORD_X / 120)
-					4'd0 : PIXEL_COLOR = (switch_1 && switch_2) ? 8'b111_111_11: 8'b111_000_11;
-					4'd1 : PIXEL_COLOR = 8'b111_001_11;
-					4'd2 : begin
-								if (maze_state[current_row][current_col]== 2) PIXEL_COLOR = 8'b000_000_00;
-								else PIXEL_COLOR =  8'b000_000_11;
-							 end
-					4'd3 : PIXEL_COLOR = 8'b111_100_11;
-					4'd4 : PIXEL_COLOR = 8'b111_110_11;
-					4'd5 : PIXEL_COLOR = 8'b111_111_10;
-					default: PIXEL_COLOR = 8'b0;
-					endcase
-			default: PIXEL_COLOR = 8'b000_111_00;
-			endcase
-	 end
+	 
 	 
 
 	 
@@ -179,16 +120,120 @@ module DE0_NANO(
         .V_SYNC_NEG(GPIO_0_D[5])
     );
 	 
+	 RADIO_READ driver2(
+			.RESET(reset),
+			.CLOCK(CLOCK_25),
+			.DATA_IN({GPIO_1_D[9],GPIO_1_D[11],GPIO_1_D[13],GPIO_1_D[15],GPIO_1_D[17],GPIO_1_D[19],GPIO_1_D[21],GPIO_1_D[23]}),
+			.RADIO_X(radio_x),
+			.RADIO_Y(radio_y),
+			.VALUE(value)
+	);
+	 
 	 assign reset = ~KEY[0]; // reset when KEY0 is pressed
 	
 	 assign LED[0] = led_state;
 	 assign LED[1] = switch_1;
 	 assign LED[2] = switch_2;
 	 
+	 
+	 
+	 initial begin
+		for(i = 0; i < 5; i = i+1) begin
+			for (j = 0; j < 4; j = j+1) begin
+				maze_state[i][j] = 3'd0;
+			end
+		end
+	 end
+	 	 
     //=======================================================
     //  Structural coding
     //=======================================================
  
+//	always @ (value) begin
+//		maze_state[radio_x][radio_y] <= value;
+//	end
+	 
+	 
+	 
+	 always @ (posedge CLOCK_50) begin
+
+			maze_state[radio_x][radio_y] <= value;
+			current_row <= 2'd3;
+			current_col <= 3'd2;
+			//if (switch_1) maze_state[current_row][current_col] <= 2'd2;
+			//else maze_state[current_row][current_col] = 2'd0;
+			
+			
+	 		case(PIXEL_COORD_Y / 120)
+			4'd0 : 												// row A
+				case(PIXEL_COORD_X / 120)
+					4'd0 : begin
+								if (maze_state[PIXEL_COORD_X/120][PIXEL_COORD_Y/120]== 2) PIXEL_COLOR <= 8'b000_000_00;
+								else PIXEL_COLOR <=  8'b000_000_11;
+							 end
+					4'd1 : begin
+								if (maze_state[PIXEL_COORD_X/120][PIXEL_COORD_Y/120]== 2) PIXEL_COLOR <= 8'b000_000_00;
+								else PIXEL_COLOR <=  8'b000_000_11;
+							 end
+					4'd2 : PIXEL_COLOR <= 8'b111_010_00;
+					4'd3 : PIXEL_COLOR <= 8'b111_100_00;
+					4'd4 : PIXEL_COLOR <= 8'b111_110_00;v
+					4'd5 : PIXEL_COLOR <= 8'b111_111_01;
+					default: PIXEL_COLOR <= 8'b111_111_11;
+					endcase
+			4'd1 : 												// row B
+				case(PIXEL_COORD_X / 120)
+					4'd0 : begin
+								if (maze_state[PIXEL_COORD_X/120][PIXEL_COORD_Y/120]== 1) PIXEL_COLOR <= 8'b000_000_00;
+								else PIXEL_COLOR <=  8'b000_000_11;
+							 end
+					4'd1 : begin
+								if (maze_state[PIXEL_COORD_X/120][PIXEL_COORD_Y/120]== 1) PIXEL_COLOR <= 8'b000_000_00;
+								else PIXEL_COLOR <=  8'b000_000_11;
+							 end
+					4'd2 : PIXEL_COLOR <= 8'b000_010_00;
+					4'd3 : PIXEL_COLOR <= 8'b000_100_00;
+					4'd4 : PIXEL_COLOR <= 8'b000_110_00;
+					4'd5 : PIXEL_COLOR <= 8'b000_111_10;
+					default: PIXEL_COLOR <= 8'b111_111_11;
+					endcase
+			4'd2 : 												// row C
+				case(PIXEL_COORD_X / 120)
+					4'd0 :begin
+								if (maze_state[PIXEL_COORD_X/120][PIXEL_COORD_Y/120]== 1) PIXEL_COLOR <= 8'b000_000_00;
+								else PIXEL_COLOR <=  8'b000_000_11;
+							 end
+					4'd1 : PIXEL_COLOR <= 8'b110_111_00;
+					4'd2 : PIXEL_COLOR <= 8'b101_111_00;
+					4'd3 : PIXEL_COLOR <= 8'b100_111_00;
+					4'd4 : PIXEL_COLOR <= 8'b011_111_00;
+					4'd5 : PIXEL_COLOR <= 8'b001_111_10;
+					default: PIXEL_COLOR <= 8'b0;
+					endcase
+			4'd3 : 												// row D
+				case(PIXEL_COORD_X / 120)
+					4'd0 :begin
+								if (maze_state[PIXEL_COORD_X/120][PIXEL_COORD_Y/120]== 2) PIXEL_COLOR <= 8'b000_000_00;
+								else PIXEL_COLOR <=  8'b000_000_11;
+							 end
+					4'd1 : PIXEL_COLOR <= 8'b111_001_11;
+					4'd2 : begin
+								if (maze_state[PIXEL_COORD_X/120][PIXEL_COORD_Y/120]== 2) PIXEL_COLOR <= 8'b000_000_00;
+								else PIXEL_COLOR <=  8'b000_000_11;
+							 end
+					4'd3 : begin
+								if (maze_state[PIXEL_COORD_X/120][PIXEL_COORD_Y/120]== 2) PIXEL_COLOR <= 8'b000_000_00;
+								else PIXEL_COLOR <=  8'b000_000_11;
+							 end
+					4'd4 : PIXEL_COLOR <= 8'b111_110_11;
+					4'd5 : PIXEL_COLOR <= 8'b111_111_10;
+					default: PIXEL_COLOR <= 8'b0;
+					endcase
+			default: PIXEL_COLOR <= 8'b000_111_00;
+			endcase
+	 end
+	 
+	 
 	 // Generate 25MHz clock for VGA, FPGA has 50 MHz clock
     always @ (posedge CLOCK_50) begin
         CLOCK_25 <= ~CLOCK_25; 
