@@ -37,6 +37,19 @@ module DE0_NANO(
 
 	 localparam ONE_SEC = 25000000; // one second in 25MHz clock cycles
 	 
+   	
+	parameter white = 8'b111_111_11;
+	parameter gray = 8'b100_100_10;
+	parameter black = 8'b000_000_00;
+	parameter red = 8'b111_000_00;
+	parameter orange = 8'b111_111_00;
+	parameter yellow = 8'b100_111_00;
+	parameter green = 8'b000_111_00;
+	parameter blue = 8'b000_000_11;
+	parameter purple = 8'b011_000_11;
+	parameter wall = 8'b010_011_11;
+	
+   
 	 //=======================================================
 	 //  PORT declarations
 	 //=======================================================
@@ -69,8 +82,8 @@ module DE0_NANO(
     reg         CLOCK_25;
     wire        reset; // active high reset signal 
 
-    wire [9:0]  PIXEL_COORD_X; // current x-coord from VGA driver
-    wire [9:0]  PIXEL_COORD_Y; // current y-coord from VGA driver
+    wire [9:0]  PIX_X; // current x-coord from VGA driver
+    wire [9:0]  PIX_Y; // current y-coord from VGA driver
     reg [7:0]  PIXEL_COLOR;   // input 8-bit pixel color for current coords
 	 
 	 reg [24:0] led_counter; // timer to keep track of when to toggle LED
@@ -78,19 +91,19 @@ module DE0_NANO(
 	 
     reg [2:0] maze_state[0:4][0:3];
 	
-	 reg [1:0] current_row;
-	 reg [2:0] current_col;
+	 //reg [1:0] current_row;
+	 //reg [2:0] current_col;
 	 
 	 wire [2:0] radio_x;
 	 wire [1:0] radio_y;
-	 wire [2:0] value;
+	 wire [2:0] radio_value;
 	 
 	 // switch setup
-	 wire switch_1;
-	 wire switch_2;
+	 //wire switch_1;
+	 //wire switch_2;
 	 
-	 assign switch_1 = GPIO_1_D[4]; //arduino 12
-	 assign switch_2 = GPIO_1_D[7]; //arduino 13
+	 //assign switch_1 = GPIO_1_D[4]; //arduino 12
+	 //assign switch_2 = GPIO_1_D[7]; //arduino 13
 	 
 	 // current highlighted square
 	 wire highlighted_x;
@@ -100,8 +113,9 @@ module DE0_NANO(
 	 assign highlighted_x = GPIO_0_D[33];
 	 assign highlighted_y = GPIO_0_D[31];
 
-	reg [2:0]i;
-	reg [2:0]j;
+  //loop variables
+	reg [2:0] i; 
+	reg [2:0] j;
 	
 
 	 
@@ -113,8 +127,8 @@ module DE0_NANO(
 		  .RESET(reset),
         .CLOCK(CLOCK_25),
         .PIXEL_COLOR_IN(PIXEL_COLOR),
-        .PIXEL_X(PIXEL_COORD_X),
-        .PIXEL_Y(PIXEL_COORD_Y),
+        .PIXEL_X(PIX_X),
+        .PIXEL_Y(PIX_Y),
         .PIXEL_COLOR_OUT({GPIO_0_D[9],GPIO_0_D[11],GPIO_0_D[13],GPIO_0_D[15],GPIO_0_D[17],GPIO_0_D[19],GPIO_0_D[21],GPIO_0_D[23]}),
         .H_SYNC_NEG(GPIO_0_D[7]),
         .V_SYNC_NEG(GPIO_0_D[5])
@@ -126,7 +140,7 @@ module DE0_NANO(
 			.DATA_IN({GPIO_1_D[9],GPIO_1_D[11],GPIO_1_D[13],GPIO_1_D[15],GPIO_1_D[17],GPIO_1_D[19],GPIO_1_D[21],GPIO_1_D[23]}),
 			.RADIO_X(radio_x),
 			.RADIO_Y(radio_y),
-			.VALUE(value)
+			.VALUE(radio_value)
 	);
 	 
 	 assign reset = ~KEY[0]; // reset when KEY0 is pressed
@@ -157,79 +171,99 @@ module DE0_NANO(
 	 
 	 always @ (posedge CLOCK_50) begin
 
-			maze_state[radio_x][radio_y] <= value;
-			current_row <= 2'd3;
-			current_col <= 3'd2;
+			maze_state[radio_x][radio_y] <= radio_value;
+			//current_row <= 2'd3;
+			//current_col <= 3'd2;
 			//if (switch_1) maze_state[current_row][current_col] <= 2'd2;
 			//else maze_state[current_row][current_col] = 2'd0;
 			
 			
-	 		case(PIXEL_COORD_Y / 120)
+	 		case(PIX_Y / 120)
 			4'd0 : 												// row A
-				case(PIXEL_COORD_X / 120)
+				case(PIX_X / 120)
 					4'd0 : begin
-								if (maze_state[PIXEL_COORD_X/120][PIXEL_COORD_Y/120]== 2) PIXEL_COLOR <= 8'b000_000_00;
-								else PIXEL_COLOR <=  8'b000_000_11;
+                case(maze_state[PIX_X/120][PIX_Y/120])
+                  3'd0: PIXEL_COLOR <= red;
+                  3'd1: PIXEL_COLOR <=  orange;
+                  3'd2: PIXEL_COLOR <=  yellow;
+                  3'd3: PIXEL_COLOR <=  green;
+                  3'd4: PIXEL_COLOR <=  blue;
+                  3'd5: PIXEL_COLOR <=  purple;
+                  3'd6: PIXEL_COLOR <=  white;
+                  3'd7: PIXEL_COLOR <=  wall;
+                endcase
 							 end
 					4'd1 : begin
-								if (maze_state[PIXEL_COORD_X/120][PIXEL_COORD_Y/120]== 2) PIXEL_COLOR <= 8'b000_000_00;
-								else PIXEL_COLOR <=  8'b000_000_11;
+                case(maze_state[PIX_X/120][PIX_Y/120])
+                  3'd0: PIXEL_COLOR <= red;
+                  3'd1: PIXEL_COLOR <=  orange;
+                  3'd2: PIXEL_COLOR <=  yellow;
+                  3'd3: PIXEL_COLOR <=  green;
+                  3'd4: PIXEL_COLOR <=  blue;
+                  3'd5: PIXEL_COLOR <=  purple;
+                  3'd6: PIXEL_COLOR <=  white;
+                  3'd7: PIXEL_COLOR <=  wall;
+                endcase
 							 end
-					4'd2 : PIXEL_COLOR <= 8'b111_010_00;
-					4'd3 : PIXEL_COLOR <= 8'b111_100_00;
-					4'd4 : PIXEL_COLOR <= 8'b111_110_00;v
-					4'd5 : PIXEL_COLOR <= 8'b111_111_01;
-					default: PIXEL_COLOR <= 8'b111_111_11;
+					4'd2 : PIXEL_COLOR <= black;
+					4'd3 : PIXEL_COLOR <= black;
+					4'd4 : PIXEL_COLOR <= black;
+					4'd5 : PIXEL_COLOR <= black;
+					default: PIXEL_COLOR <= red;
 					endcase
 			4'd1 : 												// row B
-				case(PIXEL_COORD_X / 120)
+				case(PIX_X / 120)
 					4'd0 : begin
-								if (maze_state[PIXEL_COORD_X/120][PIXEL_COORD_Y/120]== 1) PIXEL_COLOR <= 8'b000_000_00;
-								else PIXEL_COLOR <=  8'b000_000_11;
+                case(maze_state[PIX_X/120][PIX_Y/120])
+                  3'd0: PIXEL_COLOR <= red;
+                  3'd1: PIXEL_COLOR <=  orange;
+                  3'd2: PIXEL_COLOR <=  yellow;
+                  3'd3: PIXEL_COLOR <=  green;
+                  3'd4: PIXEL_COLOR <=  blue;
+                  3'd5: PIXEL_COLOR <=  purple;
+                  3'd6: PIXEL_COLOR <=  white;
+                  3'd7: PIXEL_COLOR <=  wall;
+                endcase
 							 end
 					4'd1 : begin
-								if (maze_state[PIXEL_COORD_X/120][PIXEL_COORD_Y/120]== 1) PIXEL_COLOR <= 8'b000_000_00;
-								else PIXEL_COLOR <=  8'b000_000_11;
+                case(maze_state[PIX_X/120][PIX_Y/120])
+                  3'd0: PIXEL_COLOR <= red;
+                  3'd1: PIXEL_COLOR <=  orange;
+                  3'd2: PIXEL_COLOR <=  yellow;
+                  3'd3: PIXEL_COLOR <=  green;
+                  3'd4: PIXEL_COLOR <=  blue;
+                  3'd5: PIXEL_COLOR <=  purple;
+                  3'd6: PIXEL_COLOR <=  white;
+                  3'd7: PIXEL_COLOR <=  wall;
+                endcase
 							 end
-					4'd2 : PIXEL_COLOR <= 8'b000_010_00;
-					4'd3 : PIXEL_COLOR <= 8'b000_100_00;
-					4'd4 : PIXEL_COLOR <= 8'b000_110_00;
-					4'd5 : PIXEL_COLOR <= 8'b000_111_10;
-					default: PIXEL_COLOR <= 8'b111_111_11;
+					4'd2 : PIXEL_COLOR <= black;
+					4'd3 : PIXEL_COLOR <= black;
+					4'd4 : PIXEL_COLOR <= black;
+					4'd5 : PIXEL_COLOR <= black;
+					default: PIXEL_COLOR <= red;
 					endcase
 			4'd2 : 												// row C
-				case(PIXEL_COORD_X / 120)
-					4'd0 :begin
-								if (maze_state[PIXEL_COORD_X/120][PIXEL_COORD_Y/120]== 1) PIXEL_COLOR <= 8'b000_000_00;
-								else PIXEL_COLOR <=  8'b000_000_11;
-							 end
-					4'd1 : PIXEL_COLOR <= 8'b110_111_00;
-					4'd2 : PIXEL_COLOR <= 8'b101_111_00;
-					4'd3 : PIXEL_COLOR <= 8'b100_111_00;
-					4'd4 : PIXEL_COLOR <= 8'b011_111_00;
-					4'd5 : PIXEL_COLOR <= 8'b001_111_10;
-					default: PIXEL_COLOR <= 8'b0;
+				case(PIX_X / 120)
+					4'd0 : PIXEL_COLOR <= black;
+					4'd1 : PIXEL_COLOR <= black;
+					4'd2 : PIXEL_COLOR <= black;
+					4'd3 : PIXEL_COLOR <= black;
+					4'd4 : PIXEL_COLOR <= black;
+					4'd5 : PIXEL_COLOR <= black;
+					default: PIXEL_COLOR <= red;
 					endcase
 			4'd3 : 												// row D
-				case(PIXEL_COORD_X / 120)
-					4'd0 :begin
-								if (maze_state[PIXEL_COORD_X/120][PIXEL_COORD_Y/120]== 2) PIXEL_COLOR <= 8'b000_000_00;
-								else PIXEL_COLOR <=  8'b000_000_11;
-							 end
-					4'd1 : PIXEL_COLOR <= 8'b111_001_11;
-					4'd2 : begin
-								if (maze_state[PIXEL_COORD_X/120][PIXEL_COORD_Y/120]== 2) PIXEL_COLOR <= 8'b000_000_00;
-								else PIXEL_COLOR <=  8'b000_000_11;
-							 end
-					4'd3 : begin
-								if (maze_state[PIXEL_COORD_X/120][PIXEL_COORD_Y/120]== 2) PIXEL_COLOR <= 8'b000_000_00;
-								else PIXEL_COLOR <=  8'b000_000_11;
-							 end
-					4'd4 : PIXEL_COLOR <= 8'b111_110_11;
-					4'd5 : PIXEL_COLOR <= 8'b111_111_10;
-					default: PIXEL_COLOR <= 8'b0;
+				case(PIX_X / 120)
+					4'd0 : PIXEL_COLOR <= black;
+					4'd1 : PIXEL_COLOR <= black;
+					4'd2 : PIXEL_COLOR <= black;
+					4'd3 : PIXEL_COLOR <= black;
+					4'd4 : PIXEL_COLOR <= black;
+					4'd5 : PIXEL_COLOR <= black;
+					default: PIXEL_COLOR <= red;
 					endcase
-			default: PIXEL_COLOR <= 8'b000_111_00;
+			default: PIXEL_COLOR <= green;
 			endcase
 	 end
 	 
