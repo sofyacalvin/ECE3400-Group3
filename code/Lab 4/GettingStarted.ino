@@ -51,10 +51,10 @@ const char* role_friendly_name[] = { "invalid", "Ping out", "Pong back"};
 
 // The role of the current running sketch
 role_e role = role_pong_back;
+unsigned char x_coord = -1;
+unsigned char y_coord = -1;
 
-unsigned char y_coord = 0;
-unsigned char x_coord = 0;
-unsigned char pos_data = 0;
+unsigned char pos_data = -1;
 
 void setup(void)
 {
@@ -147,6 +147,7 @@ void loop(void)
     unsigned long time = millis();
 
     unsigned char new_data;
+    
     /*
     if (x_coord == 4) {
       if (y_coord < 3) {
@@ -166,7 +167,13 @@ void loop(void)
     if (x_coord < 4) {
         x_coord++;
       }
-    else {
+    else { 
+      if (y_coord < 3) {
+        y_coord++;  
+      }
+      else {
+        y_coord = 0;
+      }
       x_coord = 0;
     }
     
@@ -179,7 +186,7 @@ void loop(void)
     }
     */
     
-    if (x_coord == 0) {
+    if (x_coord == 0 && y_coord == 0) { //starting over
       if (pos_data == 3) {
         pos_data = 0;
       }
@@ -225,13 +232,13 @@ void loop(void)
     unsigned long got_data_t;
       radio.read( &got_data_t, sizeof(unsigned long) );
       //String got_string = String(bitRead(got_data_t, 7)) + String(bitRead(got_data_t, 6)) + String(bitRead(got_data_t, 5)) + String(bitRead(got_data_t, 4)) + String(bitRead(got_data_t, 3)) + String(bitRead(got_data_t, 2)) + String(bitRead(got_data_t, 1)) + String(bitRead(got_data_t, 0));
-      String got_string = String(bitRead(got_data_t, 6)) + String(bitRead(got_data_t, 5)) + String(bitRead(got_data_t, 4)) + String(bitRead(got_data_t, 3)) + String(bitRead(got_data_t, 2)) + String(bitRead(got_data_t, 1)) + String(bitRead(got_data_t, 0));
+      String got_string = String(bitRead(got_data_t, 6)) + String(bitRead(got_data_t, 5)) + String(bitRead(got_data_t, 4)) + " " + String(bitRead(got_data_t, 3)) + String(bitRead(got_data_t, 2)) + " " + String(bitRead(got_data_t, 1)) + String(bitRead(got_data_t, 0));
       // Spew it
       Serial.println("Got response " + got_string);
       }
 
     // Try again 1s later
-    delay(2000);
+    delay(1000);
   }
 
   //
@@ -279,7 +286,7 @@ void loop(void)
         digitalWrite(7, bitRead(got_data, 5) ? HIGH : LOW);
         digitalWrite(8, bitRead(got_data, 6) ? HIGH : LOW);
         //String bin_string = String(bitRead(got_data, 7)) + String(bitRead(got_data, 6)) + String(bitRead(got_data, 5)) + String(bitRead(got_data, 4)) + String(bitRead(got_data, 3)) + String(bitRead(got_data, 2)) + String(bitRead(got_data, 1)) + String(bitRead(got_data, 0));
-        String bin_string = String(bitRead(got_data, 6)) + String(bitRead(got_data, 5)) + String(bitRead(got_data, 4)) + String(bitRead(got_data, 3)) + String(bitRead(got_data, 2)) + String(bitRead(got_data, 1)) + String(bitRead(got_data, 0));
+        String bin_string = String(bitRead(got_data, 6)) + String(bitRead(got_data, 5)) + String(bitRead(got_data, 4)) + " " + String(bitRead(got_data, 3)) + String(bitRead(got_data, 2)) + " " + String(bitRead(got_data, 1)) + String(bitRead(got_data, 0));
         
         printf("Got payload... ");
         Serial.println(bin_string);
