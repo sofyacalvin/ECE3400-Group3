@@ -42,7 +42,7 @@ module DE0_NANO(
 	parameter gray = 8'b100_100_10;
 	parameter black = 8'b000_000_00;
 	parameter red = 8'b111_000_00;
-	parameter orange = 8'b111_111_00;
+	parameter orange = 8'b111_011_00;
 	parameter yellow = 8'b100_111_00;
 	parameter green = 8'b000_111_00;
 	parameter blue = 8'b000_000_11;
@@ -119,9 +119,10 @@ module DE0_NANO(
 	reg [2:0] i; 
 	reg [2:0] j;
 	
-
-	 
-	 
+	reg [2:0] grid_x;
+	reg [1:0] grid_y;
+	reg [5:0] grid_counter; 
+	reg [1:0] maze_vector [0:19]; 
 
 	 
     // Module outputs coordinates of next pixel to be written onto screen
@@ -147,6 +148,16 @@ module DE0_NANO(
 	 
 	 assign reset = ~KEY[0]; // reset when KEY0 is pressed
 	
+//	 assign LED[0] = maze_state[4][0][0];
+//	 assign LED[1] = maze_state[4][0][1];
+//	 assign LED[2] = maze_state[4][1][0];
+//	 assign LED[3] = maze_state[4][1][1];
+//	 assign LED[4] = maze_state[4][2][0];
+//	 assign LED[5] = maze_state[4][2][1];
+//	 assign LED[6] = maze_state[4][3][0];
+//	 assign LED[7] = maze_state[4][3][1];
+//	 
+
 	 assign LED[0] = radio_value[0];
 	 assign LED[1] = radio_value[1];
 	 assign LED[2] = radio_y[0];
@@ -174,137 +185,245 @@ module DE0_NANO(
 	 
 	 
 	 
-	 always @ (posedge CLOCK_50) begin
+	 always @ (posedge CLOCK_25) begin
+	 grid_y <= PIX_Y/120;
+	 grid_x <= PIX_X/120;
+	 grid_counter <= radio_x + 5*radio_y;
+	 
+	 for(i = 0; i < 5; i = i+1) begin
+			for (j = 0; j < 4; j = j+1) begin
+				if ((i+5*j) <= grid_counter) maze_state[i][j] <= radio_value;
+				else begin
+					if (radio_value == 0) begin
+						maze_state[i][j] <= 3;
+					end
+					else begin
+						maze_state[i][j] <= radio_value - 1;
+					end
+				end
+				
+			end
+		end
+	 
+	 
+	 
 
-			maze_state[radio_x][radio_y] <= radio_value;
-			//current_row <= 2'd3;
-			//current_col <= 3'd2;
-			//if (switch_1) maze_state[current_row][current_col] <= 2'd2;
-			//else maze_state[current_row][current_col] = 2'd0;
+//		for(i = 0; i < 5; i = i+1) begin
+//			for (j = 0; j < 4; j = j+1) begin
+//				if (i == radio_x && j == radio_y) begin
+//					maze_state[i][j] <= radio_value;
+//					end
+//				else begin
+//					if (radio_value == 0) begin
+//						maze_state[i][j] <= 3;
+//					end
+//					else begin
+//						maze_state[i][j] <= radio_value - 1;
+//					end
+//				end
+//				if(i < radio_x && j <= radio_y)begin
+//					maze_state[i][j] <= radio_value;
+//					end
+//				
+//			end
+//		end
+
+		//maze_state[radio_x][radio_y] <= radio_value;
+
 			
-			
-	 		case(PIX_Y / 120)
-			4'd0 : 												// row A
-				case(PIX_X / 120)
+	 	case(grid_y)
+			4'd0 : begin												// row A
+				case(grid_x)
 					4'd0 : begin
-                case(maze_state[PIX_X/120][PIX_Y/120])
-                  2'd0: PIXEL_COLOR <= red;
-                  2'd1: PIXEL_COLOR <=  green;
-                  2'd2: PIXEL_COLOR <=  blue;
-                  2'd3: PIXEL_COLOR <=  white;
-                  2'd4: PIXEL_COLOR <=  blue;
-                  2'd5: PIXEL_COLOR <=  purple;
-                  2'd6: PIXEL_COLOR <=  white;
-                  2'd7: PIXEL_COLOR <=  wall;
-                endcase
-							 end
+						case(maze_state[grid_x][grid_y])
+							2'd0: PIXEL_COLOR <= red;
+							2'd1: PIXEL_COLOR <=  green;
+							2'd2: PIXEL_COLOR <=  blue;
+							2'd3: PIXEL_COLOR <=  white;
+						endcase
+						end
 					4'd1 : begin
-                case(maze_state[PIX_X/120][PIX_Y/120])
+                case(maze_state[grid_x][grid_y])
                   2'd0: PIXEL_COLOR <= red;
                   2'd1: PIXEL_COLOR <=  green;
                   2'd2: PIXEL_COLOR <=  blue;
                   2'd3: PIXEL_COLOR <=  white;
-                  2'd4: PIXEL_COLOR <=  blue;
-                  2'd5: PIXEL_COLOR <=  purple;
-                  2'd6: PIXEL_COLOR <=  white;
-                  2'd7: PIXEL_COLOR <=  wall;
                 endcase
 							 end
 					4'd2 : begin
-                case(maze_state[PIX_X/120][PIX_Y/120])
+                case(maze_state[grid_x][grid_y])
                   2'd0: PIXEL_COLOR <= red;
                   2'd1: PIXEL_COLOR <=  green;
                   2'd2: PIXEL_COLOR <=  blue;
                   2'd3: PIXEL_COLOR <=  white;
-                  2'd4: PIXEL_COLOR <=  blue;
-                  2'd5: PIXEL_COLOR <=  purple;
-                  2'd6: PIXEL_COLOR <=  white;
-                  2'd7: PIXEL_COLOR <=  wall;
                 endcase
 							 end
-					4'd3 :  begin
-                case(maze_state[PIX_X/120][PIX_Y/120])
+					4'd3 : begin
+                case(maze_state[grid_x][grid_y])
                   2'd0: PIXEL_COLOR <= red;
                   2'd1: PIXEL_COLOR <=  green;
                   2'd2: PIXEL_COLOR <=  blue;
                   2'd3: PIXEL_COLOR <=  white;
-                  2'd4: PIXEL_COLOR <=  blue;
-                  2'd5: PIXEL_COLOR <=  purple;
-                  2'd6: PIXEL_COLOR <=  white;
-                  2'd7: PIXEL_COLOR <=  wall;
                 endcase
 							 end
-					4'd4 :  begin
-					 case(maze_state[PIX_X/120][PIX_Y/120])
+					4'd4 : begin
+                case(maze_state[grid_x][grid_y])
                   2'd0: PIXEL_COLOR <= red;
                   2'd1: PIXEL_COLOR <=  green;
                   2'd2: PIXEL_COLOR <=  blue;
                   2'd3: PIXEL_COLOR <=  white;
-                  2'd4: PIXEL_COLOR <=  blue;
-                  2'd5: PIXEL_COLOR <=  purple;
-                  2'd6: PIXEL_COLOR <=  white;
-                  2'd7: PIXEL_COLOR <=  wall;
                 endcase
 							 end
 					4'd5 : PIXEL_COLOR <= black;
 					default: PIXEL_COLOR <= gray;
 					endcase
-			4'd1 : 												// row B
-				case(PIX_X / 120)
+					end
+			4'd1 : 	begin											// row B
+				case(grid_x)
 					4'd0 : begin
-                case(maze_state[PIX_X/120][PIX_Y/120])
+                case(maze_state[grid_x][grid_y])
                   2'd0: PIXEL_COLOR <= red;
-                  2'd1: PIXEL_COLOR <=  orange;
-                  2'd2: PIXEL_COLOR <=  yellow;
-                  2'd3: PIXEL_COLOR <=  green;
-                  2'd4: PIXEL_COLOR <=  blue;
-                  2'd5: PIXEL_COLOR <=  purple;
-                  2'd6: PIXEL_COLOR <=  white;
-                  2'd7: PIXEL_COLOR <=  wall;
+                  2'd1: PIXEL_COLOR <=  green;
+                  2'd2: PIXEL_COLOR <=  blue;
+                  2'd3: PIXEL_COLOR <=  white;
                 endcase
 							 end
 					4'd1 : begin
-                case(maze_state[PIX_X/120][PIX_Y/120])
+                case(maze_state[grid_x][grid_y])
                   2'd0: PIXEL_COLOR <= red;
-                  2'd1: PIXEL_COLOR <=  orange;
-                  2'd2: PIXEL_COLOR <=  yellow;
-                  2'd3: PIXEL_COLOR <=  green;
-                  2'd4: PIXEL_COLOR <=  blue;
-                  2'd5: PIXEL_COLOR <=  purple;
-                  2'd6: PIXEL_COLOR <=  white;
-                  2'd7: PIXEL_COLOR <=  wall;
+                  2'd1: PIXEL_COLOR <=  green;
+                  2'd2: PIXEL_COLOR <=  blue;
+                  2'd3: PIXEL_COLOR <=  white;
                 endcase
 							 end
-					4'd2 : PIXEL_COLOR <= black;
-					4'd3 : PIXEL_COLOR <= black;
-					4'd4 : PIXEL_COLOR <= black;
+					4'd2 : begin
+                case(maze_state[grid_x][grid_y])
+                  2'd0: PIXEL_COLOR <= red;
+                  2'd1: PIXEL_COLOR <=  green;
+                  2'd2: PIXEL_COLOR <=  blue;
+                  2'd3: PIXEL_COLOR <=  white;
+                endcase
+							 end
+					4'd3 : begin
+                case(maze_state[grid_x][grid_y])
+                  2'd0: PIXEL_COLOR <= red;
+                  2'd1: PIXEL_COLOR <=  green;
+                  2'd2: PIXEL_COLOR <=  blue;
+                  2'd3: PIXEL_COLOR <=  white;
+                endcase
+							 end
+					4'd4 : begin
+                case(maze_state[grid_x][grid_y])
+                  2'd0: PIXEL_COLOR <= red;
+                  2'd1: PIXEL_COLOR <=  green;
+                  2'd2: PIXEL_COLOR <=  blue;
+                  2'd3: PIXEL_COLOR <=  white;
+                endcase
+							 end
 					4'd5 : PIXEL_COLOR <= black;
 					default: PIXEL_COLOR <= gray;
 					endcase
-			4'd2 : 												// row C
-				case(PIX_X / 120)
-					4'd0 : PIXEL_COLOR <= black;
-					4'd1 : PIXEL_COLOR <= black;
-					4'd2 : PIXEL_COLOR <= black;
-					4'd3 : PIXEL_COLOR <= black;
-					4'd4 : PIXEL_COLOR <= black;
+					end
+			4'd2 : 	begin											// row C
+								case(grid_x)
+					4'd0 : begin
+                case(maze_state[grid_x][grid_y])
+                  2'd0: PIXEL_COLOR <= red;
+                  2'd1: PIXEL_COLOR <=  green;
+                  2'd2: PIXEL_COLOR <=  blue;
+                  2'd3: PIXEL_COLOR <=  white;
+                endcase
+							 end
+					4'd1 : begin
+                case(maze_state[grid_x][grid_y])
+                  2'd0: PIXEL_COLOR <= red;
+                  2'd1: PIXEL_COLOR <=  green;
+                  2'd2: PIXEL_COLOR <=  blue;
+                  2'd3: PIXEL_COLOR <=  white;
+                endcase
+							 end
+					4'd2 : begin
+                case(maze_state[grid_x][grid_y])
+                  2'd0: PIXEL_COLOR <= red;
+                  2'd1: PIXEL_COLOR <=  green;
+                  2'd2: PIXEL_COLOR <=  blue;
+                  2'd3: PIXEL_COLOR <=  white;
+                endcase
+							 end
+					4'd3 : begin
+                case(maze_state[grid_x][grid_y])
+                  2'd0: PIXEL_COLOR <= red;
+                  2'd1: PIXEL_COLOR <=  green;
+                  2'd2: PIXEL_COLOR <=  blue;
+                  2'd3: PIXEL_COLOR <=  white;
+                endcase
+							 end
+					4'd4 : begin
+                case(maze_state[grid_x][grid_y])
+                  2'd0: PIXEL_COLOR <= red;
+                  2'd1: PIXEL_COLOR <=  green;
+                  2'd2: PIXEL_COLOR <=  blue;
+                  2'd3: PIXEL_COLOR <=  white;
+                endcase
+							 end
 					4'd5 : PIXEL_COLOR <= black;
 					default: PIXEL_COLOR <= gray;
 					endcase
-			4'd3 : 												// row D
-				case(PIX_X / 120)
-					4'd0 : PIXEL_COLOR <= black;
-					4'd1 : PIXEL_COLOR <= black;
-					4'd2 : PIXEL_COLOR <= black;
-					4'd3 : PIXEL_COLOR <= black;
-					4'd4 : PIXEL_COLOR <= black;
+					end
+			4'd3 : 		begin										// row D
+				case(grid_x)
+					4'd0 : begin
+                case(maze_state[grid_x][grid_y])
+                  2'd0: PIXEL_COLOR <= red;
+                  2'd1: PIXEL_COLOR <=  green;
+                  2'd2: PIXEL_COLOR <=  blue;
+                  2'd3: PIXEL_COLOR <=  white;
+                endcase
+							 end
+					4'd1 : begin
+                case(maze_state[grid_x][grid_y])
+                  2'd0: PIXEL_COLOR <= red;
+                  2'd1: PIXEL_COLOR <=  green;
+                  2'd2: PIXEL_COLOR <=  blue;
+                  2'd3: PIXEL_COLOR <=  white;
+                endcase
+							 end
+					4'd2 : begin
+                case(maze_state[grid_x][grid_y])
+                  2'd0: PIXEL_COLOR <= red;
+                  2'd1: PIXEL_COLOR <=  green;
+                  2'd2: PIXEL_COLOR <=  blue;
+                  2'd3: PIXEL_COLOR <=  white;
+                endcase
+							 end
+					4'd3 : begin
+                case(maze_state[grid_x][grid_y])
+                  2'd0: PIXEL_COLOR <= red;
+                  2'd1: PIXEL_COLOR <=  green;
+                  2'd2: PIXEL_COLOR <=  blue;
+                  2'd3: PIXEL_COLOR <=  white;
+                endcase
+							 end
+					4'd4 : begin
+                case(maze_state[grid_x][grid_y])
+                  2'd0: PIXEL_COLOR <= red;
+                  2'd1: PIXEL_COLOR <=  green;
+                  2'd2: PIXEL_COLOR <=  blue;
+                  2'd3: PIXEL_COLOR <=  white;
+                endcase
+							 end
 					4'd5 : PIXEL_COLOR <= black;
 					default: PIXEL_COLOR <= gray;
 					endcase
+					end
 			default: PIXEL_COLOR <= orange;
 			endcase
 	 end
-	 
+//	 always @ (CLOCK_50) begin
+//		if (PIX_X/120 == radio_x && PIX_Y/120 == radio_y) PIXEL_COLOR = green;
+//		else PIXEL_COLOR = maroon;
+//		end
+//		
 	 
 	 // Generate 25MHz clock for VGA, FPGA has 50 MHz clock
     always @ (posedge CLOCK_50) begin
