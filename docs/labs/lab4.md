@@ -154,6 +154,8 @@ In order to store the incoming data, we created a 4x5 array of 2-bit values. Thi
 
 #### Displaying exploration
 
+![Circuit](../images/lab4/circuit.jpg)
+
 [![Displaying current location](http://img.youtube.com/vi/QG6HxMM3Pq4/0.jpg)](http://www.youtube.com/watch?v=QG6HxMM3Pq4)
 
 [![Old distinguishing visited sites](http://img.youtube.com/vi/UZrElPKMoSs/0.jpg)](http://www.youtube.com/watch?v=UZrElPKMoSs)
