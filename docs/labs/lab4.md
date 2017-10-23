@@ -28,35 +28,37 @@ This table is the binary representation of our 4x5 grid.
 
 To send the new data, we created a new variable (called *new_data*) as the packet to send to the base station. This is a 7-bit piece of information, in which the first three bits display the x position, the next two are y position, and the last two are state data. In order to display the data this way, we shift the x and y position data to fit next to the data. The debugging for the packet data is described later in this report.
 
-`
+```
 new_data = x_coord << 4 | y_coord << 2 | pos_data;
 // x x x | y y | d d
-`
+```
 
 To actually send this data, we follow a similar process in sending the whole maze. We send the new data through radio.write() again. 
 
-`
+```
 printf("Now sending new map data\n");
 bool ok = radio.write( &new_data, sizeof(unsigned char) );
+
 if (ok)
   printf("ok... \n");
 else
   printf("failed.\n\r");
+
 // Now, continue listening
 radio.startListening();
-`
+```
 
 To verify the data being transmitted and received, we simply read the data back and parse the string back into bits--which may not be the most efficient way to do it, but made debugging much simpler by seeing the binary represenation of the packet instead of binary.
 
-`
+```
 String got_string = String(bitRead(got_data_t, 6)) + String(bitRead(got_data_t, 5)) + String(bitRead(got_data_t, 4)) + " " + String(bitRead(got_data_t, 3)) + String(bitRead(got_data_t, 2)) + " " + String(bitRead(got_data_t, 1)) + String(bitRead(got_data_t, 0));
 // Spew it
 Serial.println("Got response " + got_string);
-`
+```
 
 On the receiving end, we similarly declare the variable of the data received (*got_data*) and verify if it was receieved. Using radio.read() we are able to take that data, print the result to the serial monitor. 
 
-`
+```
 unsigned char got_data;      
 bool done = false;
 while (!done) {
@@ -70,7 +72,7 @@ Serial.println(bin_string);
 // Delay just a little bit to let the other unit
 // make the transition to receiver
 delay(20);
-`
+```
 
 
 For now, we are simulating exploration by methodically incrementing the data to travel the entire grid.
