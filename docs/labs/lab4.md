@@ -16,6 +16,7 @@ The objective of this lab
 
 #### Sending new data
 
+
 ### FPGA
 
 #### Displaying full 4x5 grid
@@ -26,7 +27,7 @@ In order to store the incoming data, we created a 4x5 array of 2-bit values. Thi
 Binary values: 
 
 row | col | data
-xxx | xx | xxx
+xxx | xx | xx
 
 |   | 0          | 1          | 2          | 3          | 4          |
 |---|------------|------------|------------|------------|------------|
