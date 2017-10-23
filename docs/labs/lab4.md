@@ -19,6 +19,9 @@ The objective of this lab
 ### FPGA
 
 #### Displaying full 4x5 grid
+As in lab 3, we split the screen into rows and then columns using nested case statements. These nested case statements create the necessary 4x5 grid and allow us to set the pixel color within each square. Previously the color had been hard coded, but now is determined by data sent from the Ardiuno.
+In order to store the incoming data, we created a 4x5 array of 2-bit values. This array is updated every time the FPGA recieves information from the Arduino. 
+
 
 Binary values: 
 
