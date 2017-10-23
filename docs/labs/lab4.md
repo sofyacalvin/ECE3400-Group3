@@ -11,6 +11,15 @@ The objective of this lab was to implement radio communication between two Ardui
 ### Radio
 
 #### Wireless sending between Arduinos
+The majority of the wireless communication was implemented through the template code provided in GettingStarted and the RF24 library. We first calculated the identifier numbers for our pipes using the *2(3D + N) + X* formula provided. As Day 0 and and Team 3, our identifier values came out to be 6 and 7.
+
+```
+const uint64_t pipes[2] = { 0x0000000006LL, 0x0000000007LL };
+```
+
+The message (by default, set to a timestamp) is put into radio.write() in order to send it to the other, receiving radio. This transmitter then waits for a response (i.e. acknowledgement) that the data had been received correctly. Additionally, the ACK bit is already implemented. To receive the data, while it is not "done," radio.read() receives the data, which can be printed to the serial monitor.
+
+Putting this program on both Arduinos and setting one to T(ransmit) and the other to R(eceive), we were able to view the timestamps of the messages on both serial monitors. 
 
 #### Sending whole maze
 Sending the whole maze wirelessly was a fairly minor addition to the GettingStarted.ino template code. We started by defining an arbitrary 2D maze array and sent the maze in a single payload:
@@ -75,7 +84,7 @@ Sending the whole maze on each loop is evidently not the most efficient way to d
 
 This table is the binary representation of our 4x5 grid. 
 
-To send the new data, we created a new variable (called *new_data*) as the packet to send to the base station. This is a 7-bit piece of information, in which the first three bits display the x position, the next two are y position, and the last two are state data. In order to display the data this way, we shift the x and y position data to fit next to the data. The debugging for the packet data is described later in this report.
+To send the new data, we created a new variable (called *new_data*) as the packet to send to the base station. This is a 7-bit piece of information, in which the first three bits display the x position, the next two are y position, and the last two are state data. This was chosen as the grid is 5 wide, requiring 3 bits to describe each, but only 4 tall--requiring 2 bits. For testing purposes, we arbitrarily made 4 states, which also required 2 bits. In order to display the data this way, we shift the x and y position data to fit next to the data. The debugging for the packet data is described later in this report.
 
 ```
 new_data = x_coord << 4 | y_coord << 2 | pos_data;
