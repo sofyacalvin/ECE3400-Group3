@@ -19,6 +19,8 @@ We are the members of ¯\\\_(ツ)_/¯ for the Fall 2017 semester of ECE 3400 and
 
 [Lab 3: FPGA Video Controller and Sound Generation](./labs/lab3.md)
 
+[Lab 4: Radio Communication and Map Drawing](./labs/lab4.md)
+
 ## Milestones
 [Milestone 1](./milestones/Milestone1.md)
 
