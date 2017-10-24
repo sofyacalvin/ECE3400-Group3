@@ -19,7 +19,7 @@ const uint64_t pipes[2] = { 0x0000000006LL, 0x0000000007LL };
 
 The message (by default, set to a timestamp) is put into radio.write() in order to send it to the other, receiving radio. This transmitter then waits for a response (i.e. acknowledgement) that the data had been received correctly. Additionally, the ACK bit is already implemented. To receive the data, while it is not "done," radio.read() receives the data, which can be printed to the serial monitor.
 
-Putting this program on both Arduinos and setting one to T(ransmit) and the other to R(eceive), we were able to view the timestamps of the messages on both serial monitors. 
+We connected the two radios to the two Arduinos. Putting this program on both Arduinos and setting one to T(ransmit) and the other to R(eceive), we were able to view the timestamps of the messages on both serial monitors. 
 
 #### Sending whole maze
 Sending the whole maze wirelessly was a fairly minor addition to the GettingStarted.ino template code. We started by defining an arbitrary 2D maze array and sent the maze in a single payload:
@@ -46,7 +46,7 @@ unsigned char maze[4][5] =
     radio.startListening();
 ```
 
-Again, radio.write() does the heavy lifting of it, sending the data and assigning *ok* to true or false, printing the response accordingly. On the receiving end of things, we radio.read() the received data (called *got_maze*), printing it to the serial monitor by interating through the entire 2D array. The serial monitor looked as follows:
+Again, radio.write() does the heavy lifting of it, sending the data and assigning *ok* to true or false, printing the response accordingly (instsead of sending and receiving the timestamp). On the receiving end of things, we radio.read() the received data (called *got_maze*), printing it to the serial monitor by interating through the entire 2D array. The serial monitor looked as follows:
 
 ![Full maze serial monitor](../images/lab4/full_maze.png)
 
@@ -73,7 +73,7 @@ unsigned char got_maze[5][5];
 ```        
 
 #### Sending new data
-Sending the whole maze on each loop is evidently not the most efficient way to do it--particularly in relation to power consumption, if this were a larger-scale project. Instead, we chose to send only new, changing data (i.e. new position, discovered treasure, etc.). By initializing x and y coordinate variables as well as a "state" variable (called *x_coord, y_coord* and *pos_data* respectively), we will be able to simple increment the desired values to display the robot's position.
+Sending the whole maze on each loop was evidently not the most efficient way to do it--particularly in relation to power consumption, if this were a larger-scale project. Instead, we chose to send only new, changing data (i.e. new position, discovered treasure, etc.). By initializing x and y coordinate variables as well as a "state" variable (called *x_coord, y_coord* and *pos_data* respectively), we will be able to simple increment the desired values to display the robot's position.
 
 |   | 0          | 1          | 2          | 3          | 4          |
 |---|------------|------------|------------|------------|------------|
@@ -151,10 +151,19 @@ As in lab 3, we split the screen into rows and then columns using nested case st
 In order to store the incoming data, we created a 4x5 array of 2-bit values. This array is updated every time the FPGA recieves information from the Arduino. 
 
 #### Arduino and FPGA maze communication
+For this lab, we implemented parallel communication. Knowing the FPGA runs on 3.3V (as opposed to the Arduino's 5V), we built a series of 7 voltage dividers identical to the one we created in Lab 3. Each bit in the packet would transmit as an individual digital signal to the FPGA. 
+
+![Circuit](../images/lab4/circuit.jpg)
+
+////// add info about radio_read
+
+We will modify this to use SPI in the future.
+
 
 #### Displaying exploration
 
-![Circuit](../images/lab4/circuit.jpg)
+////// add general info
+
 
 [![Displaying current location](http://img.youtube.com/vi/QG6HxMM3Pq4/0.jpg)](http://www.youtube.com/watch?v=QG6HxMM3Pq4)
 
