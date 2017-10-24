@@ -148,25 +148,39 @@ We ran into some issues using the digital pins on the Arduino. We mistakenly att
 
 #### Displaying full 4x5 grid
 As in lab 3, we split the screen into rows and then columns using nested case statements. These nested case statements create the necessary 4x5 grid and allow us to set the pixel color within each square. Previously the color had been hard coded, but now is determined by data sent from the Ardiuno.
-In order to store the incoming data, we created a 4x5 array of 2-bit values. This array is updated every time the FPGA recieves information from the Arduino. 
+In order to store the incoming data, we created a 4x5 array of 2-bit values. This array is updated every time the FPGA recieves information from the Arduino.
 
 #### Arduino and FPGA maze communication
-For this lab, we implemented parallel communication. Knowing the FPGA runs on 3.3V (as opposed to the Arduino's 5V), we built a series of 7 voltage dividers identical to the one we created in Lab 3. Each bit in the packet would transmit as an individual digital signal to the FPGA. 
+For lab 4 we decided to use parallel communication between the arduino and the FPGA. We used parallel communication because we decided to send only a 7 bit number for the radio communication part. So the arduino would recieve the 7 bit number and output each of the 7 bits in a different digital pin. We then put the digital out through a voltage divider because the FPGA GPIO pins can only handle 3.3 V.  The circuit was connected as shown in the picture below.
 
 ![Circuit](../images/lab4/circuit.jpg)
 
-////// add info about radio_read
+We created a radio read module in verilog which simply mapped the first 3 bits as the column number and the next 2 bits as the row number and the last 2 bits as the state information. Then we used the code below to update our state machine depending on the signal that was being recieved. 
 
-We will modify this to use SPI in the future.
+```verilog
+for(i = 0; i < 5; i = i+1) begin
+	for (j = 0; j < 4; j = j+1) begin
+		if ((i+5*j) <= grid_counter) maze_state[i][j] <= radio_value;
+		else begin
+	    	if (radio_value == 0) begin
+				maze_state[i][j] <= 3;
+			end
+			else begin
+                maze_state[i][j] <= radio_value - 1;
+			end
+		end
+	end
+end
+```
+Then we displayed the map as we did in Lab 3 using the case statements and the VGA driver.
 
 
 #### Displaying exploration
 
-////// add general info
-
-
 [![Displaying current location](http://img.youtube.com/vi/QG6HxMM3Pq4/0.jpg)](http://www.youtube.com/watch?v=QG6HxMM3Pq4)
 
 [![Old distinguishing visited sites](http://img.youtube.com/vi/UZrElPKMoSs/0.jpg)](http://www.youtube.com/watch?v=UZrElPKMoSs)
+
+[![NEW distinguishing visited sites](http://img.youtube.com/vi/ltDu13pREOY/0.jpg)](https://www.youtube.com/watch?v=ltDu13pREOY)
 
 [Return to home](https://sofyacalvin.github.io/ece3400-group3/)
