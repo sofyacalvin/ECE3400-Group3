@@ -19,7 +19,7 @@ const uint64_t pipes[2] = { 0x0000000006LL, 0x0000000007LL };
 
 The message (by default, set to a timestamp) is put into radio.write() in order to send it to the other, receiving radio. This transmitter then waits for a response (i.e. acknowledgement) that the data had been received correctly. Additionally, the ACK bit is already implemented. To receive the data, while it is not "done," radio.read() receives the data, which can be printed to the serial monitor.
 
-We connected the two radios to the two Arduinos. Putting this program on both Arduinos and setting one to T(ransmit) and the other to R(eceive), we were able to view the timestamps of the messages on both serial monitors. 
+We connected the two radios to the two Arduinos. Putting this program on both Arduinos and setting one to T(ransmit) and the other to R(eceive), we were able to view the timestamps of the messages on both serial monitors. Furthermore, we found through physical testing that the wireless communication had a range of around 10 feet. This will be important to know later on when we implement wireless communication on Brooklynn.
 
 #### Sending whole maze
 Sending the whole maze wirelessly was a fairly minor addition to the GettingStarted.ino template code. We started by defining an arbitrary 2D maze array and sent the maze in a single payload:
