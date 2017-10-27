@@ -26,24 +26,27 @@ WIDTH = 100
 HEIGHT = 100
  
 # This sets the margin between each cell
-MARGIN = 5
+MARGIN = 10
  
 # Create a 2 dimensional array. A two dimensional
 # array is simply a list of lists.
 grid = []
-for row in range(4):
-    # Add an empty array that will hold each cell in this row
+for row in range(4): # number rows
     grid.append([])
-    for column in range(5):
+    for column in range(5): # number columns
         grid[row].append(0) 
- 
-grid[0][0] = 1
+
+wall = []
+for row in range(3): # rows
+    wall.append([])
+    for column in range(4): # columns
+        wall[row].append(0) 
  
 # Initialize pygame
 pygame.init()
  
 # Set the HEIGHT and WIDTH of the screen
-WINDOW_SIZE = [530, 425]
+WINDOW_SIZE = [560, 450]
 screen = pygame.display.set_mode(WINDOW_SIZE)
  
 # Set title of screen
@@ -56,6 +59,7 @@ done = False
 clock = pygame.time.Clock()
 
 start = [0,0]
+grid[start[0]][start[1]] = 1
 
 def dfs(graph, start):
     visited, frontier = [], [start]
@@ -71,10 +75,34 @@ def dfs(graph, start):
             grid[current[0]][current[1]] = 1
             
             """ DEFINE NEXT """
-            
-            
 
-            # frontier.append(next)
+            """
+            if current[1] = 4: # end of row
+
+
+        	else:
+        		next = [current[0], current[1] + 1] # right one
+        	"""
+
+            
+            try: 
+            	next = [current[0], current[1] + 1] # right one
+            	grid[next[0]][next[1]]
+            except IndexError:
+            	try:
+            		next = [current[0] + 1, current[1]] #down one
+            		grid[next[0]][next[1]]
+            	except IndexError:
+            		try:
+            			next = [current[0], current[1] - 1] #left one
+            			grid[next[0]][next[1]]
+            		except IndexError:
+            			next = [current[0] - 1, current[1]] #up one
+            			grid[next[0]][next[1]]
+			
+
+            print "next is " + str(next)
+            frontier.append(next)
     return visited
 
 # -------- Main Program Loop -----------
