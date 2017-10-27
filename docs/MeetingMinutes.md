@@ -108,3 +108,62 @@ Attendance: everyone is here
     * Will go in Friday
   * Nicely merged code?
   
+## October 19
+* All going in to lab today
+* No state array yet
+  * Can take info from variable and map pictures to walls and squares
+  * Can use any picture, run through Matlab thing
+  * State array needs:
+    * Walls: undiscovered, not there, there, 3 treasures
+  * Robot needs to determine orientation
+* Implement 4x5 grid with 1 byte packet for alb
+  * Can implement walls and other information after getting lab 4 working
+  
+## October 20
+* Emmett, Amanda to lab today
+  * Try not powering FPGA before uploading code
+* Discussion of issues currently with communication
+  * Pin 0 not working?
+  * FPGA not working??
+* Future discussion:
+  * Lab days to go in
+  * Perf board for Schmitt triggers
+  * Finish other Schmitt triggers
+  * Treasure sensors mounting
+    * Code and wiring needs to be integrated
+  * Do we want to use mux?
+    * Microphone
+  * Mounting microphone
+  * Look into exploration algorithms
+  * Organize state machine--what it would do in each state
+* Physical switch/potentiometer for starting orientation
+  * Keep track of orientation and box
+  
+## October 26
+* Lecture content/slides
+* Schmitt Triggers are done
+  * Outer two lines, side wall sensors
+  * Need to change code to reflect this
+* Milestone 3
+  * Simulation first
+* Thursday night lab:
+  * Everyone but Sofya can make it for some time
+  * Re-implement Lab 4/SPI
+  * Graphics portion
+* Friday afternoon:
+  * David until 3, Dylan starting 2:30, Amanda can make it
+* Saturday night:
+  * David tentative
+* Sofya will be back at some point around here
+* Monday afternoon: 
+  * normal lab, we’ll all be there
+* Monday night:
+  * Tentative Emmett
+  * Tentative Amanda
+* Tuesday afternoon:
+  * David
+  * Amanda at some point probably
+  * Emmett at some point probably
+* Wednesday:
+  * Dylan
+  * Emmett at some point probably
