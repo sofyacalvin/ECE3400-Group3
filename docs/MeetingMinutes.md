@@ -167,3 +167,11 @@ Attendance: everyone is here
 * Wednesday:
   * Dylan
   * Emmett at some point probably
+  
+## October 27
+* Put SPI on backburner for now
+* Fixing actual turning and line sensing
+  * Discussion on fastest turning
+* Python simulation for milestone 3
+* Dylan, David, Amanda will head to lab today
+  * Fix robot, continue Python simulation
