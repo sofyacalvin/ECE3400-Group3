@@ -58,7 +58,7 @@ The Maze class initializes the maze itself, which is a 2D array of Square object
 
 After initializing the squares, Maze, walls, and the Pygame library, we define two more functions--depth first search, and drawing the maze. The drawing function simply interfaces with the Pygame library, setting the color of the squares, and drawing in walls if applicable.
 
-Since Python allows modification of the size of lists, we initialize three lists to use as stacks--visited (i.e. which squares the robot has gone to), a frontier (in order, the next squares to visit), and a path (in order, the squares visited) to facilitate backtracking when it is needed. We use a variable "goback" to determine if a dead-end is hit, whether with walls or due to all adjacent squares being visited.
+Depth first search seemed like the natural go-to search algorithm, as a robot can efficiently continue down a path, but it cannot teleport to diagonal squares like breadth-first would require. Since Python allows modification of the size of lists, we initialize three lists to use as stacks--visited (i.e. which squares the robot has gone to), a frontier (in order, the next squares to visit), and a path (in order, the squares visited) to facilitate backtracking when it is needed. We use a variable "goback" to determine if a dead-end is hit, whether with walls or due to all adjacent squares being visited.
 
 Starting by adding the first, _start_ square to the frontier, if going back is not necessary, we set a _current_ variable to be what is popped off the frontier. We set this to be blue (against the green of visited squares) to signify it is the current square. Putting it in the path, additionally, if this square is not already visited, we put it in visited. 
 
@@ -81,6 +81,8 @@ At the end, the screen is cleared and "DONE" in text is displayed.
 Here are a few videos of the simulation:
 
 //////////////////// add videos
+
+In the future, we would like to implement Dijkstra's algorithm, particularly in relation to finding a path across the maze to an unvisited square when backtracking is required.
 
 ### Robot
 
