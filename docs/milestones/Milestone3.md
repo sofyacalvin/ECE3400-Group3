@@ -56,8 +56,31 @@ The Maze class initializes the maze itself, which is a 2D array of Square object
 					self.squares[row][col].right = 1
 ```
 
-After initializing the squares, Maze, walls, and the Pygame library, we define two more functions--depth first search, and drawing the maze. Since Python allows modification of the size of lists, we initialize three lists to use as stacks--visited (i.e. which squares the robot has gone to), a frontier (in order, the next squares to visit), and a path (in order, the squares visited) to facilitate backtracking when it is needed. We use a variable "goback" to determine if a dead-end is hit, whether with walls or due to all adjacent squares being visited.
+After initializing the squares, Maze, walls, and the Pygame library, we define two more functions--depth first search, and drawing the maze. The drawing function simply interfaces with the Pygame library, setting the color of the squares, and drawing in walls if applicable.
 
+Since Python allows modification of the size of lists, we initialize three lists to use as stacks--visited (i.e. which squares the robot has gone to), a frontier (in order, the next squares to visit), and a path (in order, the squares visited) to facilitate backtracking when it is needed. We use a variable "goback" to determine if a dead-end is hit, whether with walls or due to all adjacent squares being visited.
+
+Starting by adding the first, _start_ square to the frontier, if going back is not necessary, we set a _current_ variable to be what is popped off the frontier. We set this to be blue (against the green of visited squares) to signify it is the current square. Putting it in the path, additionally, if this square is not already visited, we put it in visited. 
+
+To determine how to add squares to the frontier, we set a definitive priority--most prioritized was east, then south, west, and north (as we set our grid to be landscape mode, with our start square in the top left). The simulation checks if there is a wall in a direction, and if not, set _next_ to that square. If the square should be visited, it is added to the frontier. 
+
+```
+    if current.up == 0: #if no wall to top
+	next =  squares[current.x - 1][current.y] #up one
+	hwall[current.x][current.y] = 0
+	if next not in visited:
+	    frontier.append(next)
+```
+
+This is repeated for each direction. If nothing was appended to the frontier, backtracking is required. 
+
+//////////////////// add stuff about backtracking
+
+At the end, the screen is cleared and "DONE" in text is displayed.
+
+Here are a few videos of the simulation:
+
+//////////////////// add videos
 
 ### Robot
 
