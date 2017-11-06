@@ -99,10 +99,17 @@ In the future, we would like to implement Dijkstra's algorithm, particularly in 
 
 ### Robot
 
-///content
+The concept for real-life implementation was to implement the bulk of it based on the Python simulation. We started from our robot base code that could sense walls and follow lines. In emulating our Square class, we created a Square struct with x and y coordinates.
 
-One of the tasks we faced in implementing DFS on the robot was reorienting the robot to properly turn to the next square. To do this, we kept track of the direction the robot with a variable, then used it in conjunction with the coordinates the robot was at and the coordinates the robot was to go next. From the coordinates, we determined if the robot was going north, south, east or west in reference to our maze map. This would give us both the cardinal direction and new orientation of the robot. 0 corresponded to north, 1 to east, 2 to south, and 3 to west. 
+```
+typedef struct{
+  int x; int y;
+} Square;
+```
 
+We utilized the [StackArray](https://playground.arduino.cc/Code/StackArray) library to implement a dynamic stack for our frontier and path. To keep track of the visited squares, we created an array of size 20 (the maximum amount of vistable squares in our 4x5 grid). We initialize our _start_ square to (0,0), and push it to the frontier. 
+
+The main change between our simulation and real-life implementation is keeping track of the robot's orientation, to properly turn to the next square. To do this, we kept track of the direction the robot with a variable, then used it in conjunction with the coordinates the robot was at and the coordinates the robot was to go next. From the coordinates, we determined if the robot was going north, south, east or west in reference to our maze map. This would give us both the cardinal direction and new orientation of the robot. 0 corresponded to north, 1 to east, 2 to south, and 3 to west. 
 
 ![Orientation Coordinate Map](../images/milestone3/Orientation-Coordinates.png)
 
