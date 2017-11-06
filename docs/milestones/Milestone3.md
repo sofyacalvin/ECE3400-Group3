@@ -98,6 +98,9 @@ In the future, we would like to implement Dijkstra's algorithm, particularly in 
 
 One of the tasks we faced in implementing DFS on the robot was reorienting the robot to properly turn to the next square. To do this, we kept track of the direction the robot with a variable, then used it in conjunction with the coordinates the robot was at and the coordinates the robot was to go next. From the coordinates, we determined if the robot was going north, south, east or west in reference to our maze map. This would give us both the cardinal direction and new orientation of the robot. 0 corresponded to north, 1 to east, 2 to south, and 3 to west. 
 
+
+![Orientation Coordinate Map](../images/milestone3/Orientation-Coordinates.png)
+
 ```
 char reorient(char current[], char next[], char curr_o) {
   char next_o = 0;
