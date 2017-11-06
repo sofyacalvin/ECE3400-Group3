@@ -94,4 +94,8 @@ In the future, we would like to implement Dijkstra's algorithm, particularly in 
 
 ### Robot
 
+///content
+
+[![Reorientation](http://img.youtube.com/vi/crRketHEy54/0.jpg)](https://www.youtube.com/watch?v=crRketHEy54)
+
 [Return to home](https://sofyacalvin.github.io/ece3400-group3/)
