@@ -78,13 +78,18 @@ To determine how to add squares to the frontier, we set a definitive priority--m
 	    frontier.append(next)
 ```
 
-This is repeated for each direction. If nothing was appended to the frontier, backtracking is required. 
+This is repeated for each direction. If nothing was appended to the frontier, backtracking is required. In this situation, for each node in the frontier, if it's been visited, it can be removed from the frontier. If there is anything left in the frontier, the top of the path (i.e. the most recently visited square) is appended, such that popping off the modified frontier will effectively backtrack on the previously taken path. This continues until the robot reaches its goal, or the next unexplored square. Once at this goal, _goback_ returns to 0.
 
-//////////////////// add stuff about backtracking
-
-At the end, the screen is cleared and "DONE" in text is displayed.
-
-Here are a few videos of the simulation:
+```
+for node in frontier:
+	if (node in visited):
+		frontier.remove(node)
+	tmp2 = path.pop()
+	if (len(frontier) != 0):
+		frontier.append(tmp2)
+	goback = 0
+```	    
+At the end, the screen is cleared and "DONE" in text is displayed. Here are a few videos of the simulation:
 
 [![DFS](http://img.youtube.com/vi/RPFqAKOzDf8/0.jpg)](https://www.youtube.com/watch?v=RPFqAKOzDf8)
 
