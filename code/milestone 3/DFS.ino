@@ -1,244 +1,277 @@
-#include <StackList.h>
+#include <StackArray.h>
 #include <Servo.h>
 
-StackList<unsigned char> frontier;
-unsigned char visited[20];  
-unsigned char inFrontier[20];
-unsigned char current;
+#define ROWS 4
+#define COLS 5
 
-unsigned x_pos = 0;
-unsigned y_pos = 0;
-int index = 0;
-int orientation = 0;
-int reorient = 0;//left is -1, straight is 0, right is -1
+#define LeftWall 3
+#define RightWall 4
+#define OutLineLeft 2
+#define OutLineRight 7
 
-//wall sensors
-int frontWall;
-int leftWall;
-int rightWall;
+typedef struct{
+  int x; int y;
+} Square;
 
-//line sensors
+//light sensors (analog)
+  //(>950 : black line ; <900 : white space)
 int inLeft;
 int inRight;
+
+//digital line sensors
+  //0 = black; 1 = white
 int outLeft;
 int outRight;
-int value = 200;
+
+//  //analog wall sensor ->
+  //wall: > 250; no wall: < 250
+int frontwall;
+
+//digital wall sensors ->
+  //0 = wall; 1 = no wall
+int wallL;
+int wallR;
+
+int goback;
+
+char orient;
+
+
 
 Servo leftservo;
 Servo rightservo;
+//Maze maze;
+
+// HWALL = {{1,1,1,1,1},
+//          {0,0,0,0,0},
+//          {0,0,0,0,0},
+//          {0,0,0,0,0},
+//          {1,1,1,1,1}}
+//
+// VWALL = {{1,0,0,0,0,1},
+//          {1,0,0,0,0,1},
+//          {1,0,0,0,0,1},
+//          {1,0,0,0,0,1}}
+
+Square visited[20];
+
+StackArray <Square> frontier;
+StackArray <Square> path;
+Square current;
+int visitedSize;
 
 void setup() {
-  // put your setup code here, to run once:
+  // initialize serial communication at 9600 bits per second:
   Serial.begin(9600);
   leftservo.attach(5);
   rightservo.attach(6);
-  frontier.push(x_pos << 2 | y_pos);
-
+  pinMode(OutLineLeft, INPUT);
+  pinMode(LeftWall, INPUT);
+  pinMode(RightWall, INPUT);
+  pinMode(OutLineRight, INPUT);
+  Square start;
+  start.x = 0;
+  start.y = 0;
+  frontier.push(start);
+  orient = 1;
 }
+
+
+// the loop routine runs over and over again forever:
 void loop() {
-  // put your main code here, to run repeatedly:
-  
-  
-  
-  while(!frontier.isEmpty()) {
-    current = frontier.pop();
-    //move to current
-    
-    //line following code
-    while (outLeft == 1|| outRight == 1){ //while both outer sensors see white
-      readSensor();
-    
-    if (abs(inLeft-inRight)<70) //if inner are similar
-       forward();
-    else if (inLeft>inRight){ //if tilted left, correct
-       leftservo.write(90);
-       rightservo.write(0);
+  dfs();
+}
+
+/********************************HELPER FUNCTIONS******************************/
+void dfs(){
+  Square current;
+  Square next;
+  char c_coor [] = {0,0};
+  char n_coor [] = {0,0};
+  //followline();
+
+  while(!frontier.isEmpty()){
+
+    if(goback == 0){
+      current = frontier.pop();
+      Serial.print("CURRENT:   ");
+      Serial.print(current.x);
+      Serial.println(current.y);
+      c_coor[0] = current.x;
+      c_coor[1] = current.y;
+      if (!isMember(current, visited, visitedSize)){
+        visited[visitedSize] = current;
+        visitedSize ++;
+        path.push(current);
+      }
+      int length = frontier.count();
+      if(wallL == 1){ //no wall on left
+        if(orient == 3){
+          next.x = current.x + 1;
+          next.y = current.y;
+        }
+        else if(orient == 2){
+          next.x = current.x;
+          next.y = current.y + 1;
+        }
+        else if(orient == 1){
+          next.x = current.x - 1;
+          next.y = current.y;
+        }
+        else if(orient == 0){
+          next.x = current.x;
+          next.y = current.y - 1;
+        }
+        if(!isMember(next, visited, visitedSize)){
+          frontier.push(next);
+        }
+      }
+      if(wallR == 1){ //no wall on right
+        if(orient == 3){
+          next.x = current.x - 1;
+          next.y = current.y;
+        }
+        else if(orient == 2){
+          next.x = current.x;
+          next.y = current.y - 1;
+        }
+        else if(orient == 1){
+          next.x = current.x + 1;
+          next.y = current.y;
+        }
+        else if(orient == 0){
+          next.x = current.x;
+          next.y = current.y + 1;
+        }
+        if(!isMember(next, visited, visitedSize)){
+          frontier.push(next);
+        }
+      }
+      if(frontwall < 200){ //no wall in front
+        if(orient == 3){
+          next.x = current.x;
+          next.y = current.y - 1;
+        }
+        else if(orient == 2){
+          next.x = current.x + 1;
+          next.y = current.y;
+        }
+        else if(orient == 1){
+          next.x = current.x;
+          next.y = current.y + 1;
+        }
+        else if(orient == 0){
+          next.x = current.x - 1;
+          next.y = current.y;
+        }
+        if(!isMember(next, visited, visitedSize)){
+          frontier.push(next);
+        }
+      }
+      if(frontier.count()>length){
+        goback = 0;
+      }
+      else{
+        goback = 1;
+      }
+      n_coor[0] = frontier.peek().x;
+      n_coor[1] = frontier.peek().y;
+      Serial.print("NEXT:   ");
+      Serial.print(next.x);
+      Serial.println(next.y);
+      orient = reorient(c_coor, n_coor, orient);
+//      followline();
     }
-    else if (inRight>inLeft){ //if tilted right
-      leftservo.write(180);
-      rightservo.write(90);
-    } 
-    readSensor();
-  }
-    //when at next square
-    index = (y_pos * 5) + x_pos;
-    if (!visited[index]) { //current is unvisited
-      addFrontier();
-      visited[index] = 1;
+    else{
+      next = frontier.pop();
+      if (!isMember(next, visited, visitedSize)){
+        if(frontier.count() > 0){
+          frontier.push(path.pop());
+          goback = 0;
+        }
+      }
     }
+    followline();
   }
+
 }
 
 
 
-
-
-
-/*
-
-// starting from top left (refer to map)
-void addFrontier(){
-  unsigned char next;
-  if (orientation == 0) { //facing east
-    if (leftWall == 0) { //north is path
-      next = x_pos << 2 | y_pos - 1;
-      frontier.push(next);
-      reorient = -1;
-    }
-    if (rightWall == 0){//south is path
-      next = x_pos << 2 | y_pos + 1;
-      frontier.push(next);
-      reorient = 1;
-    }
-    if (frontWall == value){//east is path--most prioritized
-      //assuming receieved data ignores "state data"
-      next = x_pos + 1 << 2 | y_pos;
-      frontier.push(next);
-      reorient = 0;
+bool isMember (Square a, Square visit[], int sizeV){
+  for(int i = 0; i < sizeV; i ++){
+    if (squareCompare(a,visit[i])){
+      return true;
     }
   }
-  
-  
-  else if (orientation == 1) { // facing south
-    if(rightWall == 0) { // west path
-      next = x_pos - 1 << 2 | y_pos;
-      frontier.push(next);
-      reorient = 1;
-    }
-    //south path
-    if (frontWall > value){  
-      next = x_pos << 2 | y_pos + 1;
-      frontier.push(next);
-      reorient = 0;
-    }
-    if (leftWall == 0) { //east
-      next = x_pos + 1 << 2 | y_pos;
-      frontier.push(next);
-      reorient = -1;
+  return false;
+}
+
+bool squareCompare (Square a, Square b){
+  if(a.x == b.x){
+    if(a.y == b.y){
+      return true;
     }
   }
-  
-  else if (orientation == 2) { // facing west
-    if(rightWall == 0) { // north path
-      next = x_pos << 2 | y_pos - 1;
-      frontier.push(next);
-      reorient = 1;
-    }
-    if (frontWall > value) { //west path
-      next = x_pos - 1 << 2 | y_pos;
-      frontier.push(next);
-      reorient = 0;
-    }
-    if (leftWall == 0) { //south
-      next = x_pos << 2 | y_pos + 1;
-      frontier.push(next);
-      reorient = -1;
-    }
+  return false;
+}
+
+
+char reorient(char current[], char next[], char curr_o) {
+  char next_o = 0;
+  char diff[] = {0, 0};
+  diff[0] = next[0]-current[0];
+  diff[1] = next[1]-current[1];
+
+  if (diff[0] == -1){ //north
+    next_o = 0;
   }
-  else if (orientation == 3) { // facing north
-    if(leftWall == 0) { // west path
-      next = x_pos - 1 << 2 | y_pos;
-      frontier.push(next);
-      reorient = -1;
-    }
-    if (frontWall > value) { //north path
-      next = x_pos << 2 | y_pos - 1;
-      frontier.push(next);
-      reorient = 0;
-    }
-    if (rightWall == 0) { //east
-      next = x_pos + 1 << 2 | y_pos;
-      frontier.push(next);
-      reorient = 1;
-    }
+  else if (diff[0] == 1){ // south
+    next_o = 2;
   }
-  if (reorient == 1){
+  else if (diff[1] == -1){ // west
+    next_o = 3;
+  }
+  else if (diff[1] == 1){ // east
+    next_o = 1;
+  }
+
+  if (next_o - curr_o == 0){
+    //straight
+    forward();
+    delay(200);
+  }
+  else if (next_o - curr_o == 1 || next_o - curr_o == -3){
+    //turn right
     right();
-        
+    delay(800);
   }
-  else if (reorient == -1){
+  else if (abs(next_o - curr_o) == 2){
+    //flip
+    flip();
+    delay(1250);
+  }
+  else if (next_o - curr_o == -1 || next_o - curr_o == 3){
+    //turn left
     left();
-        
+    delay(800);
   }
-}
-*/
 
+  curr_o = next_o;
+  Serial.println(curr_o);
 
-/*
-// starting from bottom left (refer to map)
-void addFrontier(){
-  unsigned char next;
-  if (orientation == 0) { //facing east
-    if (1){//south is path
-      next = x_pos << 2 | y_pos + 1;
-      frontier.push(next);
-    }
-    if (1) { //north is path
-      next = x_pos << 2 | y_pos - 1;
-      frontier.push(next);
-    }
-    if (1){//east is path--most prioritized
-      //assuming receieved data ignores "state data"
-      next = x_pos + 1 << 2 | y_pos;
-      frontier.push(next);
-    }
-  }
-  
-  else if (orientation == 1) { // facing south
-    if (1) { //south path
-      next = x_pos << 2 | y_pos + 1;
-      frontier.push(next);
-    }
-    if(1) { // west path
-      next = x_pos - 1 << 2 | y_pos;
-      frontier.push(next);
-    }
-    if (1) { //east
-      next = x_pos + 1 << 2 | y_pos;
-      frontier.push(next);
-    }
-  }
-  
-  else if (orientation == 2) { // facing west
-    if (1) { //south path
-      next = x_pos << 2 | y_pos + 1;
-      frontier.push(next);
-    }
-    if (1) { //west path
-      next = x_pos - 1 << 2 | y_pos;
-      frontier.push(next);
-    }
-    if(1) { // north path
-      next = x_pos << 2 | y_pos - 1;
-      frontier.push(next);
-    }
-  }
-  else if (orientation == 3) { // facing north
-    if(1) { // west path
-      next = x_pos - 1 << 2 | y_pos;
-      frontier.push(next);
-    }
-    if (1) { //north path
-      next = x_pos << 2 | y_pos - 1;
-      frontier.push(next);
-    }
-    if (1) { //east path
-      next = x_pos + 1 << 2 | y_pos;
-      frontier.push(next);
-    }
-  }
+  stp();
+  return curr_o;
 }
-*/
 
 void readSensor(){
   inLeft = analogRead(A0);
   inRight = analogRead(A1);
-  outLeft = digitalRead(2);
-  outRight = digitalRead(7);
-
-  frontWall = analogRead(A2);
-  leftWall = !digitalRead(3);
-  rightWall = !digitalRead(4);
+  frontwall = analogRead(A2);
+  outLeft = digitalRead(OutLineLeft);
+  outRight = digitalRead(OutLineRight);
+  wallL = digitalRead(LeftWall);
+  wallR = digitalRead(RightWall);
 }
 
 //turning functions
@@ -251,25 +284,44 @@ void forward() {
 void right() {
   leftservo.write(180);
   rightservo.write(95);
-  delay(500);
-  while(outLeft == 0 || outRight == 0) { //while out sees black, in sees white
-   readSensor();
-  }
-  while(inLeft < 900 && inRight < 900) { //while out sees black, in sees white
-   readSensor();
-        }
+  readSensor();
 }
 
 void left() {
   leftservo.write(85);
   rightservo.write(0);
-      delay(500);
-        while(outLeft == 0 || outRight == 0) { //while out sees black, in sees white
-          readSensor();
-        }
-        while(inLeft < 900 && inRight < 900) { //while out sees black, in sees white
-          readSensor();
-        }
+  readSensor();
+}
 
-  
+void flip() {
+  leftservo.write(180);
+  rightservo.write(180);
+  readSensor();
+  //delay(time);
+}
+
+
+void stp() {
+  leftservo.write(90);
+  rightservo.write(90);
+  readSensor();
+}
+
+void followline(){
+  while (outLeft == 1 || outRight == 1){ //while both outer sensors see white
+    readSensor();
+    if (abs(inLeft-inRight)<70){ //if inner are similar
+      forward();
+    }
+    else if (inLeft>inRight){ //if tilted left, correct
+       leftservo.write(90);
+       rightservo.write(0);
+    }
+    else if (inRight>inLeft){ //if tilted right
+      leftservo.write(180);
+       rightservo.write(90);
+    }
+    readSensor();
+  }
+  stp();
 }
