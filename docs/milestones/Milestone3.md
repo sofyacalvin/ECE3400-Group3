@@ -177,4 +177,37 @@ Finally, the robot updates its new orientation and returns to line following cod
 
 [![Reorientation](http://img.youtube.com/vi/crRketHEy54/0.jpg)](https://www.youtube.com/watch?v=crRketHEy54)
 
+Our reorientation code requires inputs of a _current_ square, the _next_ square, and the current _orientation_. These are given from our depth first search implementation. The DFS function follows the logic of our simulation, referring to each square by its (x,y) coordinates. While the frontier is not empty, if backtracking is not required, we find the _current_ node, check if it is visited, and visit it if it hasn't been. Again, it is also added to the path stack.
+
+To determine the coordinates of the next square, the wall sensors are checked. If there is no wall, the corresponding direction determines the next square to visit. If it has not yet been visited, it is added to the frontier. This happens in reverse order of our priority, and is repeated for each direction. 
+
+```
+if(wallL == 1){ //no wall on left
+        if(orient == 3){
+          next.x = current.x + 1;
+          next.y = current.y;
+        }
+        else if(orient == 2){
+          next.x = current.x;
+          next.y = current.y + 1;
+        }
+        else if(orient == 1){
+          next.x = current.x - 1;
+          next.y = current.y;
+        }
+        else if(orient == 0){
+          next.x = current.x;
+          next.y = current.y - 1;
+        }
+        if(!isMember(next, visited, visitedSize)){
+          frontier.push(next);
+        }
+      }
+...
+```
+
+isMember() is a function to simply check if a square has been visited. The definition of this function uses squareCompare(), which checks if the (x,y) coordinates of the two squares are equivalent.
+
+At the end of checking the wall sensors (of which we have three--two on the sides and one in front), if nothing was added to the frontier, the robot needs to backtrack. 
+
 [Return to home](https://sofyacalvin.github.io/ece3400-group3/)
