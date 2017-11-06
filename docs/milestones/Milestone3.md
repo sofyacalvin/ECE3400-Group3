@@ -127,6 +127,7 @@ The next part of the code calculated how the robot should turn based on how its 
 | 1, -3 | Right |
 | -2, 2 | Turn Around (Flip) |
 
+```
   if (next_o - curr_o == 0){
     //straight
     forward();
@@ -156,6 +157,7 @@ The next part of the code calculated how the robot should turn based on how its 
 }
 ```
 
+Finally, the robot updates its new orientation and returns to line following code. A video of the line following code being tested can be found below.
 
 [![Reorientation](http://img.youtube.com/vi/crRketHEy54/0.jpg)](https://www.youtube.com/watch?v=crRketHEy54)
 
