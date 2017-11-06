@@ -206,8 +206,10 @@ if(wallL == 1){ //no wall on left
 ...
 ```
 
-isMember() is a function to simply check if a square has been visited. The definition of this function uses squareCompare(), which checks if the (x,y) coordinates of the two squares are equivalent.
+isMember() is a function to simply check if a square has been visited. The definition of this function uses squareCompare(), which checks if the (x,y) coordinates of the two squares are equivalent. At this point, we wanted to check our basic DFS without walls was working. Here is the test:
 
-At the end of checking the wall sensors (of which we have three--two on the sides and one in front), if nothing was added to the frontier, the robot needs to backtrack. 
+[![DFS, no walls](http://img.youtube.com/vi/Xgz4F1bXa_Q/0.jpg)](https://www.youtube.com/watch?v=Xgz4F1bXa_Q)
+
+After determining this was successful, we returned to the code. At the end of checking the wall sensors (of which we have three--two on the sides and one in front), if nothing was added to the frontier, the robot needs to backtrack. 
 
 [Return to home](https://sofyacalvin.github.io/ece3400-group3/)
