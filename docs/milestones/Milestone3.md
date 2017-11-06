@@ -95,6 +95,67 @@ In the future, we would like to implement Dijkstra's algorithm, particularly in 
 ### Robot
 
 ///content
+One of the tasks we faced in implementing DFS on the robot was reorienting the robot to properly turn to the next square. To do this, we kept track of the direction the robot with a variable, then used it in conjunction with the coordinates the robot was at and the coordinates the robot was to go next. From the coordinates, we determined if the robot was going north, south, east or west in reference to our maze map. This would give us both the cardinal direction and new orientation of the robot. 0 corresponded to north, 1 to east, 2 to south, and 3 to west. 
+
+```
+char reorient(char current[], char next[], char curr_o) {
+  char next_o = 0;
+  char diff[] = {0, 0};
+  diff[0] = next[0]-current[0];
+  diff[1] = next[1]-current[1];
+  
+  if (diff[0] == -1){ //north
+    next_o = 0;
+  }
+  else if (diff[0] == 1){ // south
+    next_o = 2; 
+  }
+  else if (diff[1] == -1){ // west
+    next_o = 3; 
+  }
+  else if (diff[1] == 1){ // east
+    next_o = 1;
+  }
+```
+
+The next part of the code calculated how the robot should turn based on how its orientation should change. With the cardinal number system described above, we can determine whether the robot should go straight, turn left or right, or turn around by subracting the new orientation from the current orientation. A table below with the corresponding values calculated describes how the robot acts, and the next part of the code below shows this in action.
+
+| Calculated Value | Action |
+| ---------------- |:------:|
+| 0 | Straight |
+| -1, 3 | Left |
+| 1, -3 | Right |
+| -2, 2 | Turn Around (Flip) |
+
+  if (next_o - curr_o == 0){
+    //straight
+    forward();
+    delay(200);
+  }
+  else if (next_o - curr_o == 1 || next_o - curr_o == -3){
+    //turn right
+    right();
+    delay(800);
+  }
+  else if (abs(next_o - curr_o) == 2){
+    //flip
+    flip();
+    delay(1250);
+  }
+  else if (next_o - curr_o == -1 || next_o - curr_o == 3){
+    //turn left
+    left();
+    delay(800);
+  }
+  
+  curr_o = next_o;
+  Serial.println(curr_o);
+  
+  stp();
+  return curr_o;
+}
+```
+
 
 [![Reorientation](http://img.youtube.com/vi/crRketHEy54/0.jpg)](https://www.youtube.com/watch?v=crRketHEy54)
 
