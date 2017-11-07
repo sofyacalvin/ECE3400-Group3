@@ -212,4 +212,6 @@ isMember() is a function to simply check if a square has been visited. The defin
 
 After determining this was successful, we returned to the code. At the end of checking the wall sensors (of which we have three--two on the sides and one in front), if nothing was added to the frontier, the robot needs to backtrack. 
 
+//add video, explanation of what's wrong
+
 [Return to home](https://sofyacalvin.github.io/ece3400-group3/)
