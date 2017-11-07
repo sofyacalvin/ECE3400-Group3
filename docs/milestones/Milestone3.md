@@ -212,7 +212,7 @@ isMember() is a function to simply check if a square has been visited. The defin
 
 After determining this was successful, we returned to the code. At the end of checking the wall sensors (of which we have three--two on the sides and one in front), if nothing was added to the frontier, the robot needs to backtrack. 
 
-//explanation of what's wrong
+Currently, this is as far as we have been able to implement the Arduino code. Outputting the next square to the Serial Monitor, the robot knows where it needs to go, but currently fails to begin the backtracking process. In the future, we will add the implementation of going back on its path, and later, Dijkstra's algorithm instead of pure backtracking in order to find the shortest path to the next unvisited square. For now, we are still able to search the maze up until it needs to go back.
 
 [![DFS, no backtracking](http://img.youtube.com/vi/PIfQIYtSzbo/0.jpg)](https://www.youtube.com/watch?v=PIfQIYtSzbo)
 
