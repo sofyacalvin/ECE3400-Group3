@@ -1,3 +1,7 @@
+#define LOG_OUT 1 // use the log output function
+#define FFT_N 64 // set to 64 point fft
+
+#include <FFT.h>
 #include <StackArray.h>
 #include <Servo.h>
 #include <SPI.h>
@@ -45,9 +49,7 @@ Servo rightservo;
 
 RF24 radio(9,10);
 const uint64_t pipes[2] = { 0x0000000006LL, 0x0000000007LL };
-//unsigned char x_coord = 0;
-//unsigned char y_coord = 0;
-//unsigned char curr_o = 1; // N = 0; E = 1; S = 2; W = 3
+
 unsigned char walls = B1111; // N E S W
 unsigned char treasures = 0; // 17 | 12 | 7
 unsigned char done = 0;
@@ -62,6 +64,12 @@ int visitedSize;
 void setup() {
   // initialize serial communication at 9600 bits per second:
   Serial.begin(9600);
+
+  TIMSK0 = 0; // turn off timer0 for lower jitter
+  ADCSRA = 0xe5; // set the adc to free running mode
+  ADMUX = 0x43; // use adc3
+  DIDR0 = 0x04; // turn off the digital input for adc3
+  
   printf_begin();
   leftservo.attach(5);
   rightservo.attach(6);
@@ -100,6 +108,7 @@ void setup() {
 // the loop routine runs over and over again forever:
 void loop() {
   walls = B1111;
+  treasures = B000;
   dfs();
 }
 
@@ -408,3 +417,51 @@ void radio_send(char curr_o, char x_coord, char y_coord){
     // Try again 1s later
     delay(250); 
 }
+
+void find_treasures() {
+  //while(1) { // reduces jitter
+    if (ADMUX == 0x43){
+      ADMUX = 0x44;
+      DIDR0 = 0x05;
+    }
+    else if (ADMUX == 0x44){
+      ADMUX = 0x43;
+      DIDR0 = 0x04;
+    }
+  
+    cli();  // UDRE interrupt slows this way down on arduino1.0
+    for (int i = 0 ; i < 128 ; i += 2) { // save 256 samples
+      while(!(ADCSRA & 0x10)); // wait for adc to be ready
+      ADCSRA = 0xf5; // restart adc
+      byte m = ADCL; // fetch adc data
+      byte j = ADCH;
+      int k = (j << 8) | m; // form into an int
+      k -= 0x0200; // form into a signed int
+      k <<= 6; // form into a 16b signed int
+      fft_input[i] = k; // put real data into even bins
+      fft_input[i+1] = 0; // set odd bins to 0
+    }
+    fft_window(); // window the data for better frequency response
+    fft_reorder(); // reorder the data before doing the fft
+    fft_run(); // process the data in the fft
+    fft_mag_log(); // take the output of the fft
+    sei();
+    //Serial.println("start");
+    //Serial.println(ADMUX);
+    for (byte i = 0 ; i < FFT_N/2 ; i++) { 
+      //Serial.println(fft_log_out[i]); // send out the data      
+    }
+    
+    if (fft_log_out[12] > 100) { //7kHz
+      treasures |= 1;
+    }
+    if (fft_log_out[20] > 100) { //12kHz      
+      treasures |= 1 << 1;
+    }
+    if (fft_log_out[28] > 100) { //17kHz
+      treasures |= 1 << 2;
+    }        
+    
+    Serial.println(treasures); // send out the data
+    
+  }
