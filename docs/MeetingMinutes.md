@@ -178,95 +178,94 @@ Attendance: everyone is here
 
 ## November 2
 * Simulation
- * Needs finish signal
-  * Add in lab tonight
- * Need video
+  * Needs finish signal
+    * Add in lab tonight
+  * Need video
 * Lab today
- * Emmett possibly (SPI)
- * "Go to desired square, turn toward desired direction"
-  * Amanda
-  * Dylan
- * Arduino logic
-  * David
+  * Emmett possibly (SPI)
+  * "Go to desired square, turn toward desired direction"
+    * Amanda
+    * Dylan
+  * Arduino logic
+    * David
 * Walk through simulation code to implement in Arduino later
- * Need to implement in Arduino/C
- * Robot is currently functional; just need to write code
+  * Need to implement in Arduino/C
+  * Robot is currently functional; just need to write code
 * How to communicate maze?
- * X,Y vs index
- * Sending 12 bits
-  * X X X | Y Y | N E S W | T T T 
-  * 1 1 1 | 1 1 | whatever  = done signal?
-  * FPGA will need to determine 9x7 coordinates vs 5x4
-* 
+  * X,Y vs index
+  * Sending 12 bits
+    * X X X | Y Y | N E S W | T T T 
+    * 1 1 1 | 1 1 | whatever  = done signal?
+    * FPGA will need to determine 9x7 coordinates vs 5x4
 
 
 ## November 3
 * Discussion of turning/destination logic
- * Notes posted in Slack
- * Will go to lab at 1:30
+  * Notes posted in Slack
+  * Will go to lab at 1:30
 * DFS implementation on Arduino
- * David
+  * David
 * Finish signal in simulation done
- * Video will be posted on youtube
+  * Video will be posted on youtube
 * Writeup
- * Backtracking: Sofya
- * Turning: Dylan
- * Base simulation: Amanda
- * Conversion to Arduino: David
+  * Backtracking: Sofya
+  * Turning: Dylan
+  * Base simulation: Amanda
+  * Conversion to Arduino: David
 
 ## November 10
 * Discussion of attendance?
 * Packet data 
- * / | D | T T T | W W W W | O O | X X X | Y Y
+  * / | D | T T T | W W W W | O O | X X X | Y Y
 * Old stuff
- * Need to finish DFS on robot
- * Fix front wall sensor sensitivity
+  * Need to finish DFS on robot
+  * Fix front wall sensor sensitivity
 * Milestone 4
- * Mount treasure sensors
- * Send/receive full packet of data
-  * Create packets, add lab 4 code
- * Write code from previous labs into main DFS code
-  * Interrupt-based
-  * Treasure sensing
- * Display… everything 😥
-  * Walls
-  * Treasures
-  * Done signal
+  * Mount treasure sensors
+  * Send/receive full packet of data
+    * Create packets, add lab 4 code
+  * Write code from previous labs into main DFS code
+    * Interrupt-based
+    * Treasure sensing
+  * Display… everything 😥
+    * Walls
+    * Treasures
+    * Done signal
 * Else
- * Mount microphone
-  * Integrate code
+  * Mount microphone
+   * Integrate code
 * Lab schedule
- * Friday
-  * Emmett
-  * Amanda
- * Saturday
-  * Sofya at 5
-  * Amanda for a period of time
-  * Emmett for a period of time
- * Monday
-  * Lab section
- * Tuesday
-  * David
-  * Emmett
- * Wednesday
-  * Amanda
-  * Sofya
-  * David
- * Thursday
-  * Sofya
-  * Amanda
-  * Emmett
-  * David
- * Friday
-  * Sofya
-  * David
-  * Amanda
- * Saturday
-  * Uhh
- * Monday
-  * Mandatory team meeting
-  * Lab section
-  * 😥
+  * Friday
+    * Emmett
+    * Amanda
+  * Saturday
+    * Sofya at 5
+    * Amanda for a period of time
+    * Emmett for a period of time
+  * Monday
+    * Lab section
+  * Tuesday
+    * David
+    * Emmett
+  * Wednesday
+    * Amanda
+    * Sofya
+    * David
+  * Thursday
+    * Sofya
+    * Amanda
+    * Emmett
+    * David
+  * Friday
+    * Sofya
+    * David
+    * Amanda
+  * Saturday
+    * Uhh
+  * Monday
+    * Mandatory team meeting
+    * Lab section
+    * 😥
 * Ethics homework Monday after break
- * Next Thursday team meeting
+  * Next Thursday team meeting
 * Team evals due Saturday
