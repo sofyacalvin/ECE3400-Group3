@@ -57,13 +57,13 @@ void loop() {
       //Serial.println(fft_log_out[i]); // send out the data      
     }
     
-    if (fft_log_out[12] > 100) { //7kHz
+    if (fft_log_out[12] > 60) { //7kHz
       treasures |= 1;
     }
-    if (fft_log_out[20] > 100) { //12kHz      
+    if (fft_log_out[21] > 50) { //12kHz      
       treasures |= 1 << 1;
     }
-    if (fft_log_out[28] > 100) { //17kHz
+    if (fft_log_out[28] > 53) { //17kHz
       treasures |= 1 << 2;
     }        
     else {
