@@ -8,7 +8,7 @@ port at 115.2kb.
 */
 
 #define LOG_OUT 1 // use the log output function
-#define FFT_N 64 // set to 256 point fft
+#define FFT_N 64 // set to 64 point fft
 
 #include <FFT.h> // include the library
 int treasures = B000;
@@ -17,14 +17,21 @@ void setup() {
   Serial.begin(115200); // use the serial port
   TIMSK0 = 0; // turn off timer0 for lower jitter
   ADCSRA = 0xe5; // set the adc to free running mode
-  ADMUX = 0x43; // use adc3
-  DIDR0 = 0x04; // turn off the digital input for adc3
+  ADMUX = 0x40; // use adc3
+  DIDR0 = 0x01; // turn off the digital input for adc3
 
-  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(7, OUTPUT);
 }
 
 void loop() {
+  find_treasures();
+}
+
+
+void find_treasures() {
   //while(1) { // reduces jitter
+  /*
+    treasures = 0;
     if (ADMUX == 0x43){
       ADMUX = 0x44;
       DIDR0 = 0x05;
@@ -33,9 +40,10 @@ void loop() {
       ADMUX = 0x43;
       DIDR0 = 0x04;
     }
+    */
   
     cli();  // UDRE interrupt slows this way down on arduino1.0
-    for (int i = 0 ; i < 128 ; i += 2) { // save 256 samples
+    for (int i = 0 ; i < 128 ; i += 2) { // save 64 samples
       while(!(ADCSRA & 0x10)); // wait for adc to be ready
       ADCSRA = 0xf5; // restart adc
       byte m = ADCL; // fetch adc data
@@ -51,25 +59,29 @@ void loop() {
     fft_run(); // process the data in the fft
     fft_mag_log(); // take the output of the fft
     sei();
-    //Serial.println("start");
+    Serial.println("start");
     //Serial.println(ADMUX);
     for (byte i = 0 ; i < FFT_N/2 ; i++) { 
-      //Serial.println(fft_log_out[i]); // send out the data      
+      Serial.println(fft_log_out[i]); // send out the data      
     }
     
     if (fft_log_out[12] > 60) { //7kHz
       treasures |= 1;
+      digitalWrite(7, HIGH);
     }
-    if (fft_log_out[21] > 50) { //12kHz      
+    else if (fft_log_out[21] > 50) { //12kHz      
       treasures |= 1 << 1;
+      digitalWrite(7, HIGH);
     }
-    if (fft_log_out[28] > 53) { //17kHz
+    else if (fft_log_out[28] > 53) { //17kHz
       treasures |= 1 << 2;
+      digitalWrite(7, HIGH);
     }        
     else {
-      digitalWrite(LED_BUILTIN, LOW);
+      digitalWrite(7, LOW);
     }
-    Serial.println(treasures); // send out the data
+
+    Serial.println(int(treasures)); // send out the data
     
   }
-//}
+
