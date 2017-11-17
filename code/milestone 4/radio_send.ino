@@ -15,41 +15,21 @@
  * node can then see how long the whole cycle took.
  */
 
+//////////////////////////////// CONFIGURATION ///////////
+
 #include <SPI.h>
 #include "nRF24L01.h"
 #include "RF24.h"
 #include "printf.h"
 
-//
-// Hardware configuration
-//
-
 // Set up nRF24L01 radio on SPI bus plus pins 9 & 10
-
 RF24 radio(9,10);
-
-//
-// Topology
-//
 
 // Radio pipe addresses for the 2 nodes to communicate.
 const uint64_t pipes[2] = { 0x0000000006LL, 0x0000000007LL };
 
-//
-// Role management
-//
-// Set up role.  This sketch uses the same software for all the nodes
-// in this system.  Doing so greatly simplifies testing.
-//
 
-// The various roles supported by this sketch
-//typedef enum { role_ping_out = 1, role_pong_back } role_e;
-
-// The debug-friendly names of those roles
-//const char* role_friendly_name[] = { "invalid", "Ping out", "Pong back"};
-
-// The role of the current running sketch
-//role_e role = role_pong_back;
+//////////////////////////////// VARIABLES TO SEND ///////////
 unsigned char x_coord = 0;
 unsigned char y_coord = 0;
 unsigned char curr_o = 1; // N = 0; E = 1; S = 2; W = 3
@@ -57,31 +37,14 @@ unsigned char walls = B1111; // N | E | S | W
 unsigned char treasures = 0; // 17 | 12 | 7
 unsigned char done = 0;
 
-//unsigned int new_data;
-// SPI stuff
-//const int slaveSelectPin = 7;
 
+//////////////////////////////// SETUP ///////////
 void setup(void)
 {
-  //pinMode(slaveSelectPin, OUTPUT);
-  //SPI.begin();
-
-  //
-  // Print preamble
-  //
   Serial.begin(57600);
   printf_begin();
- // printf("\n\rRF24/examples/GettingStarted/\n\r");
-  //printf("ROLE: %s\n\r",role_friendly_name[role]);
-  //printf("*** PRESS 'T' to begin transmitting to the other node\n\r");
-  
-  //
-  // Setup and configure rf radio
-  //
-
   radio.begin();
 
-  // optionally, increase the delay between retries & # of retries
   radio.setRetries(15,15);
   radio.setAutoAck(true);
   // set the channel
@@ -92,89 +55,33 @@ void setup(void)
   //RF24_250KBPS for 250kbs, RF24_1MBPS for 1Mbps, or RF24_2MBPS for 2Mbps
   radio.setDataRate(RF24_250KBPS);
 
-  // optionally, reduce the payload size.  seems to
-  // improve reliability
   radio.setPayloadSize(15);
+  
+  radio.openWritingPipe(pipes[0]);
+  radio.openReadingPipe(1,pipes[1]);
 
-  //
-  // Open pipes to other nodes for communication
-  //
-
-  // This simple sketch opens two pipes for these two nodes to communicate
-  // back and forth.
-  // Open 'our' pipe for writing
-  // Open the 'other' pipe for reading, in position #1 (we can have up to 5 pipes open for reading)
-
- // if ( role == role_ping_out )
-//  {
-    radio.openWritingPipe(pipes[0]);
-    radio.openReadingPipe(1,pipes[1]);
-//  }
-//  else
-//  {
-//    radio.openWritingPipe(pipes[1]);
-//    radio.openReadingPipe(1,pipes[0]);
-//  }
-
-  //
   // Start listening
-  //
-
   radio.startListening();
 
-  //
   // Dump the configuration of the rf unit for debugging
-  //
-
   radio.printDetails();
-
 }
 
-void loop(void)
-{
-  //
-  // Ping out role.  Repeatedly send the current time
-  //
+void loop(void){
+  //need to reset treasures to B0000, walls to B1111 each square
+  radio_send(done, treasures, walls, curr_o, x_coord, y_coord);
+}
 
- // if (role == role_ping_out)
- // {
+void radio_send(char done, char treasures, char walls, char curr_o, char x_coord, char y_coord){
     // First, stop listening so we can talk.
     radio.stopListening();
-
     // Take the time, and send it.  This will block until complete
     unsigned long time = millis();
 
     unsigned int new_data;
-
-    /*
-    if (x_coord < 5) {
-        x_coord++;
-      }
-    else { 
-      if (y_coord < 4) {
-        y_coord++;  
-      }
-      else {
-        y_coord = 0;
-      }
-      x_coord = 0;
-    }
-    
-
-    if (x_coord == 0 && y_coord == 0) { //starting over
-      if (pos_data == 5) {
-        pos_data = 0;
-      }
-      else {
-        pos_data++;
-      }
-    }
-   */
-
     new_data = done << 14 | treasures << 11 | walls << 7 | curr_o << 5 | x_coord << 2 | y_coord;
     
     // * | D | T T T | W W W W | O O | X X X | Y Y
-    // will appear as decimal value
     
     printf("Now sending new map data\n");
     bool ok = radio.write( &new_data, sizeof(unsigned int) );
@@ -212,4 +119,3 @@ void loop(void)
     // Try again 1s later
     delay(250);
   }
-
