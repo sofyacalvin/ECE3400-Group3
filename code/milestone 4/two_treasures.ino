@@ -27,20 +27,16 @@ void loop() {
   find_treasures();
 }
 
-
 void find_treasures() {
   //while(1) { // reduces jitter
-  /*
-    treasures = 0;
     if (ADMUX == 0x43){
-      ADMUX = 0x44;
+      ADMUX = 0x44;       //a4
       DIDR0 = 0x05;
     }
     else if (ADMUX == 0x44){
-      ADMUX = 0x43;
+      ADMUX = 0x43;       //a3
       DIDR0 = 0x04;
     }
-    */
   
     cli();  // UDRE interrupt slows this way down on arduino1.0
     for (int i = 0 ; i < 128 ; i += 2) { // save 64 samples
@@ -65,15 +61,15 @@ void find_treasures() {
       Serial.println(fft_log_out[i]); // send out the data      
     }
     
-    if (fft_log_out[12] > 60) { //7kHz
+    if (fft_log_out[12] > 60) {         //7kHz
       treasures |= 1;
       digitalWrite(7, HIGH);
     }
-    else if (fft_log_out[21] > 50) { //12kHz      
+    else if (fft_log_out[21] > 50) {    //12kHz      
       treasures |= 1 << 1;
       digitalWrite(7, HIGH);
     }
-    else if (fft_log_out[28] > 53) { //17kHz
+    else if (fft_log_out[28] > 53) {    //17kHz
       treasures |= 1 << 2;
       digitalWrite(7, HIGH);
     }        
@@ -82,6 +78,4 @@ void find_treasures() {
     }
 
     Serial.println(int(treasures)); // send out the data
-    
   }
-
