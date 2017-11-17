@@ -269,3 +269,21 @@ Attendance: everyone is here
 * Ethics homework Monday after break
   * Next Thursday team meeting
 * Team evals due Saturday
+
+##November 16
+* Servos and linear regulators are ordered and on the way
+* Ethics assignment
+  * Essay
+    * ~100 words each by Sunday
+    * Intro/stakeholders: Amanda
+    * Utilitarian: Dylan
+    * Justice: Emmett
+    * Virtue: David
+    * Economic/social/political constraints, creative solutions: Sofya
+* 3D printed treasure sensors during lab
+* Make website nicer
+  * Bootstrap
+* Make graphics for maze
+* Need to finish treasure sensors
+* Test radio send code
+* Modify finish tone (themed?)
