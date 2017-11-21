@@ -13,6 +13,9 @@ add text
 [![name](http://img.youtube.com/vi/j25lZeRPJQ8/0.jpg)](https://www.youtube.com/watch?v=j25lZeRPJQ8)
 
 
+![Treasure mounts](../images/milestone4/mounts.png)
+
+
 ### Implementing SPI
 We have reformatted our packets to send the data we will actually need to display the correct data. We are using a 16-bit packet, like so:
 
@@ -20,9 +23,9 @@ We have reformatted our packets to send the data we will actually need to displa
 valid | done | 17kHz | 12kHz | 7kHz | north | east | south | west | orientation | orientation | x | x | x | y | y
 ```
 
-We use a valid bit in order to determine which data to "throw away," such as any startup inconsistencies or the 16b'0 signal that may send at the beginning. The done bit is self-explanatory--this will be 1 when the robot has finished exploration and 0 otherwise. The following three bits describe if the robot has detected a treasure, and the respective bits describe the frequency. The next four bits describe if the robot has detected walls, and what direction the wall is in. Orientation follows the same guidelines as we used in [Milestone 3](./docs/labs/lab3.md), as do the x and y coordinates. 
+We use a valid bit in order to determine which data to "throw away," such as any startup inconsistencies or the 16b'0 signal that may send at the beginning. The done bit is self-explanatory--this will be 1 when the robot has finished exploration and 0 otherwise. The following three bits describe if the robot has detected a treasure, and the respective bits describe the frequency. The next four bits describe if the robot has detected walls, and what direction the wall is in. Orientation follows the same guidelines as we used in [Milestone 3](../milestones/Milestone3.md), as do the x and y coordinates. 
 
-SPI has been a source of some pain on this team. In [Lab 4](./docs/labs/lab4.md), we utilized parallel communication, under the assumption it would be a simpler implementation. We recognized that we would not have enough digital pins to do so, and made the switch to SPI (which uses less pins on the Arduino) for this milestone. 
+SPI has been a source of some pain on this team. In [Lab 4](../labs/lab4.md), we utilized parallel communication, under the assumption it would be a simpler implementation. We recognized that we would not have enough digital pins to do so, and made the switch to SPI (which uses less pins on the Arduino) for this milestone. 
 
 
 -------------- CHECK SPI STUFF ------------------------------
@@ -59,7 +62,7 @@ To test if the graphics were updating correctly based on the data, we created a 
 
 After working out the bugs, we added an arrow to show the current orientation. The following map corresponds to the successful run below it:
 
-[Maze](./docs/images/milestone4/maze.png)
+![Maze](../images/milestone4/maze.png)
 
 [![Full maze display](http://img.youtube.com/vi/401oCFdBCfc/0.jpg)](https://www.youtube.com/watch?v=401oCFdBCfc)
 
