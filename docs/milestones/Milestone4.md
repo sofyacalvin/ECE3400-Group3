@@ -7,6 +7,12 @@ The objective of Milestone 4 is to prepare Brooklynn for the final competition: 
 
 ### Backtracking algorithm
 
+add text
+
+[![name](http://img.youtube.com/vi/zIg74VQQIzY/0.jpg)](https://www.youtube.com/watch?v=zIg74VQQIzY)
+[![name](http://img.youtube.com/vi/j25lZeRPJQ8/0.jpg)](https://www.youtube.com/watch?v=j25lZeRPJQ8)
+
+
 ### Implementing SPI
 We have reformatted our packets to send the data we will actually need to display the correct data. We are using a 16-bit packet, like so:
 
@@ -49,12 +55,13 @@ Without this iteration, an inferred latch occurs. The walls are assigned based o
 
 To test if the graphics were updating correctly based on the data, we created a MATLAB script to create packets that would simulate our manually assigned mazes. Below is a partial maze test.
 
-youtube link to one
+[![Middle maze display](http://img.youtube.com/vi/J19PKXrj4/0.jpg)](https://www.youtube.com/watch?v=J19PKXrj4)
 
 After working out the bugs, we added an arrow to show the current orientation. The following map corresponds to the successful run below it:
 
-map
-youtube link
+[Maze](./docs/images/milestone4/maze.png)
+
+[![Full maze display](http://img.youtube.com/vi/401oCFdBCfc/0.jpg)](https://www.youtube.com/watch?v=401oCFdBCfc)
 
 We currently have an issue with the top row not displaying walls correctly. However, the maze display otherwise responds correctly to the inputs. We plan to fix this error before the final competition.
 
@@ -62,5 +69,7 @@ Debugging:
 We had a lot of issues with displaying the data. Our primary issue was seemingly arbitrary walls and squares showing up when they had been neither explored nor called at all. The root of this issue had been the clock speeds, in which we were running our grid driver slower than SPI and VGA output. The changing signals became stable once we set the clock speeds to be the same.
 
 ### Finish tune
+
+[![Finish tune](http://img.youtube.com/vi/YnziLtI_s6o/0.jpg)](https://www.youtube.com/watch?v=YnziLtI_s6o)
 
 [Return to home](https://sofyacalvin.github.io/ece3400-group3/)
