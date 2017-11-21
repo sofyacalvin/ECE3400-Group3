@@ -27,3 +27,5 @@ We are the members of ¯\\\_(ツ)_/¯ for the Fall 2017 semester of ECE 3400 and
 [Milestone 2](./milestones/Milestone2.md)
 
 [Milestone 3](./milestones/Milestone3.md)
+
+[Milestone 4](./milestones/Milestone4.md)
