@@ -7,11 +7,26 @@ The objective of Milestone 4 is to prepare Brooklynn for the final competition: 
 
 ### Backtracking algorithm
 
-add text
+add text about backtracking, integrating treasure and radio code, etc! i just added the videos, put them wherever you want! also please delete this line when you're done. also i added a little bit about about the treasure code 
 
-[![name](http://img.youtube.com/vi/zIg74VQQIzY/0.jpg)](https://www.youtube.com/watch?v=zIg74VQQIzY)
-[![name](http://img.youtube.com/vi/j25lZeRPJQ8/0.jpg)](https://www.youtube.com/watch?v=j25lZeRPJQ8)
+---
 
+Instead of shorting the treasure sensors together, we decided to toggle quickly between analog pins 3 and 4 on each iteration of the FFT.
+
+```
+if (ADMUX == 0x43){
+      ADMUX = 0x44;			//a4
+      DIDR0 = 0x05;
+    }
+else if (ADMUX == 0x44){
+  ADMUX = 0x43;       		//a3
+  DIDR0 = 0x04;
+    }
+```
+
+This data is collected on the robot and sent via radio to the base station.
+
+Once the robot has reached an intersection, it checks for treasures. Within DFS, it checks for walls in order to add squares to the frontier--this is when we also update the _walls_ variable. Its update to the walls depends on its orientation, as in Milestone 3. Shifting the data as usual, the packet is sent through radio. The receiving Arduino receives the data and sends it to the FPGA through SPI.
 
 ![Treasure mounts](../images/milestone4/mounts.png)
 
@@ -27,13 +42,10 @@ We use a valid bit in order to determine which data to "throw away," such as any
 
 SPI has been a source of some pain on this team. In [Lab 4](../labs/lab4.md), we utilized parallel communication, under the assumption it would be a simpler implementation. We recognized that we would not have enough digital pins to do so, and made the switch to SPI (which uses less pins on the Arduino) for this milestone. 
 
-
--------------- CHECK SPI STUFF ------------------------------
-
 Our SPI uses three main lines--Master Out Slave In (MOSI), Clock (SCK), and Slave Select (SS). We connected the receiving Arduino to the FPGA. When the SS pin is low, it communicates with the master (i.e. the Arduino). A new driver was written to read in the data from the radio module, check which slave to send to, send the data, and check for a successful transfer.
 
 Debugging:
-Oddly, we were having an issue with using the MISO pin, despite there only being one master and one slave. When the line was connected to the Arduino, data transmission would 
+Oddly, we were having an issue with using the MISO pin, despite there only being one master and one slave. When the line was connected to the Arduino, data transmission would stop. Unplugging the MISO pin allowed the transmission to continue as usual. Considering that we don't need to send data from the slave to the master, we have just left it unplugged.
 
 ### Displaying data
 
@@ -73,6 +85,36 @@ We had a lot of issues with displaying the data. Our primary issue was seemingly
 
 ### Finish tune
 
+We wanted to create a tune instead of having a plain finish tone. We transcribed "Take Me Out to the Ball Game" and defined the C5-C6 major scale's frequencies for convenient use. From there, since we are only using 24 beats of the song, we modified our sound generation code from Lab 3 to check which _note_ values (i.e. "indexed" beat of the song) corresponded to which notes in the scale. Here is a snippet of our song definition code:
+
+```
+if (note == 0 || note == 1 || note == 12 || note == 13) begin	//C5
+	count <= CLKDIVIDER_C5 - 16'b1;
+	note <= note + 5'b1;
+end
+else if (note == 9 || note == 10 || note == 11 ) begin			//D5
+	count <= CLKDIVIDER_D5 - 16'b1;
+	note <= note + 5'b1;
+end
+
+...
+```
+
+And so on. The actual tune can be heard in this video (the first C5 is hard to hear):
+
 [![Finish tune](http://img.youtube.com/vi/YnziLtI_s6o/0.jpg)](https://www.youtube.com/watch?v=YnziLtI_s6o)
+
+### Future work
+While we didn't quite have time to combine all of the components of this milestone, we have done enough unit testing to be confident that we will be able to integrate the radio sending code for the final competition. 
+
+Additionally, we have been working on implementing Dijkstra's algorithm to backtrack more efficiently. This is mostly functional, as can be seen in the videos below:
+
+[![Dijkstra's (1)](http://img.youtube.com/vi/zIg74VQQIzY/0.jpg)](https://www.youtube.com/watch?v=zIg74VQQIzY)
+
+[![Dijkstra's (2)](http://img.youtube.com/vi/j25lZeRPJQ8/0.jpg)](https://www.youtube.com/watch?v=j25lZeRPJQ8)
+
+However, they do not fully finish, and would then fail to send a _done_ signal. This is why we chose to revert to our functional DFS code with backtracking for this lab, but we will finish up Dijkstra's later.
+
+Finally, we plan to clean up the wiring on Brooklynn to avoid catching on things as well as simple aesthetics, and are ordering faster servo motors to replace the slower ones we are currently using. We are also getting voltage regulators to use in conjunction with the new servos.
 
 [Return to home](https://sofyacalvin.github.io/ece3400-group3/)
