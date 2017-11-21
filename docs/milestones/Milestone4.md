@@ -40,9 +40,9 @@ valid | done | 17kHz | 12kHz | 7kHz | north | east | south | west | orientation 
 
 We use a valid bit in order to determine which data to "throw away," such as any startup inconsistencies or the 16b'0 signal that may send at the beginning. The done bit is self-explanatory--this will be 1 when the robot has finished exploration and 0 otherwise. The following three bits describe if the robot has detected a treasure, and the respective bits describe the frequency. The next four bits describe if the robot has detected walls, and what direction the wall is in. Orientation follows the same guidelines as we used in [Milestone 3](../milestones/Milestone3.md), as do the x and y coordinates. 
 
-SPI has been a source of some pain on this team. In [Lab 4](../labs/lab4.md), we utilized parallel communication, under the assumption it would be a simpler implementation. We recognized that we would not have enough digital pins to do so, and made the switch to SPI (which uses less pins on the Arduino) for this milestone. 
+In [Lab 4](../labs/lab4.md), we utilized parallel communication, under the assumption it would be a simpler implementation. We recognized that we would not have enough digital pins to do so, and made the switch to SPI (which uses less pins on the Arduino) for this milestone. 
 
-Our SPI uses three main lines--Master Out Slave In (MOSI), Clock (SCK), and Slave Select (SS). We connected the receiving Arduino to the FPGA. When the SS pin is low, it communicates with the master (i.e. the Arduino). A new driver was written to read in the data from the radio module, check which slave to send to, send the data, and check for a successful transfer.
+Our SPI uses three main lines--Master Out Slave In (MOSI), Clock (SCK), and Slave Select (SS). We connected the receiving Arduino to the FPGA. When the SS pin is low, it communicates with the master (i.e. the Arduino). A new driver was written to read in the data from the radio module, check which slave to send to, send the data, and check for a successful transfer. We then stop SPI and set the SS pin high again to end communication.
 
 Debugging:
 
