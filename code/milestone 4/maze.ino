@@ -1,3 +1,9 @@
+#define LOG_OUT 1 // use the log output function
+#define FFT_N 64 // set to 64 point fft
+
+#include <FFT.h> // include the library
+int treasures = B000;
+
 #include <StackArray.h>
 #include <Servo.h>
 
@@ -8,6 +14,8 @@
 #define RightWall 4
 #define OutLineLeft 2
 #define OutLineRight 7
+
+uint8_t *heapptr, *stackptr; // global variable
 
 typedef struct{
   int x; int y;
@@ -40,20 +48,8 @@ char orient;
 
 Servo leftservo;
 Servo rightservo;
-//Maze maze;
 
-// HWALL = {{1,1,1,1,1},
-//          {0,0,0,0,0},
-//          {0,0,0,0,0},
-//          {0,0,0,0,0},
-//          {1,1,1,1,1}}
-//
-// VWALL = {{1,0,0,0,0,1},
-//          {1,0,0,0,0,1},
-//          {1,0,0,0,0,1},
-//          {1,0,0,0,0,1}}
-
-Square visited[20];
+Square visited[21];
 Square start;
 
 StackArray <Square> frontier;
@@ -107,7 +103,6 @@ void dfs(){
       }
       int length = frontier.count();
       if(wallL == 1){ //no wall on left
-        Serial.println("GOES IN HERE!");
         if(orient == 3){
           next.x = current.x + 1;
           next.y = current.y;
@@ -149,7 +144,7 @@ void dfs(){
           frontier.push(next);
         }
       }
-      if(frontwall < 200){ //no wall in front
+      if(frontwall < 180){ //no wall in front
         if(orient == 3){
           next.x = current.x;
           next.y = current.y - 1;
@@ -173,20 +168,13 @@ void dfs(){
 
       n_coor[0] = frontier.peek().x;
       n_coor[1] = frontier.peek().y;
-      Serial.println(isMember(next, visited, visitedSize));
-      Serial.print("NEXT:   ");
-      Serial.print(frontier.peek().x);
-      Serial.println(frontier.peek().y);
       if(frontier.count()>length){
         goback = 0;
         orient = reorient(c_coor, n_coor, orient);
-        Serial.print("Orient:   ");
-        Serial.println((int)orient);
-        Serial.print("new frontier element");
-        Serial.print(frontier.peek().x);
-        Serial.println(frontier.peek().y);
-        Serial.println("Stuck here");
         path.push(current);
+//        check_mem(); 
+//        Serial.write("heapptr: "); Serial.print((int)heapptr);
+//        Serial.write(", stackptr: "); Serial.println((int)stackptr);
       }
       else{
         goback = 1;
@@ -207,26 +195,34 @@ void dfs(){
           frontier.push(tmp);
           n_coor[0] = frontier.peek().x;
           n_coor[1] = frontier.peek().y;
-          Serial.print("NEXT:   ");
-          Serial.print(frontier.peek().x);
-          Serial.println(frontier.peek().y);
           orient = reorient(c_coor, n_coor, orient);
-          Serial.print("Orient:   ");
-          Serial.println((int)orient);
           goback = 0;
-          Serial.println("Stuck here3");
         }
       }
       else{
         frontier.pop();
       }
     }
+    Serial.print("size  ");
+    Serial.println(frontier.count());
     followline();
+  }
+//  Serial.print("size");
+//  Serial.println(frontier.count());
+  Serial.println("DONE");
+  while(frontier.isEmpty()){
+    stp();
   }
 
 }
 
 
+//void check_mem() {
+//  stackptr = (uint8_t *)malloc(4);  // use stackptr temporarily
+//  heapptr = stackptr;               // save value of heap pointer
+//  free(stackptr);                   // free up the memory again (sets stackptr to 0)
+//  stackptr =  (uint8_t *)(SP);      // save value of stack pointer
+//}
 
 bool isMember (Square a, Square visit[], int sizeV){
   for(int i = 0; i < sizeV; i ++){
@@ -299,11 +295,76 @@ char reorient(char current[], char next[], char curr_o) {
 //  }
 
   curr_o = next_o;
-  Serial.println((int) curr_o);
 
   stp();
   return curr_o;
 }
+
+void find_treasures() {
+  int reset1 = ADCSRA;
+  int reset2 = ADMUX;
+  int reset3 = DIDR0;
+  int reset4 = TIMSK0;
+  TIMSK0 = 0; // turn off timer0 for lower jitter
+  ADCSRA = 0xe5; // set the adc to free running mode
+  ADMUX = 0x43; // use adc3
+  DIDR0 = 0x04; // turn off the digital input for adc3
+  
+  //while(1) { // reduces jitter
+    if (ADMUX == 0x43){
+      ADMUX = 0x44;       //a4
+      DIDR0 = 0x05;
+    }
+    else if (ADMUX == 0x44){
+      ADMUX = 0x43;       //a3
+      DIDR0 = 0x04;
+    }
+  
+    cli();  // UDRE interrupt slows this way down on arduino1.0
+    for (int i = 0 ; i < 128 ; i += 2) { // save 64 samples
+      while(!(ADCSRA & 0x10)); // wait for adc to be ready
+      ADCSRA = 0xf5; // restart adc
+      byte m = ADCL; // fetch adc data
+      byte j = ADCH;
+      int k = (j << 8) | m; // form into an int
+      k -= 0x0200; // form into a signed int
+      k <<= 6; // form into a 16b signed int
+      fft_input[i] = k; // put real data into even bins
+      fft_input[i+1] = 0; // set odd bins to 0
+    }
+    fft_window(); // window the data for better frequency response
+    fft_reorder(); // reorder the data before doing the fft
+    fft_run(); // process the data in the fft
+    fft_mag_log(); // take the output of the fft
+    sei();
+    Serial.println("start");
+    //Serial.println(ADMUX);
+    for (byte i = 0 ; i < FFT_N/2 ; i++) { 
+      //Serial.println(fft_log_out[i]); // send out the data      
+    }
+    
+    if (fft_log_out[12] > 60) {         //7kHz
+      treasures |= 1;
+//      digitalWrite(7, HIGH);
+    }
+    else if (fft_log_out[21] > 50) {    //12kHz      
+      treasures |= 1 << 1;
+//      digitalWrite(7, HIGH);
+    }
+    else if (fft_log_out[28] > 53) {    //17kHz
+      treasures |= 1 << 2;
+//      digitalWrite(7, HIGH);
+    }        
+    else {
+//      digitalWrite(7, LOW);
+    }
+
+    Serial.println((int)treasures); // send out the data
+     TIMSK0 = reset4; // turn off timer0 for lower jitter
+     ADCSRA = reset1; // set the adc to free running mode
+     ADMUX = reset2; // use adc3
+     DIDR0 = reset3;
+  }
 
 void readSensor(){
   inLeft = analogRead(A0);
@@ -364,5 +425,6 @@ void followline(){
     }
     readSensor();
   }
+  find_treasures();
   stp();
 }
