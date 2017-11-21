@@ -45,6 +45,7 @@ SPI has been a source of some pain on this team. In [Lab 4](../labs/lab4.md), we
 Our SPI uses three main lines--Master Out Slave In (MOSI), Clock (SCK), and Slave Select (SS). We connected the receiving Arduino to the FPGA. When the SS pin is low, it communicates with the master (i.e. the Arduino). A new driver was written to read in the data from the radio module, check which slave to send to, send the data, and check for a successful transfer.
 
 Debugging:
+
 Oddly, we were having an issue with using the MISO pin, despite there only being one master and one slave. When the line was connected to the Arduino, data transmission would stop. Unplugging the MISO pin allowed the transmission to continue as usual. Considering that we don't need to send data from the slave to the master, we have just left it unplugged.
 
 ### Displaying data
@@ -70,7 +71,7 @@ Without this iteration, an inferred latch occurs. The walls are assigned based o
 
 To test if the graphics were updating correctly based on the data, we created a MATLAB script to create packets that would simulate our manually assigned mazes. Below is a partial maze test.
 
-[![Middle maze display](http://img.youtube.com/vi/J19PKXrj4/0.jpg)](https://www.youtube.com/watch?v=J19PKXrj4)
+[![Middle maze display](http://img.youtube.com/vi/0-J19PKXrj4/0.jpg)](https://www.youtube.com/watch?v=0-J19PKXrj4)
 
 After working out the bugs, we added an arrow to show the current orientation. The following map corresponds to the successful run below it:
 
@@ -81,6 +82,7 @@ After working out the bugs, we added an arrow to show the current orientation. T
 We currently have an issue with the top row not displaying walls correctly. However, the maze display otherwise responds correctly to the inputs. We plan to fix this error before the final competition.
 
 Debugging:
+
 We had a lot of issues with displaying the data. Our primary issue was seemingly arbitrary walls and squares showing up when they had been neither explored nor called at all. The root of this issue had been the clock speeds, in which we were running our grid driver slower than SPI and VGA output. The changing signals became stable once we set the clock speeds to be the same.
 
 ### Finish tune
