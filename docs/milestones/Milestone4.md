@@ -10,8 +10,6 @@ The objective of Milestone 4 is to prepare Brooklynn for the final competition: 
 Our backtracking algorithm is not yet complete, but we plan to implement a shortest path algorithm to back track once the dfs algorithm gets to a dead end. The shortest back algorithm is pretty straight forward, once the robot gets to the dead end it would check the current node that it is on and check the next node in the frontier and do a bfs to find the shortest path to the next node from the current position. Once it finds the path the robot would simply folow the path until it reaches the next node and then it will continue with dfs. 
 The way we plan on holding the information about the maze on the robot is with a struct, called Squarewalls, that has fields called n, w, s, and e. These fields represent the north, west, south, and east sides in an intersection. We will make a 2d array of the struct Squarewalls to hold the maze information.
 
-add text about backtracking, integrating treasure and radio code, etc! i just added the videos, put them wherever you want! also please delete this line when you're done. also i added a little bit about about the treasure code 
-
 ---
 
 Instead of shorting the treasure sensors together, we decided to toggle quickly between analog pins 3 and 4 on each iteration of the FFT.
