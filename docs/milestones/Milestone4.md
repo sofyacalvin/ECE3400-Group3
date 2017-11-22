@@ -5,14 +5,16 @@ The objective of Milestone 4 is to prepare Brooklynn for the final competition: 
 
 ## Procedure
 
-### Backtracking algorithm
+### Backtracking Algorithm
 
-Our backtracking algorithm is not yet complete, but we plan to implement a shortest path algorithm to back track once the dfs algorithm gets to a dead end. The shortest back algorithm is pretty straight forward, once the robot gets to the dead end it would check the current node that it is on and check the next node in the frontier and do a bfs to find the shortest path to the next node from the current position. Once it finds the path the robot would simply folow the path until it reaches the next node and then it will continue with dfs. 
-The way we plan on holding the information about the maze on the robot is with a struct, called Squarewalls, that has fields called n, w, s, and e. These fields represent the north, west, south, and east sides in an intersection. We will make a 2d array of the struct Squarewalls to hold the maze information.
+For this milestone, one of the first tasks that we worked on was completing the depth first search code to properly complete backtracking. When finishing up this part of the code, we realized that she was perfectly capable of exploring the entire maze using dsf when there was at lease one square of the maze that was closed off. However, as soon as we opened up the maze so that every square in the 4x5 grid could be explored, she would malfunction and reset the code before reaching the very last square. At first we thought it was a memory problem but after writing in code to check the memory of the data we were storing and outputting, we realized that we were no where near the capacity. Finally, we ended up realizing that the problem relied on the size of the array that we initialized the maze to be. Although we made the array size 20 because there are 20 squares in the grid, we realized that the array size actually needs to be 21. This is because the way our code works, we have Brooklynn initialized to start on an "imaginary" square at location (0, -1) so that when it encounters the very first intersection at (0,0), it can go through the proper procedure of adding the available options to the frontier. After changing the size of this array, we found that the dfs code was fully functional.  
 
----
+For the final competition, we want our backtracking algorithm to implement Dijkstra's algorithm and backtrack using the shortest path instead of the path it had originally taken to get there. The shortest back algorithm is pretty straight forward - once the robot gets to the dead end, it would check the current node that it is on and check the next node in the frontier and do a bredth first search to find the shortest path to the next node from the current position. Once it finds the path Brooklynn would simply folow the path until she reaches the next node and then she will continue with dfs. 
+The way we plan on holding the information about the maze on the robot is with a struct, called Squarewalls, that has fields called n, w, s, and e. These fields represent the north, west, south, and east sides in an intersection. We will make a 2d array of the struct Squarewalls to hold the maze information. As of now, we have begun implementing the shortest path algorithm but it is not yet complete. 
 
-Instead of shorting the treasure sensors together, we decided to toggle quickly between analog pins 3 and 4 on each iteration of the FFT.
+### Integrating the Treasures
+
+Instead of shorting the treasure sensors together, we decided to toggle quickly between analog pins 3 and 4 on each iteration of the FFT. We did so through the following code:
 
 ```
 if (ADMUX == 0x43){
@@ -25,9 +27,9 @@ else if (ADMUX == 0x44){
     }
 ```
 
-This data is collected on the robot and sent via radio to the base station.
+This data is collected on the robot and will be sent via radio to the base station.
 
-Once the robot has reached an intersection, it checks for treasures. Within DFS, it checks for walls in order to add squares to the frontier--this is when we also update the _walls_ variable. Its update to the walls depends on its orientation, as in Milestone 3. Shifting the data as usual, the packet is sent through radio. The receiving Arduino receives the data and sends it to the FPGA through SPI.
+At every intersection, Brooklynn is programmed to check for the presense of treasures. Within DFS, she also checks for walls in order to add squares to the frontier--this is when we also update the _walls_ variable. Her update to the walls depends on its orientation, as in Milestone 3. Shifting the data as usual, the packet is sent through radio. The receiving Arduino receives the data and sends it to the FPGA through SPI.
 
 ![Treasure mounts](../images/milestone4/mounts.png)
 
@@ -49,7 +51,7 @@ Debugging:
 
 Oddly, we were having an issue with using the MISO pin, despite there only being one master and one slave. When the line was connected to the Arduino, data transmission would stop. Unplugging the MISO pin allowed the transmission to continue as usual. Considering that we don't need to send data from the slave to the master, we have just left it unplugged.
 
-### Finish tune
+### Finish Tune
 
 We wanted to create a tune instead of having a plain finish tone. We transcribed "Take Me Out to the Ball Game" and defined the C5-C6 major scale's frequencies for convenient use. From there, since we are only using 24 beats of the song, we modified our sound generation code from Lab 3 to check which _note_ values (i.e. "indexed" beat of the song) corresponded to which notes in the scale. Here is a snippet of our song definition code:
 
@@ -72,7 +74,7 @@ And so on. The actual tune can be heard in this video (the first C5 is hard to h
 
 
 
-### Displaying data
+### Displaying Data
 
 Once the FPGA receives this packet of data, it parses the data back into the respective sections, e.g. valid bit, done, treasures, etc. A new driver was written to update the maze graphic. After initializing our maze with walls to zeros, we iteratively check if each square needs to be updated, and if not, to keep it the same. This is where we update the color of the square if a treasure is present:
 
@@ -114,7 +116,7 @@ We had a lot of issues with displaying the data. Our primary issue was seemingly
 
 
 
-### Future work
+### Future Work
 While we didn't quite have time to combine all of the components of this milestone, we have done enough unit testing to be confident that we will be able to integrate the radio sending code for the final competition. 
 
 Additionally, we have been working on implementing Dijkstra's algorithm to backtrack more efficiently. This is mostly functional, as can be seen in the videos below:
@@ -123,7 +125,7 @@ Additionally, we have been working on implementing Dijkstra's algorithm to backt
 
 [![Dijkstra's (2)](http://img.youtube.com/vi/j25lZeRPJQ8/0.jpg)](https://www.youtube.com/watch?v=j25lZeRPJQ8)
 
-However, they do not fully finish, and would then fail to send a _done_ signal. This is why we chose to revert to our functional DFS code with backtracking for this lab, but we will finish up Dijkstra's later.
+However, they do not fully finish, and would then fail to send a _done_ signal. This is why we chose to revert to our functional DFS code with backtracking for this milestone, but we will finish up Dijkstra's later.
 
 Although the display is (mostly) functional, the solid colors used are generally unappealing. We plan to change the graphics to use images for the ground, background, and walls. We also want to display our robot with a more appealing icon, instead of just an arrow. In addition, the small squares between walls will be addressed to blend in with walls and/or the ground to make the grid appear more seamless.
 
