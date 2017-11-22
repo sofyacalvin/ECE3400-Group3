@@ -29,7 +29,9 @@ else if (ADMUX == 0x44){
 
 This data is collected on the robot and will be sent via radio to the base station.
 
-At every intersection, Brooklynn is programmed to check for the presense of treasures. Within DFS, she also checks for walls in order to add squares to the frontier--this is when we also update the _walls_ variable. Her update to the walls depends on its orientation, as in Milestone 3. Shifting the data as usual, the packet is sent through radio. The receiving Arduino receives the data and sends it to the FPGA through SPI.
+At every intersection, Brooklynn is programmed to check for the presense of treasures. Within DFS, she also checks for walls in order to add squares to the frontier--this is when we also update the _walls_ variable. Her update to the walls depends on its orientation, as in Milestone 3. Shifting the data as usual, the packet is sent through radio. The receiving Arduino receives the data and sends it to the FPGA through SPI and the treasures should update on the display.
+
+To install the IR sensors onto the hardware, we first had to soder and heat shrink wires onto the sensors. We then designed and 3D printed the mount shown below for the IR sensor to be held in. We especially wanted the hollow part of the piece to be long so that the sodered and heat shrunk parts of the wires would be protected. 
 
 ![Treasure mounts](../images/milestone4/mounts.png)
 
