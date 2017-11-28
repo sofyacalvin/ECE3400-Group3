@@ -270,7 +270,7 @@ Attendance: everyone is here
   * Next Thursday team meeting
 * Team evals due Saturday
 
-##November 16
+## November 16
 * Servos and linear regulators are ordered and on the way
 * Ethics assignment
   * Essay
@@ -287,3 +287,48 @@ Attendance: everyone is here
 * Need to finish treasure sensors
 * Test radio send code
 * Modify finish tone (themed?)
+
+## November 27
+* Display
+  * Top walls don’t show up
+  * Otherwise, mostly done
+  * Photos will be added later (to save compilation time)
+* Robot
+  * Treasure sensors: 
+    * Currently should spin if treasure detected
+    * Seems to constantly detect treasures
+  * Modifying DFS/Dijkstra’s
+* Other things
+  * Soldering
+    * Perf boards have arrived
+  * Tentative replacing motors
+  * Mounting treasure sensors
+    * And make them work
+* Ethics assignment
+* Tuesday
+  * David
+  * Sofya maybe
+  * Amanda
+  * Emmett for some time
+* Wednesday
+  * Emmett maybe
+  * Amanda maybe
+  * Dylan maybe
+* Thursday
+  * Sofya after 3
+  * Dylan
+  * David after 3
+  * Emmett 
+  * Amanda maybe
+* Friday
+  * Sofya
+  * Amanda
+  * Dylan   
+* Saturday
+   * Sofya maybe
+   * Amanda maybe?
+   * Dylan maybe
+* Sunday
+   * Sofya
+   * Amanda maybe
+   * Dylan
