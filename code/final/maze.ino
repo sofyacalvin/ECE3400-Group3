@@ -3,11 +3,14 @@
 #include <Servo.h>
 
 #define LOG_OUT 1 // use the log output function
-#define FFT_N 128 // set to 64 point fft
+#define FFT_N 64 // set to 64 point fft
 
 #include <FFT.h> // include the library
-int treasures = B000;
 
+#include <SPI.h>
+#include "nRF24L01.h"
+#include "RF24.h"
+#include "printf.h"
 
 #define ROWS 4
 #define COLS 5
@@ -16,14 +19,6 @@ int treasures = B000;
 #define RightWall 4
 #define OutLineLeft 2
 #define OutLineRight 7
-
-
-int sensorPin = A5;
-
-#include <SPI.h>
-#include "nRF24L01.h"
-#include "RF24.h"
-#include "printf.h"
 
 typedef struct{
   int x; int y;
@@ -48,7 +43,7 @@ int inRight;
 int outLeft;
 int outRight;
 
-//  //analog wall sensor ->
+//analog wall sensor ->
 //wall: > 250; no wall: < 250
 int frontwall;
 
@@ -57,60 +52,136 @@ int frontwall;
 int wallL;
 int wallR;
 
+//signal to use dfs or backtrack using bfs
 int goback;
 
+//orientation 
 char orient;
 
+//mircophone pin
+int sensorPin = A5;
 
+//initialize treasure variable
+int treasures = B000;
 
+//initialize Servos
 Servo leftservo;
 Servo rightservo;
 
+//initialize maze information array to keep track of walls 
 Square_wall maze[ROWS][COLS];
 
-
+//intialize starting node
 Square start;
 
+//initialize frontier stack for dfs and path stack for backtracking (using shortest path)
 StackArray <Square> frontier;
 StackArray <Square> path;
 
+//Radio variables
 RF24 radio(9,10);
 const uint64_t pipes[2] = { 0x0000000006LL, 0x0000000007LL };
-// Square current;
-// int visitedSize;
+
 
 void setup() {
-  // initialize serial communication at 9600 bits per second:
+  //initialize serial communication at 9600 bits per second:
   Serial.begin(9600);
-  radio_init();
+  radio_init(); //initialize radio
   leftservo.attach(5);
   rightservo.attach(6);
   stp();
+  
+  //set up digital pins
   pinMode(OutLineLeft, INPUT);
   pinMode(LeftWall, INPUT);
   pinMode(RightWall, INPUT);
   pinMode(OutLineRight, INPUT);
   pinMode(8, INPUT);
+
+  //set the starting node and add to frontier
   start.x = 3;
   start.y = 0;
   frontier.push(start);
+
+  //set the starting orientation
   orient = 1;
+
+  //set up walls in the maze information array
   initialize_walls();
 }
 
-bool check_mic(){
-//   int reset1 = ADCSRA;
-//  int reset2 = ADMUX;
-//  int reset3 = DIDR0;
-//  int reset4 = TIMSK0;
-//  //TIMSK0 = 0; // turn off timer0 for lower jitter
-//  ADCSRA = 0xe7; // set the adc to free running mode
-//  ADMUX = 0x45; // use adc3
-//  //DIDR0 = 0x06; // turn off the digital input for adc3
+
+// the loop routine runs over and over again forever:
+void loop() {
+//  while(1){
+//    Serial.print("Left:  ");
+//    Serial.print(analogRead(A0));
+//    Serial.print("     Right:  ");
+//    Serial.println(analogRead(A1));
+//    delay(1000);
+//  }
+
+  //660 hz signal detection variable
+  bool start_signal = false;
+  //counter to check that the 660 hz signal is dectected for a while
+  int i = 0;
+
+  //FFT constants that mess with Servos if they dont get reset
+  int reset1 = ADCSRA;
+  int reset2 = ADMUX;
+  int reset3 = DIDR0;
+  int reset4 = TIMSK0;
   
-  //while(1) { // reduces jitter
+  //FFT setup stuff from example code in lab
+  //TIMSK0 = 0; // turn off timer0 for lower jitter
+  ADCSRA = 0xe7; // set the adc to free running mode
+  ADMUX = 0x45; // use adc5
+  DIDR0 = 0x06; // turn off the digital input for adc5
+  
+  
+  Serial.println("looking for 660Hz");
+  while ((!start_signal) || !(i == 10)){    
+    Serial.println("still looking");
+    delay(10);
+    start_signal = check_mic();
+    if (start_signal) {
+      i++;
+    }
+    else{
+       if (i == 0) {
+        i = 0;
+       }
+       else {
+        i--;
+       }
+    }
+
+    //push button for manual start (overrides the start_signal)
+    if(digitalRead(8)){
+      start_signal = true;
+      i = 10;
+    }
+  }
+
+  //reset FFT stuff that mess with Servos
+  //TIMSK0 = reset4; // turn off timer0 for lower jitter
+  ADCSRA = reset1; // set the adc to free running mode
+  ADMUX = reset2; // use adc3
+  DIDR0 = reset3;
+  
+  Serial.println("Heard 660Hz");
+
+  //run main maze algorithm
+  dfs();
+}
+
+/********************************HELPER FUNCTIONS******************************/
+/* helper function that returns a bool based on whether or not a 660 hz tone 
+ * was detected. Uses FFT to check if the microphone is detecting the 660 hz
+ * tone.*/
+bool check_mic(){
     cli();  // UDRE interrupt slows this way down on arduino1.0
-    for (int i = 0 ; i < 256 ; i += 2) { // save 64 samples
+    for (int i = 0 ; i < FFT_N*2 ; i += 2) { // save 64 samples
       while(!(ADCSRA & 0x10)); // wait for adc to be ready
       ADCSRA = 0xf7; // restart adc
       byte m = ADCL; // fetch adc data
@@ -126,34 +197,23 @@ bool check_mic(){
     fft_run(); // process the data in the fft
     fft_mag_log(); // take the output of the fft
     sei();
+//Print statements for debugging
+/*
 //    Serial.println("start here");
-    //Serial.println(ADMUX);
+//    //Serial.println(ADMUX);
 //    for (byte i = 0 ; i < FFT_N/2 ; i++) { 
-     // Serial.println(fft_log_out[10]); // send out the data      
-//    }
-    
-    if (fft_log_out[5] > 90) {         //660Hz
+//      Serial.println(fft_log_out[i]); // send out the data      
+//    }*/
+    if (fft_log_out[5] > 90) {    //660Hz
       return true;
-      //digitalWrite(8, HIGH);
     }      
     else {
       return false;
-      //digitalWrite(8, LOW);
     }
-
-  
-
-     //stp();
-     //Serial.println(fft_log_out[28]); // send out the data
-  
-//      //Serial.println((int)treasures); // send out the data
-//     //TIMSK0 = reset4; // turn off timer0 for lower jitter
-//  ADCSRA = reset1; // set the adc to free running mode
-//  ADMUX = reset2; // use adc3
-//  //DIDR0 = reset3;
-   
 }
 
+/* helper function that initializes the radio stuff. Copied
+ * from the radio lab.*/
 void radio_init() {
   printf_begin();
   radio.begin();
@@ -172,382 +232,300 @@ void radio_init() {
   radio.setPayloadSize(16);
   radio.openWritingPipe(pipes[0]);
   radio.openReadingPipe(1,pipes[1]);
-
   radio.startListening();
-
   //radio.printDetails();
 }
 
-// the loop routine runs over and over again forever:
-void loop() {
-  while(1){
-    find_treasures();
-  }
-  bool start_signal = false;
-  int i = 0;
-
-  int reset1 = ADCSRA;
-  int reset2 = ADMUX;
-  int reset3 = DIDR0;
-  int reset4 = TIMSK0;
-  //TIMSK0 = 0; // turn off timer0 for lower jitter
-  ADCSRA = 0xe7; // set the adc to free running mode
-  ADMUX = 0x45; // use adc3
-  DIDR0 = 0x06; // turn off the digital input for adc3
-  
-
-
-  Serial.println("looking for 660Hz");
-  while ((!start_signal) || !(i == 10)){
-//while(1){
-    
-    Serial.println("still looking");
-    delay(10);
-    start_signal = check_mic();
-    //Serial.println(start_signal);
-    //Serial.println(i);
-    if (start_signal) {
-      i++;
-    }
-    else{
-       if (i == 0) {
-        i = 0;
-       }
-       else {
-        i--;
-       }
-    }
-    if(digitalRead(8)){
-      start_signal = true;
-      i = 10;
-    }
-    
-//            check_mem(); 
-//        Serial.write("heapptr: "); Serial.print((int)heapptr);
-//        Serial.write(", stackptr: "); Serial.println((int)stackptr);
-
-    
-  }
-  //TIMSK0 = reset4; // turn off timer0 for lower jitter
-  ADCSRA = reset1; // set the adc to free running mode
-  ADMUX = reset2; // use adc3
-  DIDR0 = reset3;
-  Serial.println("Heard 660Hz");
-  dfs();
-
-}
-
-/********************************HELPER FUNCTIONS******************************/
+/* Main maze mapping algorthm. Uses depth first search (DFS) for unexplored parts of
+ * the maze and when back tracking uses breadth first search (BFS) to find the 
+ * shortest path. */
 void dfs(){
   int visitedSize = 0;
-  //StackArray <Square> path;
-  StackArray <Square> backto;
+  
+  //keeps track of nodes that added multiple elments into the frontier.
+  StackArray <Square> backto; 
+
   Square visited[20];
   Square current;
   Square next;
-  char done;
-  char walls;
-  //current = start;
-  char c_coor [] = {0,0};
-  char n_coor [] = {0,0};
-  //followline();
-  int newsquare;
 
+  //done signal; to send over radio
+  char done;
+
+  //wall info; to send over radio
+  char walls;
+
+  char c_coor [] = {0,0}; //current coordinates
+  char n_coor [] = {0,0}; //next coordinates
+  
+  int newsquare; //signal to tell if it is the first visit to current node.
+
+  //run algorthm in loop until there are no elements in the frontier
+  //which would mean that all explorable parts of the maze has been explored
   while(!frontier.isEmpty()){
     readSensor();
-    if (outLeft == 0 && outRight == 0){ //while both outer sensors see black
-      treasures = B000;
-      stp();
-      find_treasures();
-     
-    //if we decide to start at (0,0) add code to check if we are at an intersection
-    if(goback == 0){
-      current = frontier.pop();
-      Serial.print("CURRENT:   ");
-      Serial.print(current.x);
-      Serial.println(current.y);
-      c_coor[0] = current.x;
-      c_coor[1] = current.y;
+    if (outLeft == 0 && outRight == 0){ //check that it is at an intersection.
+      if(goback == 0){
+        current = frontier.pop();
+        Serial.print("CURRENT:   ");
+        Serial.print(current.x);
+        Serial.println(current.y);
+        c_coor[0] = current.x;
+        c_coor[1] = current.y;
 
-      if (!isMember(current, visited, visitedSize)){
-        visited[visitedSize] = current;
-        visitedSize ++;
-        newsquare = 1;
-      }
-      else{
-        newsquare = 0;
-      }
-      int length = frontier.count();
-      if(wallL == 1){ //no wall on left
-        if(orient == 3){
-          next.x = current.x + 1;
-          next.y = current.y;
+        //add to visited if first time at node
+        if (!isMember(current, visited, visitedSize)){
+          visited[visitedSize] = current;
+          visitedSize ++;
+          newsquare = 1;
         }
-        else if(orient == 2){
-          next.x = current.x;
-          next.y = current.y + 1;
+        else{
+          newsquare = 0;
         }
-        else if(orient == 1){
-          next.x = current.x - 1;
-          next.y = current.y;
-        }
-        else if(orient == 0){
-          next.x = current.x;
-          next.y = current.y - 1;
-        }
-        if(!isMember(next, visited, visitedSize)){
-          frontier.push(next);
-        }
-      }
-      else{
-        if(orient == 3){
-          maze[current.x][current.y].s = 1;
-        }
-        else if(orient == 2){
-          maze[current.x][current.y].e = 1;
-        }
-        else if(orient == 1){
-          maze[current.x][current.y].n = 1;
-        }
-        else if(orient == 0){
-          maze[current.x][current.y].w = 1;
-        }
-      }
-      if(wallR == 1){ //no wall on right
-        if(orient == 3){
-          next.x = current.x - 1;
-          next.y = current.y;
-        }
-        else if(orient == 2){
-          next.x = current.x;
-          next.y = current.y - 1;
-        }
-        else if(orient == 1){
-          next.x = current.x + 1;
-          next.y = current.y;
-        }
-        else if(orient == 0){
-          next.x = current.x;
-          next.y = current.y + 1;
-        }
-        if(!isMember(next, visited, visitedSize)){
-          frontier.push(next);
-        }
-      }
-      else{
-        if(orient == 3){
-          maze[current.x][current.y].n = 1;
-        }
-        else if(orient == 2){
-          maze[current.x][current.y].w = 1;
-        }
-        else if(orient == 1){
-          maze[current.x][current.y].s = 1;
-        }
-        else if(orient == 0){
-          maze[current.x][current.y].e = 1;
-        }
-      }
-      if(frontwall < 170){ //no wall in front
-        if(orient == 3){
-          next.x = current.x;
-          next.y = current.y - 1;
-        }
-        else if(orient == 2){
-          next.x = current.x + 1;
-          next.y = current.y;
-        }
-        else if(orient == 1){
-          next.x = current.x;
-          next.y = current.y + 1;
-        }
-        else if(orient == 0){
-          next.x = current.x - 1;
-          next.y = current.y;
-        }
-        if(!isMember(next, visited, visitedSize)){
-          frontier.push(next);
-        }
-      }
-      else{
-        if(orient == 3){
-          maze[current.x][current.y].w = 1;
-        }
-        else if(orient == 2){
-          maze[current.x][current.y].s = 1;
-        }
-        else if(orient == 1){
-          maze[current.x][current.y].e = 1;
-        }
-        else if(orient == 0){
-          maze[current.x][current.y].n = 1;
-        }
-      }
 
-      done = 0;
-      if (frontier.isEmpty()) done = 1;
-      walls = B0000;
-      walls = checkWalls (current.x, current.y);
-//      Serial.println("stuck");
-//      while (! radio_send(done, treasures, walls, orient, current.x, current.y)){
-        radio_send(done, treasures, walls, orient, current.x, current.y);
-//      }  
-  
-      
-      if(frontier.count()>length){
-        n_coor[0] = frontier.peek().x;
-        n_coor[1] = frontier.peek().y;
-        if((frontier.count() - length) == 2){
-            backto.push(current);
-        }
-        else if((frontier.count() - length) == 3){
-            backto.push(current);
-            backto.push(current);
-        }
-        goback = 0;
-        orient = reorient(c_coor, n_coor, orient);
-        treasures = B000;
-        stp();
-        find_treasures();
+        int length = frontier.count();
         
-      }
-      else{
-        goback = 1;
-      }
-
-       done = 0;
-       walls = B0000;
-       walls = checkWalls (current.x, current.y);
-//       while (! radio_send(done, treasures, walls, orient, current.x, current.y)){
-       radio_send(done, treasures, walls, orient, current.x, current.y);
-//       }  
- 
-      
-
-
-    }
-    else{
-      Square back;
-      Serial.print("newSquare:  ");
-      Serial.println(newsquare);
-      next = frontier.peek();
-      if (!isMember(next, visited, visitedSize)){
-        if(newsquare == 1){
-          back = backto.pop();
-          frontier.pop();
-          shortest_path(current,back,maze); 
+        if(wallL == 1){ //no wall on left
+          if(orient == 3){
+            next.x = current.x + 1;
+            next.y = current.y;
+          }
+          else if(orient == 2){
+            next.x = current.x;
+            next.y = current.y + 1;
+          }
+          else if(orient == 1){
+            next.x = current.x - 1;
+            next.y = current.y;
+          }
+          else if(orient == 0){
+            next.x = current.x;
+            next.y = current.y - 1;
+          }
+          
+          // if the neighbor to the left of node is not visited add to the frontier
+          if(!isMember(next, visited, visitedSize)){
+            frontier.push(next);
+          }
         }
-        Square tmp = path.pop();
-        while (!squareCompare(tmp,back)){
+        else{ //if there is wall add to maze info that there is wall to the left
+          if(orient == 3){
+            maze[current.x][current.y].s = 1;
+          }
+          else if(orient == 2){
+            maze[current.x][current.y].e = 1;
+          }
+          else if(orient == 1){
+            maze[current.x][current.y].n = 1;
+          }
+          else if(orient == 0){
+            maze[current.x][current.y].w = 1;
+          }
+        }
+        if(wallR == 1){ //no wall on right
+          if(orient == 3){
+            next.x = current.x - 1;
+            next.y = current.y;
+          }
+          else if(orient == 2){
+            next.x = current.x;
+            next.y = current.y - 1;
+          }
+          else if(orient == 1){
+            next.x = current.x + 1;
+            next.y = current.y;
+          }
+          else if(orient == 0){
+            next.x = current.x;
+            next.y = current.y + 1;
+          }
+
+          // if the neighbor to the left of node is not visited add to the frontier
+          if(!isMember(next, visited, visitedSize)){
+            frontier.push(next);
+          }
+        }
+        else{ //if there is wall add to maze info that there is wall to the right
+          if(orient == 3){
+            maze[current.x][current.y].n = 1;
+          }
+          else if(orient == 2){
+            maze[current.x][current.y].w = 1;
+          }
+          else if(orient == 1){
+            maze[current.x][current.y].s = 1;
+          }
+          else if(orient == 0){
+            maze[current.x][current.y].e = 1;
+          }
+        }
+        if(frontwall < 170){ //no wall in front
+          if(orient == 3){
+            next.x = current.x;
+            next.y = current.y - 1;
+          }
+          else if(orient == 2){
+            next.x = current.x + 1;
+            next.y = current.y;
+          }
+          else if(orient == 1){
+            next.x = current.x;
+            next.y = current.y + 1;
+          }
+          else if(orient == 0){
+            next.x = current.x - 1;
+            next.y = current.y;
+          }
+
+          // if the neighbor to the left of node is not visited add to the frontier
+          if(!isMember(next, visited, visitedSize)){
+            frontier.push(next);
+          }
+        }
+        else{ //if there is wall add to maze info that there is wall in front
+          if(orient == 3){
+            maze[current.x][current.y].w = 1;
+          }
+          else if(orient == 2){
+            maze[current.x][current.y].s = 1;
+          }
+          else if(orient == 1){
+            maze[current.x][current.y].e = 1;
+          }
+          else if(orient == 0){
+            maze[current.x][current.y].n = 1;
+          }
+        }
+        
+        // if something has been added to the frontier
+        if(frontier.count()>length){
+          n_coor[0] = frontier.peek().x;
+          n_coor[1] = frontier.peek().y;
+
+          // if 2 elements were added add node to backto
+          if((frontier.count() - length) == 2){
+              backto.push(current);
+          }
+          // if 3 elements were added add node to backto 2 times
+          else if((frontier.count() - length) == 3){
+              backto.push(current);
+              backto.push(current);
+          }
+          goback = 0;
+          orient = reorient(c_coor, n_coor, orient);       
+        }
+        else{ // if no new elements have been added 
+          goback = 1;
+        }
+      }
+      else{ // if signal was recieved to go back
+        // node to go back to (node where robot added mutiple elements to frontier)
+        Square back;
+        
+        next = frontier.peek();
+
+        // if the next element in the frontier has not been visited
+        if (!isMember(next, visited, visitedSize)){
+          
+          /* if it is a new square then you must run the shorest path function to 
+           * find the path back.*/
+          if(newsquare == 1){
+            back = backto.pop();
+            frontier.pop();
+            shortest_path(current,back,maze); 
+          }
+          
+          Square tmp = path.pop();
+
+          //follow path back until you get to the correct backto node
+          while (!squareCompare(tmp,back)){
+            n_coor[0] = tmp.x;
+            n_coor[1] = tmp.y;
+            orient = reorient(c_coor, n_coor, orient);
+            followline();
+            c_coor[0] = n_coor[0];
+            c_coor[1] = n_coor[1];
+            tmp = path.pop();
+          }
+
+          /* do above one more time because while loop ends when tmp is equal to 
+           * back node but it doesn't move to the back node*/
           n_coor[0] = tmp.x;
           n_coor[1] = tmp.y;
-          done = 0;
-          treasures = B000;
-          stp();
-          find_treasures();
-          walls = B0000;
-          walls = checkWalls (c_coor[0], c_coor[1]);
-////          while (! radio_send(done, treasures, walls, orient, c_coor[0], c_coor[1])){
-//            radio_send(done, treasures, walls, orient, c_coor[0], c_coor[1]);
-////          }  
-    
-          radio_send(done, treasures, walls, orient, c_coor[0], c_coor[1]);
           orient = reorient(c_coor, n_coor, orient);
-          treasures = B000;
-          stp();
-          find_treasures();
-          done = 0;
-          walls = B0000;
-          walls = checkWalls (c_coor[0], c_coor[1]);
-//          while (! radio_send(done, treasures, walls, orient, c_coor[0], c_coor[1])){
-            radio_send(done, treasures, walls, orient, c_coor[0], c_coor[1]);
-//          }  
-    
-          followline();
-          c_coor[0] = n_coor[0];
-          c_coor[1] = n_coor[1];
-          tmp = path.pop();
+          frontier.push(tmp);
+          goback = 0;
         }
-        n_coor[0] = tmp.x;
-        n_coor[1] = tmp.y;
-        done = 0;
-        treasures = B000;
-        stp();
-        find_treasures();
-        walls = B0000;
-        walls = checkWalls (c_coor[0], c_coor[1]);
-//        while (! radio_send(done, treasures, walls, orient, c_coor[0], c_coor[1])){
-            radio_send(done, treasures, walls, orient, c_coor[0], c_coor[1]);
-//          }  
-    
-        orient = reorient(c_coor, n_coor, orient);
-        treasures = B000;
-        stp();
-        find_treasures();
-        done = 0;
-        walls = B0000;
-        walls = checkWalls (c_coor[0], c_coor[1]);
-//        while (! radio_send(done, treasures, walls, orient, c_coor[0], c_coor[1])){
-            radio_send(done, treasures, walls, orient, c_coor[0], c_coor[1]);
-//          }  
-    
-        frontier.push(tmp);
-        goback = 0;
+        else{ // if the next element in the frontier has not been visited
+          frontier.pop();
+          backto.pop();
+        } 
       }
-      else{
-//        Serial.print("NEXT on front:   ");
-//          Serial.print(frontier.peek().x);
-//          Serial.println(frontier.peek().y);
-        frontier.pop();
-        backto.pop();
-//        Serial.print("Frontier size:  ");
-//        Serial.println(frontier.count());
-//        Serial.print("NEXT on front:   ");
-////          Serial.print(frontier.peek().x);
-////          Serial.println(frontier.peek().y);
-////        Serial.print("      ");
-//        Serial.print("backto size:  ");
-//        Serial.println(backto.count());
-      }
-      
-      
+      followline();
     }
+    else{ // if not at intersection
     followline();
     }
-    else{
-    followline();
-    //stp();
+//   Serial.print("size");
+//  Serial.println(frontier.count());
   }
+
+  // edge case to check if treasure is on the front side of dead end in the maze.
+  if (frontier.isEmpty()){
+    if(frontwall > 170 && wallL == 0 && wallL == 0){
+      done = 0;
+      flip();
+      delay(600);
+      stp();
+      walls = B0000;
+      walls = checkWalls(current.x,current.y);
+      treasures = B000;
+      find_treasures();
+      for  (int i = 0; i < 3; i++ ){
+      radio_send(done, treasures, walls, orient + 1, current.x, current.y);
+      }
+    }
   }
-    Serial.print("size");
-  Serial.println(frontier.count());
-  Serial.println("DONE");
-  //digitalWrite(8, HIGH);
+
+//  print used for debugging 
+//  Serial.print("size");
+//  Serial.println(frontier.count());
+
+  //send done signal through radio
   done = 1;
-//  treasures = 0;
-//  walls = 0;
-//  orient = 0;
-//  current.x = 0;
-//  current.y = 0;
-// while (! radio_send(done, treasures, walls, orient, current.x, current.y)){
-      radio_send(done, treasures, walls, orient, current.x, current.y);
-//    }  
-  
+  walls = B000;
+  walls = checkWalls(current.x,current.y);
+  treasures = B000;
+  find_treasures();
+  for  (int i = 0; i < 3; i++ ){
+    radio_send(done, treasures, walls, orient + 1, current.x, current.y);
+  }  
+
+  //once maze is mapped just stop and do nothing
   while(frontier.isEmpty()){
     stp();
   }
-
 }
 
+/* Helper function that uses breadth first search to find the shortest path from one node to
+ * another. However only considers visited locations to find the path because there is no 
+ * information about the unexplored areas. In most mazes the shortest path ends up being 
+ * the path that dfs took.*/
 void shortest_path (Square a, Square b, Square_wall maze[ROWS][COLS]){
+  // initialize queue for bfs
   QueueList <Square> queue;
+
+  //make temp intersection
   Square blank;
   blank.x = 1287;
   blank.y = 1287;
+  
   Square visited [20];
   int visitedSize = 0;
+
+  // initialize best_path array
   Square_dist best_path [ROWS][COLS];
-  //initialize best_path array
+  // set array to max values
   for (int i = 0; i < ROWS; i++){
     for (int j = 0; j < COLS; j++){
       best_path[i][j].dist = 21;
@@ -555,20 +533,25 @@ void shortest_path (Square a, Square b, Square_wall maze[ROWS][COLS]){
     }
   }
   queue.push(a);
-  bool stop = true;
+  bool dontstop = true;
   Square current;
   Square next;
   best_path[a.x][a.y].dist = 0;
-  Serial.println("stuck in first while");
-  while ((!queue.isEmpty())||stop){
+
+  // keep looping until the desired node was mapped
+  while ((!queue.isEmpty())|| dontstop){
     current = queue.pop();
     if (!isMember(current, visited, visitedSize)){
       visited[visitedSize] = current;
       visitedSize ++;
     }
+
     if (squareCompare(b, current)){
-      stop = false;
+      dontstop = false;
     }
+
+    /* Update best path array with the shortest path to each node
+     * from current node*/
     if(maze[current.x][current.y].n == 0){
       int temp = best_path[current.x][current.y].dist + 1;
       next.x = current.x - 1;
@@ -616,23 +599,19 @@ void shortest_path (Square a, Square b, Square_wall maze[ROWS][COLS]){
       if(!isMember(next, visited, visitedSize)){
         queue.push(next);
       }
-
     }
-
   }
-  Serial.println("stuck in second while");
   //make path back.
   current = b;
   while(!squareCompare(a, current)){
     path.push(current);
     current = best_path[current.x][current.y].prev;
-    Serial.print("current:   ");
-    Serial.print(path.peek().x);
-    Serial.println(path.peek().y);
   }
-
 }
 
+/* This function initializes the walls in the maze information array 
+ * so that the borders are assigned as walls and everything node inside 
+ * the maze has no walls initiallly. */
 void initialize_walls(){
   for (int i = 0; i < ROWS; i++){
     for (int j = 0; j < COLS; j++){
@@ -643,25 +622,25 @@ void initialize_walls(){
       if (i == 0){
         maze[i][j].n = 1;
       }
-
       if (i == 3){
         maze[i][j].s = 1;
       }
-
       if (j == 0){
         maze[i][j].w = 1;
       }
-
       if (j == 4){
         maze[i][j].e = 1;
       }
-
-
-
     }
   }
 }
 
+/* This function returns the value to send through the radio 
+ * about where the walls are at each intersection.
+ * ex) B0000 -> no walls
+ *     B1000 -> north wall only
+ *     B1010 -> north and south wall
+ *     B0110 -> east and south wall. */
 char checkWalls (int x, int y) {
   char temp = B0000;
   if(maze[x][y].n == 1)
@@ -683,6 +662,7 @@ char checkWalls (int x, int y) {
    return temp;
 }
 
+/* helper function to see if a Square a is in an array. */
 bool isMember (Square a, Square visit[], int sizeV){
   for(int i = 0; i < sizeV; i ++){
     if (squareCompare(a,visit[i])){
@@ -692,6 +672,7 @@ bool isMember (Square a, Square visit[], int sizeV){
   return false;
 }
 
+/* helper function to check if Square a is equal to Square b. */
 bool squareCompare (Square a, Square b){
   if(a.x == b.x){
     if(a.y == b.y){
@@ -701,10 +682,16 @@ bool squareCompare (Square a, Square b){
   return false;
 }
 
-
+/* Helper function that takes in the current node, the next node and 
+ * and the current orietation and re adjusts the robot to face the 
+ * next node. This helper function also checks for treasures after 
+ * each adjustment and sends the intersection info over the radio.
+ * This function returns the new orientation of the robot. */
 char reorient(char current[], char next[], char curr_o) {
   char next_o = 0;
   char diff[] = {0, 0};
+  char done = 0;
+  char walls;
   diff[0] = next[0]-current[0];
   diff[1] = next[1]-current[1];
 
@@ -720,63 +707,108 @@ char reorient(char current[], char next[], char curr_o) {
   else if (diff[1] == 1){ // east
     next_o = 1;
   }
-  if (next_o - curr_o == 0){
-    //straight
-    forward();
-    delay(250);
-
-  }
-  else if (next_o - curr_o == 1 || next_o - curr_o == -3){
-    //turn right
-    right();
-    delay(800);
-
-
-  }
-  else if (abs(next_o - curr_o) == 2){
-    char done = 0;
-    char walls;
+  
+  if (next_o - curr_o == 0){ //straight
+    walls = B000;
     walls = checkWalls(current[0],current[1]);
-    //flip
-//    right();
-    flip();
-    delay(600);
+    forward();
+    delay(200);
     stp();
     treasures = B000;
     find_treasures();
-////    while (! radio_send(done, treasures, walls, next_o - 1, current[0], current[1])){
-//      radio_send(done, treasures, walls, next_o, current[0], current[1]);
-////    }
-    //radio_send(done, treasures, walls, orient, current[0], current[1]);
+    for  (int i = 0; i < 3; i++ ){
+      radio_send(done, treasures, walls, curr_o, current[0], current[1]);
+    } 
+  }
+  else if (next_o - curr_o == 1 || next_o - curr_o == -3){ //turn right
+      walls = B000;
+      walls = checkWalls(current[0],current[1]);
+      forward();
+      delay(180);
+      stp();
+      //check treasure and send
+      treasures = B000;
+      find_treasures();
+      for  (int i = 0; i < 3; i++ ){
+        radio_send(done, treasures, walls, curr_o, current[0], current[1]);
+      } 
+      right();
+      delay(680);
+      left();
+      delay(70);
+      stp();
+      //check treasure and send
+      treasures = B000;
+      find_treasures();
+      for  (int i = 0; i < 3; i++ ){
+        radio_send(done, treasures, walls, next_o, current[0], current[1]);
+      } 
+
+
+  }
+  else if (abs(next_o - curr_o) == 2){ //flip
+    walls = B000;
+    walls = checkWalls(current[0],current[1]);
+    flip();
+    delay(580);
+    stp();
+    treasures = B000;
+    find_treasures();
+    char tmp;
+    if (next_o == 0){
+       tmp = 4;
+    }
+    else{
+       tmp = next_o - 1;
+    }
+    for  (int i = 0; i < 3; i++ ){
+      radio_send(done, treasures, walls, tmp, current[0], current[1]);
+    }
     flip();
     delay(700);  
     stp();
     treasures = B000;
     find_treasures();
-//    while (! radio_send(done, treasures, walls, next_o, current[0], current[1])){
+    for  (int i = 0; i < 3; i++ ){
       radio_send(done, treasures, walls, next_o, current[0], current[1]);
-//    }  
-
-//flip
-//    flip();
-//    delay(1250);
-
-
+    }  
   }
-  else if (next_o - curr_o == -1 || next_o - curr_o == 3){
-    //turn left
-    left();
-    delay(800);
+  else if (next_o - curr_o == -1 || next_o - curr_o == 3){ //left
+      walls = B000;
+      walls = checkWalls(current[0],current[1]);
+      forward();
+      delay(180);
+      stp();
+      //check treasure and send
+      treasures = B000;
+      find_treasures();
+      for  (int i = 0; i < 3; i++ ){
+         radio_send(done, treasures, walls, curr_o, current[0], current[1]);
+      }
+      left();
+      delay(640);
+      forward();
+      delay(70);
+      stp();
+      //check treasure and send
+       treasures = B000;
+      find_treasures();
+      for  (int i = 0; i < 3; i++ ){
+         radio_send(done, treasures, walls, next_o, current[0], current[1]);
+      }
   }
-
-  curr_o = next_o;
-  //  Serial.println((int) curr_o);
-
   stp();
-  
-  return curr_o;
+  return next_o;
 }
 
+/* helper function that finds the tresures at 7kHz, 12kHz and 17kHz using FFT
+ * takes measurements from each treasure sensor 5 times. Updates global variable 
+ * treasure with the findings.
+ * ex) B000 -> no treasure
+ *     B100 -> 17kHz
+ *     B010 -> 12kHz
+ *     B001 -> 7kHz
+ */
 void find_treasures() {
   int reset1 = ADCSRA;
   int reset2 = ADMUX;
@@ -787,20 +819,19 @@ void find_treasures() {
   ADMUX = 0x43; // use adc3
   DIDR0 = 0x04; // turn off the digital input for adc3
 
-  for(int i = 0; i < 4; i++){
+  // measure each treasure sensor 5 times.
+  for(int i = 0; i < 10; i++){
+    if (ADMUX == 0x43){
+      ADMUX = 0x44;       //a4
+      DIDR0 = 0x05;
+    }
+    else if (ADMUX == 0x44){
+      ADMUX = 0x43;       //a3
+      DIDR0 = 0x04;
+    }
   
-//  //while(1) { // reduces jitter
-//    if (ADMUX == 0x43){
-//      ADMUX = 0x44;       //a4
-//      DIDR0 = 0x05;
-//    }
-//    else if (ADMUX == 0x44){
-//      ADMUX = 0x43;       //a3
-//      DIDR0 = 0x04;
-//    }
-//  
     cli();  // UDRE interrupt slows this way down on arduino1.0
-    for (int i = 0 ; i < 256 ; i += 2) { // save 64 samples
+    for (int i = 0 ; i < FFT_N*2; i += 2) { // save 64 samples
       while(!(ADCSRA & 0x10)); // wait for adc to be ready
       ADCSRA = 0xf5; // restart adc
       byte m = ADCL; // fetch adc data
@@ -816,117 +847,60 @@ void find_treasures() {
     fft_run(); // process the data in the fft
     fft_mag_log(); // take the output of the fft
     sei();
-    Serial.println("start here");
-    Serial.println(ADMUX);
-    for (byte i = 0 ; i < FFT_N/2 ; i++) { 
-      Serial.println(fft_log_out[42]); // send out the data    
-        
-    }
     
-    if (fft_log_out[24] > 140) {         //7kHz
+    //print for debugging
+//    Serial.println("start here");
+////    Serial.println(ADMUX);
+//    for (byte i = 0 ; i < FFT_N/2 ; i++) { 
+//      Serial.println(fft_log_out[28]); // send out the data    
+//        
+//    }
+    
+    if (fft_log_out[12] > 120) {         //7kHz
       treasures |= 1;
-////       digitalWrite(8, HIGH);
-//      delay(2500);
-//      digitalWrite(8, LOW);
     }
-    else if (fft_log_out[21] > 130) {    //12kHz      
-      treasures |= 1 << 1;
-//       digitalWrite(8, HIGH);
-//      delay(2500);
-//      digitalWrite(8, LOW);
-     
-    
+    else if (fft_log_out[20] > 135) {    //12kHz      
+      treasures |= 2;
     }
     else if (fft_log_out[28] > 120) {    //17kHz
-      treasures |= 1 << 2;
-//      digitalWrite(8, HIGH);
-//      delay(2500);
-//      digitalWrite(8, LOW);
-      //stp();
-    
+      treasures |= 4;
     }        
-    else {
-//      digitalWrite(7, LOW);
-    }
-
   }
 
-     //stp();
-     //Serial.println(fft_log_out[28]); // send out the data
-  
-      //Serial.println((int)treasures); // send out the data
-     TIMSK0 = reset4; // turn off timer0 for lower jitter
-     ADCSRA = reset1; // set the adc to free running mode
-     ADMUX = reset2; // use adc3
-     DIDR0 = reset3;
-  }
+  TIMSK0 = reset4; // turn off timer0 for lower jitter
+  ADCSRA = reset1; // set the adc to free running mode
+  ADMUX = reset2; // use adc3
+  DIDR0 = reset3;
+}
 
+/* helper function to send information through the radio. packet size of 16.*/
 bool radio_send(char done, char treasures, char walls, char curr_o, char x_coord, char y_coord){
     // First, stop listening so we can talk.
     radio.stopListening();
+    
     // Take the time, and send it.  This will block until complete
     unsigned long time = millis();
-//    Serial.print("walls: ");
-//    Serial.print(String(bitRead(walls, 3)) + String(bitRead(walls, 2)) + String(bitRead(walls, 1)) + String(bitRead(walls, 0)));
-//    Serial.print("      treasures: ");
-//    Serial.println((int) treasures);
-    int i=0;
-    unsigned int new_data;
+ 
+    unsigned int new_data = 0;
+    
     new_data = 1 << 15 | done << 14 | treasures << 11 | walls << 7 | curr_o << 5 | y_coord << 2 | x_coord;
-    
     // * | D | T T T | W W W W | O O | Y Y Y | X X
-    
 //    printf("Now sending new map data\n");
     bool ok = radio.write( &new_data, sizeof(unsigned int) );
 
-//    Serial.println("in while");
-//    while((!ok)&&(i == 5)){
-//      Serial.println(i);
-//      ok = radio.write( &new_data, sizeof(unsigned int) );
-//      delay(20);
-//      i++;
-//    }
-//     Serial.println("finish while");
     if (ok)
       printf("ok... \n");
     else
       printf("failed.\n\r");
 
-    delay(20);
+    delay(70);
 
     // Now, continue listening
     radio.startListening();
     
-
-//    // Wait here until we get a response, or timeout (250ms)
-//    unsigned long started_waiting_at = millis();
-//    bool timeout = false;
-//    while ( ! radio.available() && ! timeout )
-//      if (millis() - started_waiting_at > 200 )
-//        timeout = true;
-//
-//    // Describe the results
-//    if ( timeout )
-//    {
-//      return false;
-//      printf("Failed, response timed out.\n\r");
-//    }
-//    else
-//    {
-//      
-//
-//    unsigned long got_data_t;
-//      radio.read( &got_data_t, sizeof(unsigned long) );
-//      if (got_data_t == 1) return true;
-//      // Spew it
-//      //Serial.println("Got response " + got_string);
-//      }
-
-    // Try again 1s later
-    //delay(250);
   }
 
-
+/* helper function to read all the sensors.*/
 void readSensor(){
   inLeft = analogRead(A0);
   inRight = analogRead(A1);
@@ -937,32 +911,31 @@ void readSensor(){
   wallR = digitalRead(RightWall);
 }
 
-//turning functions
-void forward() {
+/***********************moving helper functions***********************/
+void forward(){
   leftservo.write(180);
   rightservo.write(0);
   readSensor();
 }
 
 void right() {
-  leftservo.write(180);
-  rightservo.write(95);
+  leftservo.write(130);
+  rightservo.write(180);
   readSensor();
 }
 
 void left() {
-  leftservo.write(85);
+  leftservo.write(65);
   rightservo.write(0);
   readSensor();
 }
 
+// fast right turn for 180 degree turns
 void flip() {
   leftservo.write(180);
   rightservo.write(180);
   readSensor();
-  //delay(time);
 }
-
 
 void stp() {
   leftservo.write(90);
@@ -973,7 +946,7 @@ void stp() {
 void followline(){
   while (outLeft == 1 || outRight == 1){ //while both outer sensors see white
     readSensor();
-    if (abs(inLeft-inRight)<70){ //if inner are similar
+    if (abs(inLeft-inRight)<30){ //if inner are similar
       forward();
     }
     else if (inLeft>inRight){ //if tilted left, correct
